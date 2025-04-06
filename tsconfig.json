@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "target": "ES6", // Target ES6+ JavaScript
+    "module": "commonjs", // Use CommonJS modules
+    "strict": true, // Enable strict type checking
+    "esModuleInterop": true, // Allow import/export syntax
+    "skipLibCheck": true, // Skip type checks of library files
+    "forceConsistentCasingInFileNames": true, // Enforce consistent file naming
+    "outDir": "./dist", // Output directory
+    "rootDir": "./src", // Source directory
+    "resolveJsonModule": true, // Allow importing JSON files
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    }
+  },
+  "include": ["src/**/*"], // Include all TypeScript files in the src directory
+  "exclude": ["node_modules"] // Exclude node_modules
+}

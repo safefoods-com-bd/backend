@@ -1,0 +1,69 @@
+version: "3.9"
+
+services:
+  redis:
+    image: redis:latest
+    container_name: compress-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - compress-redis-data:/data
+    networks:
+      - compress-app-network
+    restart: on-failure:3
+
+  # Redis Commander - Web-based Redis management tool
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    environment:
+      - REDIS_HOSTS=local:redis:6379
+    ports:
+      - "8081:8081"
+    depends_on:
+      - redis
+    networks:
+      - compress-app-network
+
+  mailhog:
+    image: mailhog/mailhog:latest
+    restart: always
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+    networks:
+      - compress-app-network
+    # healthcheck:
+    #   test: ["CMD", "curl", "-f", "http://localhost:8025"]
+    #   interval: 10s
+    #   timeout: 5s
+    #   retries: 3
+
+  app-dev:
+    restart: on-failure:3
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: express-app-dev
+    ports:
+      - "8000:8000"
+    environment:
+      NODE_ENV: development
+      DATABASE_URL: postgres://compressuser:compresspassword@212.28.189.176:5432/compressdb # Remote database
+      REDIS_URL: redis://redis:6379
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/.pnpm-store # Prevent overwriting node_modules
+    depends_on:
+      - mailhog
+      - redis
+    networks:
+      - compress-app-network
+
+volumes:
+  compress-pg-data:
+    driver: local
+  compress-redis-data:
+    driver: local
+networks:
+  compress-app-network:
+    driver: bridge

@@ -1,0 +1,77 @@
+version: "3.8"
+
+services:
+  # --- Redis ---
+  redis:
+    image: redis:7
+    container_name: compress-redis
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - compress-app-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+  # --- Postgres Database ---
+  postgres:
+    image: postgres:15
+    container_name: compress-database
+    restart: always
+    environment:
+      POSTGRES_USER: compressuser
+      POSTGRES_DB: compressdb
+      POSTGRES_PASSWORD: compresspassword
+    ports:
+      - "5432:5432"
+    volumes:
+      - compress-pg-data:/var/lib/postgresql/data
+    networks:
+      - compress-app-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready", "-U", "compressuser -d compressdb"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  # --- Production App ---
+  app:
+    image: $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA
+    container_name: compress-app
+    restart: always
+    ports:
+      - "8000:8000"
+    environment:
+      # Make sure these match your app’s config
+      NODE_ENV: production
+      DATABASE_URL: postgres://compressuser:compresspassword@postgres:5432/compressdb
+      REDIS_URL: redis://redis:6379
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - compress-app-network
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+volumes:
+  compress-pg-data:
+    driver: local
+  redis-data:
+    driver: local
+
+networks:
+  compress-app-network:
+    driver: bridge

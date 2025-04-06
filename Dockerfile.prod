@@ -1,0 +1,40 @@
+# -------- Stage 1: Build the application --------
+    FROM node:22-alpine as builder
+
+    WORKDIR /usr/src/app
+    
+    COPY package.json pnpm-lock.yaml ./
+    RUN npm install -g pnpm
+    
+    # Install all deps (including dev)
+    RUN pnpm install
+    
+    # Copy all source code
+    COPY . .
+    
+    # === RUN TSC + TSC-ALIAS ===
+    RUN pnpm tsc && pnpm tsc-alias  # This step rewrites import paths in dist
+    
+    # -------- Stage 2: Create a minimal production image --------
+    FROM node:22-alpine
+    WORKDIR /usr/src/app
+    
+    COPY package.json pnpm-lock.yaml ./
+    RUN npm install -g pnpm
+    RUN pnpm install --prod --ignore-scripts
+    
+    # Copy compiled output
+    COPY --from=builder /usr/src/app/dist ./dist
+    
+
+    # Create necessary directories and set permissions
+    RUN mkdir -p /usr/src/app/node_modules && chown -R node:node /usr/src/app
+
+    # Switch to non-root user
+    USER node
+
+    EXPOSE 8000
+    ENV NODE_ENV=production
+    
+    CMD ["node", "dist/index.js"]
+    

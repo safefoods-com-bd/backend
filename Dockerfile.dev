@@ -1,0 +1,31 @@
+# Use Node.js as the base image
+FROM node:22-alpine
+
+# Install pnpm globally
+RUN npm install -g pnpm@8.15.2
+# Set the working directory
+WORKDIR /usr/src/app
+
+# Set the environment variable
+ENV NODE_ENV=development
+
+# Copy only package files for dependency installation
+COPY package.json pnpm-lock.yaml ./
+
+# Install dependencies using pnpm
+RUN pnpm install
+
+# Create node_modules directory and set ownership before switching to node user
+RUN mkdir -p /usr/src/app/node_modules && chown -R node:node /usr/src/app
+
+# Don't use root user 
+USER node
+
+# Copy the rest of the application code
+COPY . .
+
+# Expose the port the app runs on
+EXPOSE 8000
+
+# Set the command for development mode
+CMD ["pnpm", "run", "dev"]
