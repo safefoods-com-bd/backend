@@ -6,7 +6,9 @@ import "module-alias/register";
 import responseTime from "response-time";
 
 import { registerRoutes } from "./routes";
-import { DOMAIN } from "./constants/variables";
+import { DOMAIN, isDevelopment, isProduction } from "./constants/variables";
+import dotenv from "dotenv";
+dotenv.config();
 // logger
 import { createLogger, transports } from "winston";
 import LokiTransport from "winston-loki";
@@ -80,8 +82,8 @@ app.get("/metrics", async (req, res) => {
 });
 
 app.get("/health", (req, res) => {
-  // logger.info("Server is running");
-  logger.error("Server crashed");
+  logger.info("Server is running");
+  // logger.error("Server crashed");
   res.status(200).send("Server is running");
 });
 
@@ -89,11 +91,13 @@ app.use(express.raw({ type: "application/octet-stream", limit: "50mb" }));
 // Routes
 registerRoutes(app);
 app.get("/", (req: Request, res: Response) => {
+  console.log("isProduction", isProduction);
+  console.log("isDevelopment", isDevelopment);
   logger.info("Hello, from safefoods api!");
   res.status(200).send("Hello, from safefoods api!");
 });
 
 // Start Server
 app.listen(port, () => {
-  // console.log(`Server is running at http://localhost:${port}`);
+  console.log(`Server is running at http://localhost:${port}`);
 });

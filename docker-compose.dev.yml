@@ -1,11 +1,11 @@
 version: "3.9"
 
 services:
-  redis:
+  safefoods-redis:
     image: redis:7
     container_name: safefoods-redis
     ports:
-      - "6379:6379"
+      - "${REDIS_HOST_PORT}:${REDIS_PORT}"
     volumes:
       - safefoods-redis-data:/data
     networks:
@@ -17,20 +17,8 @@ services:
       timeout: 5s
       retries: 3
       start_period: 5s
-  # Redis Commander - Web-based Redis management tool
-  redis-commander:
-    image: rediscommander/redis-commander:latest
-    environment:
-      - REDIS_HOSTS=local:redis:6379
-    ports:
-      - "8081:8081"
-    depends_on:
-      - redis
-    networks:
-      - safefoods-app-network
-    restart: unless-stopped
 
-  mailhog:
+  safefoods-mailhog:
     image: mailhog/mailhog:latest
     restart: always
     ports:
@@ -44,23 +32,20 @@ services:
       timeout: 5s
       retries: 3
 
-  app-dev:
+  safefoods-app:
     build:
       context: .
       dockerfile: Dockerfile.dev
     container_name: safefoods-app-dev
     ports:
-      - "8000:8000"
+      - "${PORT}:${PORT}"
     restart: on-failure:3
-    environment:
-      NODE_ENV: development
-      DATABASE_URL: postgresql://neondb_owner:npg_4EyfqPJYn6ws@ep-round-smoke-a5ug84q3-pooler.us-east-2.aws.neon.tech/neondb?sslmode=require
-      # database created from softpiper.dev@gmail.com email in neon
-      REDIS_URL: redis://redis:6379
+    env_file:
+      - .env
     depends_on:
-      # postgres:
-      #   condition: service_healthy
-      redis:
+      safefoods-postgres:
+        condition: service_healthy
+      safefoods-redis:
         condition: service_healthy
     volumes:
       - .:/usr/src/app
@@ -68,35 +53,36 @@ services:
     networks:
       - safefoods-app-network
     healthcheck:
-      test: ["CMD", "wget", "--spider", "-q", "http://localhost:8000/health"]
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:${PORT}/health"]
       interval: 15s
       timeout: 5s
       retries: 3
       start_period: 5s
 
-  # postgres:
-  #   image: postgres:15
-  #   container_name: compress-database
-  #   restart: unless-stopped
-  #   environment:
-  #     POSTGRES_USER: ${POSTGRES_USER}
-  #     POSTGRES_DB: ${POSTGRES_DB}
-  #     POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-  #   ports:
-  #     - "127.0.0.1:5432:5432"
-  #   volumes:
-  #     - compress-pg-data:/var/lib/postgresql/data
-  #   networks:
-  #     - compress-app-network
-  #   healthcheck:
-  #     test: ["CMD-SHELL", "pg_isready -U compressuser -d compressdb"]
-  #     interval: 15s
-  #     timeout: 5s
-  #     retries: 3
-  #     start_period: 5s
+  safefoods-postgres:
+    image: postgres:15
+    container_name: safefoods-database
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "${POSTGRES_HOST_PORT}:${POSTGRES_PORT}"
+    volumes:
+      - safefoods-pg-data:/var/lib/postgresql/data
+    networks:
+      - safefoods-app-network
+    healthcheck:
+      test:
+        ["CMD-SHELL", "pg_isready", "-U", "${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
 volumes:
-  # compress-pg-data:
-  #   driver: local
+  safefoods-pg-data:
+    driver: local
   safefoods-redis-data:
     driver: local
 networks:

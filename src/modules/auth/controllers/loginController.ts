@@ -21,6 +21,7 @@ import {
   REFRESH_TOKEN_COOKIE_MAX_AGE,
   REFRESH_TOKEN_NAME,
   ACCESS_TOKEN_NAME,
+  COMMON_BASE,
 } from "@/constants/variables";
 import refreshTokensTable from "@/db/schema/user-management/refresh_tokens";
 import { UAParser } from "ua-parser-js";
@@ -138,7 +139,7 @@ export const login = async (req: Request, res: Response) => {
       sameSite: isProduction ? "none" : "lax", // "none" for production, "lax" for development
       secure: isProduction, // true for production, false for development
       maxAge: ACCESS_TOKEN_COOKIE_MAX_AGE,
-      // domain: isProduction ? COMMON_BASE : undefined,
+      domain: isProduction ? COMMON_BASE : undefined,
     });
 
     // Set the refresh token in the cookie
@@ -147,7 +148,7 @@ export const login = async (req: Request, res: Response) => {
       sameSite: isProduction ? "none" : "lax", // "none" for production, "lax" for development
       secure: isProduction, // true for production, false for development
       maxAge: REFRESH_TOKEN_COOKIE_MAX_AGE,
-      // domain: isProduction ? COMMON_BASE : undefined,
+      domain: isProduction ? COMMON_BASE : undefined,
     });
 
     return res.status(200).json({

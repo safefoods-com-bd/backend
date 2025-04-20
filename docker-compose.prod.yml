@@ -2,16 +2,16 @@ version: "3.8"
 
 services:
   # --- Redis ---
-  redis:
+  safefoods-redis:
     image: redis:7
-    container_name: compress-redis
+    container_name: safefoods-redis
     restart: always
     ports:
-      - "6379:6379"
+      - "${REDIS_HOST_PORT}:${REDIS_PORT}"
     volumes:
-      - redis-data:/data
+      - safefoods-redis-data:/data
     networks:
-      - compress-app-network
+      - safefoods-app-network
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 30s
@@ -19,59 +19,59 @@ services:
       retries: 3
       start_period: 10s
   # --- Postgres Database ---
-  postgres:
+  safefoods-postgres:
     image: postgres:15
-    container_name: compress-database
+    container_name: safefoods-database
     restart: always
     environment:
-      POSTGRES_USER: compressuser
-      POSTGRES_DB: compressdb
-      POSTGRES_PASSWORD: compresspassword
+      POSTGRES_USER: safefoodsuser
+      POSTGRES_DB: safefoodsdb
+      POSTGRES_PASSWORD: safefoodspassword
     ports:
-      - "5432:5432"
+      - "${POSTGRES_HOST_PORT}:${POSTGRES_PORT}"
     volumes:
-      - compress-pg-data:/var/lib/postgresql/data
+      - safefoods-pg-data:/var/lib/postgresql/data
     networks:
-      - compress-app-network
+      - safefoods-app-network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready", "-U", "compressuser -d compressdb"]
+      test: ["CMD-SHELL", "pg_isready", "-U", "safefoodsuser -d safefoodsdb"]
       interval: 30s
       timeout: 5s
       retries: 3
       start_period: 10s
 
   # --- Production App ---
-  app:
+  safefoods-app:
     image: $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA
-    container_name: compress-app
+    # build:
+    #   context: .
+    #   dockerfile: Dockerfile.prod
+    container_name: safefoods-app
     restart: always
     ports:
-      - "8000:8000"
-    environment:
-      # Make sure these match your app’s config
-      NODE_ENV: production
-      DATABASE_URL: postgres://compressuser:compresspassword@postgres:5432/compressdb
-      REDIS_URL: redis://redis:6379
+      - "${PORT}:${PORT}"
+    env_file:
+      - .env
     depends_on:
-      postgres:
+      safefoods-postgres:
         condition: service_healthy
-      redis:
+      safefoods-redis:
         condition: service_healthy
     networks:
-      - compress-app-network
+      - safefoods-app-network
     healthcheck:
-      test: ["CMD", "wget", "--spider", "-q", "http://localhost:8000/health"]
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:${PORT}/health"]
       interval: 30s
       timeout: 5s
       retries: 3
       start_period: 10s
 
 volumes:
-  compress-pg-data:
+  safefoods-pg-data:
     driver: local
-  redis-data:
+  safefoods-redis-data:
     driver: local
 
 networks:
-  compress-app-network:
+  safefoods-app-network:
     driver: bridge
