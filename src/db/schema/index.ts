@@ -13,3 +13,10 @@ export { default as usersToAccountsTable } from "./user-management/users_account
 // general-settings
 
 export { default as generalSettingsTable } from "./general-settings/general_settings";
+
+// categories
+export { default as categoriesTable } from "./categories/categories";
+export { default as categoryLevelsTable } from "./categories/category_levels";
+
+// utils
+export { default as mediaTable } from "./utils/media";

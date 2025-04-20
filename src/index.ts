@@ -7,9 +7,15 @@ import responseTime from "response-time";
 
 import { registerRoutes } from "./routes";
 import { DOMAIN, isDevelopment, isProduction } from "./constants/variables";
+//-------------------------------------------------------------------------------
+// dotenv is used to load environment variables from a .env file into process.env
+// This is useful for managing configuration settings and secrets in a secure way
+// without hardcoding them into the source code.
 import dotenv from "dotenv";
 dotenv.config();
-// logger
+
+// -------------------------------------------------------------
+// logger is used to log messages to the console or a file
 import { createLogger, transports } from "winston";
 import LokiTransport from "winston-loki";
 const options = {
@@ -21,6 +27,8 @@ const options = {
   ],
 };
 const logger = createLogger(options);
+
+// -------------------------------------------------------------
 const app = express();
 const port = 8000;
 
@@ -34,7 +42,8 @@ app.use(
   }),
 );
 
-// Prometheus
+// --------------------------------------------------------
+// Prometheus Metrics
 const collectDefaultMetrics = client.collectDefaultMetrics;
 collectDefaultMetrics({ register: client.register });
 
@@ -74,13 +83,17 @@ app.use(
       .observe(time);
   }),
 );
-
+// --------------------------------------------------------
+// Prometheus metrics endpoint
+// This endpoint is used to expose the metrics to Prometheus
 app.get("/metrics", async (req, res) => {
   res.set("Content-Type", client.register.contentType);
   const metrics = await client.register.metrics();
   res.send(metrics);
 });
-
+// --------------------------------------------------------
+// Health Check
+// This endpoint is used to check if the server is running and healthy
 app.get("/health", (req, res) => {
   logger.info("Server is running");
   // logger.error("Server crashed");

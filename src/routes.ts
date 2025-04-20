@@ -5,6 +5,7 @@ import { authRoutes } from "@/modules/auth/index";
 import { userRoutes } from "@/modules/user-management/users/index";
 import { profileRoutes } from "@/modules/user-management/profile/index";
 import { settingsRoutes } from "@/modules/general-settings/index";
+import { mediaRoutes } from "@/modules/utils/media/index";
 
 import { validateApiKey } from "./middleware/apiKeyMiddleware";
 import { isProduction } from "./constants/variables";
@@ -22,4 +23,5 @@ export const registerRoutes = (app: Express) => {
 
   //general-settings
   app.use("/api", settingsRoutes);
+  app.use("/api/media", mediaRoutes);
 };
