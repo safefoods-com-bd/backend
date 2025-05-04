@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
-import MediaTables from "../../../db/schema/utils/media";
 import { eq, inArray } from "drizzle-orm";
 import { handleError } from "@/utils/errorHandler";
 import { db } from "@/db/db";
+import mediaTables from "@/db/schema/utils/media";
 
 /**
  * Deletes a single media record from the database by ID
@@ -22,8 +22,8 @@ export const deleteMediaSingleV100 = async (req: Request, res: Response) => {
     }
 
     const deletedMedia = await db
-      .delete(MediaTables)
-      .where(eq(MediaTables.id, id))
+      .delete(mediaTables)
+      .where(eq(mediaTables.id, id))
       .returning();
 
     if (deletedMedia.length === 0) {
@@ -75,8 +75,8 @@ export const deleteMediaBatchV100 = async (req: Request, res: Response) => {
     }
 
     const deletedMedia = await db
-      .delete(MediaTables)
-      .where(inArray(MediaTables.id, ids))
+      .delete(mediaTables)
+      .where(inArray(mediaTables.id, ids))
       .returning();
 
     return res.status(200).json({

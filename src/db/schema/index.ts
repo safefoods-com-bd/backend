@@ -1,6 +1,6 @@
 export { default as generaSettings } from "./general-settings/general_settings";
 
-// user-management
+// -------------user-management-----------------
 export { default as permissionsTable } from "./user-management/permissions";
 export { default as rolesTable } from "./user-management/roles";
 export { default as permissionToRolesTable } from "./user-management/permissions_roles";
@@ -10,13 +10,27 @@ export { default as refreshTokensTable } from "./user-management/refresh_tokens"
 export { default as accountsTable } from "./user-management/accounts";
 export { default as usersToAccountsTable } from "./user-management/users_accounts";
 
-// general-settings
-
+// ------------general-settings-------------------
 export { default as generalSettingsTable } from "./general-settings/general_settings";
 
-// categories
-export { default as categoriesTable } from "./categories/categories";
-export { default as categoryLevelsTable } from "./categories/category_levels";
-
-// utils
+// ------------utils------------------
 export { default as mediaTable } from "./utils/media";
+export { default as brandsTable } from "./utils/brands";
+export { default as sizesTables } from "./utils/sizes";
+export { default as colorsTable } from "./utils/colors";
+
+// -----------product management-----------------
+// products
+export { default as productsTable } from "./product-management/products/products";
+export { default as variantProductsMediaTables } from "./product-management/products/variant_products_media";
+export { default as variantProductsTable } from "./product-management/products/variant_products";
+// categories
+export { default as categoriesTable } from "./product-management/categories/categories";
+export { default as categoryLevelsTable } from "./product-management/categories/category_levels";
+// ------------order management-----------------
+export { default as ordersTable } from "./order-management/orders";
+export { default as addressesTable } from "./order-management/addresses";
+export { default as couponsTable } from "./order-management/coupons";
+export { default as paymentsTable } from "./order-management/payments";
+export { default as paymentMethodsTable } from "./order-management/payment_methods";
+export { default as productsOrdersTable } from "./order-management/products_orders";

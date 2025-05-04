@@ -1,11 +1,10 @@
 import { pgTable, uuid, timestamp, varchar } from "drizzle-orm/pg-core";
 
-const mediaTables = pgTable("media", {
+const sizeTables = pgTable("sizes", {
   id: uuid("id").primaryKey().defaultRandom(),
-  title: varchar("title", { length: 255 }),
-  url: varchar("url", { length: 255 }).notNull(),
+  title: varchar("title", { length: 255 }).notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
-export default mediaTables;
+export default sizeTables;

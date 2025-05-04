@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
-import MediaTables from "../../../db/schema/utils/media";
 import { db } from "@/db/db";
 import { handleError } from "@/utils/errorHandler";
+import mediaTables from "@/db/schema/utils/media";
 
 /**
  * Creates a new media record in the database
@@ -23,7 +23,7 @@ export const createMediaV100 = async (req: Request, res: Response) => {
     // Create media record
 
     const newMedia = await db
-      .insert(MediaTables)
+      .insert(mediaTables)
       .values({
         url,
       })
