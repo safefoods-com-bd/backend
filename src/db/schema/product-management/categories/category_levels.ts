@@ -1,6 +1,5 @@
 import {
   AnyPgColumn,
-  integer,
   pgTable,
   timestamp,
   uuid,
@@ -11,7 +10,7 @@ const categoryLevelsTable = pgTable("category_levels", {
   id: uuid("id").primaryKey().defaultRandom(),
   title: varchar("title", { length: 255 }).notNull().unique(),
   slug: varchar("slug", { length: 255 }).notNull().unique(),
-  parentId: integer("parent_id").references(
+  parentId: uuid("parent_id").references(
     (): AnyPgColumn => categoryLevelsTable.id,
   ),
   createdAt: timestamp("created_at", { withTimezone: true })

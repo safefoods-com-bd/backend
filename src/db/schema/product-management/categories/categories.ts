@@ -1,6 +1,6 @@
 import {
   AnyPgColumn,
-  integer,
+  boolean,
   pgTable,
   text,
   timestamp,
@@ -14,13 +14,13 @@ const categoriesTable = pgTable("categories", {
   title: varchar("title", { length: 255 }).notNull(),
   slug: varchar("slug", { length: 255 }).notNull(),
   description: text("description"),
-  categoryLevelId: integer("category_level_id")
+  categoryLevelId: uuid("category_level_id")
     .notNull()
     .references(() => categoryLevelsTable.id),
-  parentId: integer("parent_id").references(
-    (): AnyPgColumn => categoriesTable.id,
-  ),
-  isActive: integer("is_active").default(1).notNull(),
+  parentId: uuid("parent_id")
+    .notNull()
+    .references((): AnyPgColumn => categoriesTable.id),
+  isActive: boolean("is_active").default(true).notNull(),
   createdAt: timestamp("created_at", { withTimezone: true })
     .defaultNow()
     .notNull(),

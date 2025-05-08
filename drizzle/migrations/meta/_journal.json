@@ -5,22 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1735557580457,
-      "tag": "0000_rainy_selene",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1736397762012,
-      "tag": "0001_optimal_punisher",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1736398611006,
-      "tag": "0002_awesome_ultimatum",
+      "when": 1746727991696,
+      "tag": "0000_complex_jack_power",
       "breakpoints": true
     }
   ]
