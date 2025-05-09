@@ -104,104 +104,11 @@ async function seedUsers() {
 }
 
 async function seedCategoryLevels() {
-  try {
-    // Process category levels in order to maintain hierarchy
-    // First seed all top-level categories (parentId === null)
-    const topLevelCategories = categoryLevelsData.filter(
-      (cat) => cat.parentId === null,
-    );
-
-    for (const category of topLevelCategories) {
-      await db
-        .insert(schema.categoryLevelsTable)
-        .values({
-          title: category.title,
-          slug: category.slug,
-          parentId: null,
-          createdAt: category.createdAt,
-          updatedAt: category.updatedAt,
-        })
-        .onConflictDoNothing();
-    }
-
-    console.log("Top-level categories seeded successfully");
-
-    // Then seed level 2 categories (parentId references top-level categories)
-    const level2Categories = categoryLevelsData.filter(
-      (cat) =>
-        cat.parentId !== null && cat.parentId <= topLevelCategories.length,
-    );
-
-    for (const category of level2Categories) {
-      // Find the actual parent ID from the database
-      const parentCategory = await db
-        .select({ id: schema.categoryLevelsTable.id })
-        .from(schema.categoryLevelsTable)
-        .where(
-          eq(
-            schema.categoryLevelsTable.slug,
-            topLevelCategories[Number(category.parentId) - 1].slug,
-          ),
-        )
-        .limit(1);
-
-      if (parentCategory[0]) {
-        await db
-          .insert(schema.categoryLevelsTable)
-          .values({
-            title: category.title,
-            slug: category.slug,
-            parentId: Number(parentCategory[0].id),
-            createdAt: category.createdAt,
-            updatedAt: category.updatedAt,
-          })
-          .onConflictDoNothing();
-      }
-    }
-
-    console.log("Level 2 categories seeded successfully");
-
-    // Finally seed level 3 categories (parentId references level 2 categories)
-    const level3Categories = categoryLevelsData.filter(
-      (cat) =>
-        cat.parentId !== null && cat.parentId > topLevelCategories.length,
-    );
-
-    for (const category of level3Categories) {
-      // Find level 2 parent category in the seed data
-      const parentCategorySeed = categoryLevelsData.find(
-        (c) =>
-          c.parentId !== null &&
-          categoryLevelsData.indexOf(c) + 1 === Number(category.parentId),
-      );
-
-      if (parentCategorySeed) {
-        // Find the actual parent ID from the database
-        const parentCategory = await db
-          .select({ id: schema.categoryLevelsTable.id })
-          .from(schema.categoryLevelsTable)
-          .where(eq(schema.categoryLevelsTable.slug, parentCategorySeed.slug))
-          .limit(1);
-
-        if (parentCategory[0]) {
-          await db
-            .insert(schema.categoryLevelsTable)
-            .values({
-              title: category.title,
-              slug: category.slug,
-              parentId: Number(parentCategory[0].id),
-              createdAt: category.createdAt,
-              updatedAt: category.updatedAt,
-            })
-            .onConflictDoNothing();
-        }
-      }
-    }
-
-    console.log("Level 3 categories seeded successfully");
-  } catch (error) {
-    console.error("Error seeding category levels:", error);
-    throw error;
+  for (const categoryLevel of categoryLevelsData) {
+    await db
+      .insert(schema.categoryLevelsTable)
+      .values(categoryLevel)
+      .onConflictDoNothing();
   }
 }
 

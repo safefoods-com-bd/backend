@@ -17,9 +17,7 @@ const categoriesTable = pgTable("categories", {
   categoryLevelId: uuid("category_level_id")
     .notNull()
     .references(() => categoryLevelsTable.id),
-  parentId: uuid("parent_id")
-    .notNull()
-    .references((): AnyPgColumn => categoriesTable.id),
+  parentId: uuid("parent_id").references((): AnyPgColumn => categoriesTable.id),
   isActive: boolean("is_active").default(true).notNull(),
   createdAt: timestamp("created_at", { withTimezone: true })
     .defaultNow()

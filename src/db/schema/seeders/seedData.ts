@@ -56,154 +56,41 @@ export const serverData = [
   },
 ];
 
-// ...existing code...
-
 export const categoryLevelsData = [
   // Main categories (Level 1)
   {
-    title: "Fruits & Vegetables",
-    slug: "fruits-vegetables",
+    id: "7474c266-4a58-4dad-b741-0daca67d34fa",
+    title: "level_1",
+    slug: "level_1",
     parentId: null,
     createdAt: new Date(),
     updatedAt: new Date(),
   },
   {
-    title: "Meat & Seafood",
-    slug: "meat-seafood",
-    parentId: null,
+    id: "65f89dd4-3dab-4832-b1ff-83a7178d1561",
+    title: "level_2",
+    slug: "level_2",
+    parentId: "7474c266-4a58-4dad-b741-0daca67d34fa",
     createdAt: new Date(),
     updatedAt: new Date(),
   },
   {
-    title: "Dairy & Eggs",
-    slug: "dairy-eggs",
-    parentId: null,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    title: "Bakery",
-    slug: "bakery",
-    parentId: null,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    title: "Grains & Pasta",
-    slug: "grains-pasta",
-    parentId: null,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-
-  // Sub-categories (Level 2)
-  {
-    title: "Fresh Fruits",
-    slug: "fresh-fruits",
-    parentId: 1, // Child of Fruits & Vegetables
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    title: "Fresh Vegetables",
-    slug: "fresh-vegetables",
-    parentId: 1, // Child of Fruits & Vegetables
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    title: "Frozen Fruits",
-    slug: "frozen-fruits",
-    parentId: 1, // Child of Fruits & Vegetables
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    title: "Beef",
-    slug: "beef",
-    parentId: 2, // Child of Meat & Seafood
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    title: "Poultry",
-    slug: "poultry",
-    parentId: 2, // Child of Meat & Seafood
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    title: "Fish",
-    slug: "fish",
-    parentId: 2, // Child of Meat & Seafood
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    title: "Milk",
-    slug: "milk",
-    parentId: 3, // Child of Dairy & Eggs
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    title: "Cheese",
-    slug: "cheese",
-    parentId: 3, // Child of Dairy & Eggs
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    title: "Bread",
-    slug: "bread",
-    parentId: 4, // Child of Bakery
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    title: "Rice",
-    slug: "rice",
-    parentId: 5, // Child of Grains & Pasta
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-
-  // Sub-sub-categories (Level 3)
-  {
-    title: "Apples",
-    slug: "apples",
-    parentId: 6, // Child of Fresh Fruits
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    title: "Bananas",
-    slug: "bananas",
-    parentId: 6, // Child of Fresh Fruits
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    title: "Leafy Greens",
-    slug: "leafy-greens",
-    parentId: 7, // Child of Fresh Vegetables
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    title: "Chicken",
-    slug: "chicken",
-    parentId: 10, // Child of Poultry
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    title: "Turkey",
-    slug: "turkey",
-    parentId: 10, // Child of Poultry
+    id: "1a6f01e6-de51-4b9c-b7ca-876a61bd462e",
+    title: "level_3",
+    slug: "level_3",
+    parentId: "65f89dd4-3dab-4832-b1ff-83a7178d1561",
     createdAt: new Date(),
     updatedAt: new Date(),
   },
 ];
 
-// ...existing code...
+// export const categoryData = [
+//   {
+//     id: "ff544434-5843-4609-8475-3fe7737dfca9",
+//     title: "Seasonal Food",
+//     slug: "seasonal-food",
+//     parentId: null,
+//     createdAt: new Date(),
+//     updatedAt: new Date(),
+//   },
+// ];
