@@ -4,9 +4,10 @@ import cookieParser from "cookie-parser";
 import client from "prom-client";
 import "module-alias/register";
 import responseTime from "response-time";
+import "../src/services/tracing";
 
 import { registerRoutes } from "./routes";
-import { DOMAIN, isDevelopment, isProduction } from "./constants/variables";
+import { DOMAIN } from "./constants/variables";
 //-------------------------------------------------------------------------------
 // dotenv is used to load environment variables from a .env file into process.env
 // This is useful for managing configuration settings and secrets in a secure way
@@ -16,7 +17,7 @@ dotenv.config();
 
 // -------------------------------------------------------------
 // logger is used to log messages to the console or a file
-import { createLogger, transports } from "winston";
+import { createLogger } from "winston";
 import LokiTransport from "winston-loki";
 const options = {
   transports: [
@@ -26,7 +27,7 @@ const options = {
     }),
   ],
 };
-const logger = createLogger(options);
+export const logger = createLogger(options);
 
 // -------------------------------------------------------------
 const app = express();
@@ -104,8 +105,6 @@ app.use(express.raw({ type: "application/octet-stream", limit: "50mb" }));
 // Routes
 registerRoutes(app);
 app.get("/", (req: Request, res: Response) => {
-  console.log("isProduction", isProduction);
-  console.log("isDevelopment", isDevelopment);
   logger.info("Hello, from safefoods api!");
   res.status(200).send("Hello, from safefoods api!");
 });

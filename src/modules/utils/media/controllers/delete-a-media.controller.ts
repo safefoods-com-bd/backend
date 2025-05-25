@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { eq, inArray } from "drizzle-orm";
-import { handleError } from "@/utils/errorHandler";
+import { ERROR_TYPES, handleError } from "@/utils/errorHandler";
 import { db } from "@/db/db";
 import mediaTables from "@/db/schema/utils/media";
 
@@ -15,10 +15,7 @@ export const deleteMediaSingleV100 = async (req: Request, res: Response) => {
 
     // Validate input
     if (!id) {
-      return res.status(400).json({
-        success: false,
-        message: "Media id is required",
-      });
+      throw { type: ERROR_TYPES.VALIDATION, message: "Media ID is required" };
     }
 
     const deletedMedia = await db
@@ -27,10 +24,7 @@ export const deleteMediaSingleV100 = async (req: Request, res: Response) => {
       .returning();
 
     if (deletedMedia.length === 0) {
-      return res.status(404).json({
-        success: false,
-        message: "Media not found",
-      });
+      throw { type: ERROR_TYPES.NOT_FOUND, message: "Media not found" };
     }
 
     return res.status(200).json({
@@ -39,7 +33,7 @@ export const deleteMediaSingleV100 = async (req: Request, res: Response) => {
       data: deletedMedia[0],
     });
   } catch (error) {
-    handleError(error, res);
+    handleError(error, res, "DELETE: /api/media/v1");
   }
 };
 
@@ -54,24 +48,21 @@ export const deleteMediaBatchV100 = async (req: Request, res: Response) => {
 
     // Validate input
     if (!ids) {
-      return res.status(400).json({
-        success: false,
-        message: "Media ids array is required",
-      });
+      throw { type: ERROR_TYPES.VALIDATION, message: "IDs array is required" };
     }
 
     if (!Array.isArray(ids)) {
-      return res.status(400).json({
-        success: false,
+      throw {
+        type: ERROR_TYPES.VALIDATION,
         message: "The ids parameter must be an array",
-      });
+      };
     }
 
     if (ids.length === 0) {
-      return res.status(400).json({
-        success: false,
+      throw {
+        type: ERROR_TYPES.VALIDATION,
         message: "The ids array cannot be empty",
-      });
+      };
     }
 
     const deletedMedia = await db
@@ -85,6 +76,6 @@ export const deleteMediaBatchV100 = async (req: Request, res: Response) => {
       data: deletedMedia,
     });
   } catch (error) {
-    handleError(error, res);
+    handleError(error, res, "DELETE: /api/media/v1/batch");
   }
 };

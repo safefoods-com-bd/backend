@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { db } from "@/db/db";
-import { handleError } from "@/utils/errorHandler";
+import { ERROR_TYPES, handleError } from "@/utils/errorHandler";
 import mediaTables from "@/db/schema/utils/media";
 
 /**
@@ -11,13 +11,10 @@ import mediaTables from "@/db/schema/utils/media";
 export const createMediaV100 = async (req: Request, res: Response) => {
   try {
     // Validate input
-    const { url } = req.body;
+    const { url, title } = req.body;
 
     if (!url) {
-      return res.status(400).json({
-        success: false,
-        message: "URL is required",
-      });
+      throw { type: ERROR_TYPES.VALIDATION, message: "URL is required" };
     }
 
     // Create media record
@@ -26,6 +23,7 @@ export const createMediaV100 = async (req: Request, res: Response) => {
       .insert(mediaTables)
       .values({
         url,
+        title,
       })
       .returning();
 
@@ -35,6 +33,6 @@ export const createMediaV100 = async (req: Request, res: Response) => {
       data: newMedia[0],
     });
   } catch (error) {
-    handleError(error, res);
+    handleError(error, res, "POST: /api/media/v1");
   }
 };

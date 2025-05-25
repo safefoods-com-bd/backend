@@ -24,7 +24,7 @@ import { generateHateoasLinksForCollection } from "../../../../utils/generateHat
  *
  * @throws Handles and processes any errors using the handleError utility function
  */
-export const ListAllMediaV100 = async (req: Request, res: Response) => {
+export const listAllMediaV100 = async (req: Request, res: Response) => {
   try {
     const limit = parseInt(req.query.limit as string) || 10;
     const offset = parseInt(req.query.offset as string) || 0;
@@ -33,7 +33,9 @@ export const ListAllMediaV100 = async (req: Request, res: Response) => {
     const query = db
       .select()
       .from(mediaTable)
-      .orderBy(sort === "desc" ? desc(mediaTable.id) : mediaTable.id)
+      .orderBy(
+        sort === "desc" ? desc(mediaTable.createdAt) : mediaTable.createdAt,
+      )
       .offset(offset)
       .limit(limit);
 
