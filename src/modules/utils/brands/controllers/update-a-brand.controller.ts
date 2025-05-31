@@ -5,6 +5,7 @@ import brandTables from "@/db/schema/utils/brands";
 import { updateBrandValidationSchema } from "../brands.validation";
 import { eq } from "drizzle-orm";
 import { BRAND_ENDPOINTS } from "@/data/endpoints";
+import { mediaTable } from "@/db/schema";
 
 /**
  * Updates an existing brand record in the database
@@ -39,7 +40,7 @@ export const updateBrandV100 = async (
       };
     }
 
-    const { id, ...updateData } = validation.data;
+    const { id, title, mediaId } = validation.data;
 
     // Check if brand exists
     const existingBrand = await db
@@ -55,11 +56,11 @@ export const updateBrandV100 = async (
     }
 
     // Check if title exists (if title update is requested)
-    if (updateData.title) {
+    if (title) {
       const duplicateTitle = await db
         .select()
         .from(brandTables)
-        .where(eq(brandTables.title, updateData.title));
+        .where(eq(brandTables.title, title));
 
       if (
         duplicateTitle.length > 0 &&
@@ -72,11 +73,26 @@ export const updateBrandV100 = async (
       }
     }
 
+    // Check if the media exists (if mediaId is provided)
+    if (mediaId) {
+      const isMediaExists = await db
+        .select()
+        .from(mediaTable)
+        .where(eq(mediaTable.id, mediaId));
+      if (isMediaExists.length === 0) {
+        throw {
+          type: ERROR_TYPES.VALIDATION,
+          message: "Media not found",
+        };
+      }
+    }
+
     // Update brand
     const updatedBrand = await db
       .update(brandTables)
       .set({
-        ...updateData,
+        title,
+        mediaId,
         updatedAt: new Date(),
       })
       .where(eq(brandTables.id, id))

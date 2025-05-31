@@ -5,6 +5,7 @@ import brandTables from "@/db/schema/utils/brands";
 import { brandValidationSchema } from "../brands.validation";
 import { eq } from "drizzle-orm";
 import { BRAND_ENDPOINTS } from "@/data/endpoints";
+import mediaTables from "@/db/schema/utils/media";
 
 /**
  * Creates a new brand record in the database
@@ -38,7 +39,7 @@ export const createBrandV100 = async (
       };
     }
 
-    const { title } = validation.data;
+    const { title, mediaId } = validation.data;
 
     // Check for existing brand with same title
     const existingBrand = await db
@@ -53,8 +54,26 @@ export const createBrandV100 = async (
       };
     }
 
+    // check if the media exists
+    if (mediaId) {
+      const isMediaExists = await db
+        .select()
+        .from(mediaTables)
+        .where(eq(mediaTables.id, mediaId));
+
+      if (isMediaExists.length === 0) {
+        throw {
+          type: ERROR_TYPES.VALIDATION,
+          message: "Media not found",
+        };
+      }
+    }
+
     // Create brand record
-    const newBrand = await db.insert(brandTables).values({ title }).returning();
+    const newBrand = await db
+      .insert(brandTables)
+      .values({ title, mediaId })
+      .returning();
 
     return res.status(201).json({
       success: true,

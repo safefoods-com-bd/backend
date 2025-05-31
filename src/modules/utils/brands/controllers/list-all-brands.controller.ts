@@ -1,9 +1,10 @@
 import { Request, Response } from "express";
 import { db } from "@/db/db";
 import { handleError } from "@/utils/errorHandler";
-import { asc, desc, sql } from "drizzle-orm";
+import { asc, desc, eq, sql } from "drizzle-orm";
 import brandTables from "@/db/schema/utils/brands";
 import { BRAND_ENDPOINTS } from "@/data/endpoints";
+import mediaTables from "@/db/schema/utils/media";
 
 /**
  * Lists all brand records from the database with optional filtering and pagination
@@ -56,7 +57,10 @@ export const listAllBrandsV100 = async (
     const search = req.query.search as string;
 
     // Build the select query
-    const selectQueryBuilder = db.select().from(brandTables);
+    const selectQueryBuilder = db
+      .select()
+      .from(brandTables)
+      .leftJoin(mediaTables, eq(brandTables.mediaId, mediaTables.id));
 
     // Apply search filter if provided
     if (search) {

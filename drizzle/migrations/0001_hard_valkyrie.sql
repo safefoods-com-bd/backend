@@ -1,0 +1,2 @@
+ALTER TABLE "brands" ADD COLUMN "media_id" uuid;--> statement-breakpoint
+ALTER TABLE "brands" ADD CONSTRAINT "brands_media_id_media_id_fk" FOREIGN KEY ("media_id") REFERENCES "public"."media"("id") ON DELETE cascade ON UPDATE no action;

@@ -8,6 +8,13 @@
       "when": 1748661431087,
       "tag": "0000_common_mentor",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1748690249293,
+      "tag": "0001_hard_valkyrie",
+      "breakpoints": true
     }
   ]
 }

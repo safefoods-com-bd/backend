@@ -4,6 +4,7 @@ export const brandValidationSchema = z.object({
   title: z
     .string({ required_error: "Brand title is required" })
     .min(1, "Brand title cannot be empty"),
+  mediaId: z.string().uuid("Invalid ID format").nullable().optional(),
 });
 export type BrandValidationType = z.infer<typeof brandValidationSchema>;
 
@@ -15,6 +16,7 @@ export const updateBrandValidationSchema = brandValidationSchema
   })
   .partial({
     title: true,
+    mediaId: true,
   });
 export type UpdateBrandValidationType = z.infer<
   typeof updateBrandValidationSchema
