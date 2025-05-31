@@ -6,7 +6,8 @@ import { userRoutes } from "@/modules/user-management/users/index";
 import { profileRoutes } from "@/modules/user-management/profile/index";
 import { settingsRoutes } from "@/modules/general-settings/index";
 import mediaRoutes from "@/modules/utils/media/media.routes";
-import colorRoutes from "@/modules/utils/colors";
+import colorRoutes from "@/modules/utils/colors/colors.routes";
+import brandRoutes from "@/modules/utils/brands/brands.routes";
 
 import { validateApiKey } from "./middleware/apiKeyMiddleware";
 import { isProduction } from "./constants/variables";
@@ -26,4 +27,5 @@ export const registerRoutes = (app: Express) => {
   app.use("/api", settingsRoutes);
   app.use("/api/v1/media", mediaRoutes);
   app.use("/api/v1/colors", colorRoutes);
+  app.use("/api/v1/brands", brandRoutes);
 };
