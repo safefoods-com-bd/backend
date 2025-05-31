@@ -7,7 +7,12 @@ import {
   uuid,
 } from "drizzle-orm/pg-core";
 
-const paymentStatusEnum = pgEnum("payment_status", ["paid", "unpaid"]);
+const paymentStatusEnum = pgEnum("payment_status", [
+  "paid",
+  "unpaid",
+  "refunded",
+  "failed",
+]);
 const orderStatusEnum = pgEnum("order_status", [
   "pending",
   "processing",

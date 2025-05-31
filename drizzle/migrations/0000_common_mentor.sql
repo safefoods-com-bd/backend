@@ -32,7 +32,7 @@ CREATE TABLE "categories" (
 	"slug" varchar(255) NOT NULL,
 	"description" text,
 	"category_level_id" uuid NOT NULL,
-	"parent_id" uuid NOT NULL,
+	"parent_id" uuid,
 	"is_active" boolean DEFAULT true NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"updated_at" timestamp with time zone DEFAULT now() NOT NULL
@@ -47,22 +47,6 @@ CREATE TABLE "category_levels" (
 	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
 	CONSTRAINT "category_levels_title_unique" UNIQUE("title"),
 	CONSTRAINT "category_levels_slug_unique" UNIQUE("slug")
-);
---> statement-breakpoint
-CREATE TABLE "colors" (
-	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"title" varchar(255) NOT NULL,
-	"slug" varchar(255) NOT NULL,
-	"sku" varchar(255) NOT NULL,
-	"season" varchar(255) NOT NULL,
-	"is_active" boolean DEFAULT true NOT NULL,
-	"is_deleted" boolean DEFAULT false NOT NULL,
-	"created_at" timestamp DEFAULT now() NOT NULL,
-	"updated_at" timestamp DEFAULT now() NOT NULL,
-	"category_id" uuid NOT NULL,
-	"brand_id" uuid NOT NULL,
-	CONSTRAINT "colors_slug_unique" UNIQUE("slug"),
-	CONSTRAINT "colors_sku_unique" UNIQUE("sku")
 );
 --> statement-breakpoint
 CREATE TYPE "discount_type" AS ENUM ('percentage', 'fixed');
@@ -103,8 +87,11 @@ CREATE TABLE "media" (
 	"updated_at" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
-CREATE TYPE "order_status" AS ENUM ('pending', 'processing', 'completed', 'cancelled');
-CREATE TYPE "payment_status" AS ENUM ('unpaid', 'paid', 'refunded');
+
+CREATE TYPE "payment_status" AS ENUM ('unpaid', 'paid', 'refunded', 'failed');
+CREATE TYPE "order_status" AS ENUM ('pending', 'processing','shipped', 'delivered', 'cancelled');
+
+
 CREATE TABLE "orders" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"sub_total" numeric(10, 2) NOT NULL,
@@ -161,6 +148,14 @@ CREATE TABLE "product_orders" (
 	"is_deleted" boolean DEFAULT false NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"updated_at" timestamp with time zone DEFAULT now() NOT NULL
+);
+--> statement-breakpoint
+CREATE TABLE "colors" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"title" varchar(255) NOT NULL,
+	"color_code" varchar(255) NOT NULL,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "profiles" (
@@ -260,20 +255,22 @@ CREATE TABLE "variant_products" (
 ALTER TABLE "categories" ADD CONSTRAINT "categories_category_level_id_category_levels_id_fk" FOREIGN KEY ("category_level_id") REFERENCES "public"."category_levels"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "categories" ADD CONSTRAINT "categories_parent_id_categories_id_fk" FOREIGN KEY ("parent_id") REFERENCES "public"."categories"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "category_levels" ADD CONSTRAINT "category_levels_parent_id_category_levels_id_fk" FOREIGN KEY ("parent_id") REFERENCES "public"."category_levels"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "colors" ADD CONSTRAINT "colors_category_id_categories_id_fk" FOREIGN KEY ("category_id") REFERENCES "public"."categories"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "colors" ADD CONSTRAINT "colors_brand_id_brands_id_fk" FOREIGN KEY ("brand_id") REFERENCES "public"."brands"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "payments" ADD CONSTRAINT "payments_order_id_orders_id_fk" FOREIGN KEY ("order_id") REFERENCES "public"."orders"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "payments" ADD CONSTRAINT "payments_payment_method_payment_methods_id_fk" FOREIGN KEY ("payment_method") REFERENCES "public"."payment_methods"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "permission_to_roles" ADD CONSTRAINT "permission_to_roles_permission_id_permissions_id_fk" FOREIGN KEY ("permission_id") REFERENCES "public"."permissions"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "permission_to_roles" ADD CONSTRAINT "permission_to_roles_role_id_roles_id_fk" FOREIGN KEY ("role_id") REFERENCES "public"."roles"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "product_orders" ADD CONSTRAINT "product_orders_variant_product_id_variant_products_id_fk" FOREIGN KEY ("variant_product_id") REFERENCES "public"."variant_products"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "product_orders" ADD CONSTRAINT "product_orders_order_id_orders_id_fk" FOREIGN KEY ("order_id") REFERENCES "public"."orders"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+-- Commenting out these constraints as the columns are not defined in the colors table
+-- ALTER TABLE "colors" ADD CONSTRAINT "colors_category_id_categories_id_fk" FOREIGN KEY ("category_id") REFERENCES "public"."categories"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+-- ALTER TABLE "colors" ADD CONSTRAINT "colors_brand_id_brands_id_fk" FOREIGN KEY ("brand_id") REFERENCES "public"."brands"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "profiles" ADD CONSTRAINT "profiles_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "users" ADD CONSTRAINT "users_role_id_roles_id_fk" FOREIGN KEY ("role_id") REFERENCES "public"."roles"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "users_to_accounts" ADD CONSTRAINT "users_to_accounts_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "users_to_accounts" ADD CONSTRAINT "users_to_accounts_account_id_accounts_id_fk" FOREIGN KEY ("account_id") REFERENCES "public"."accounts"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "variant_products_media" ADD CONSTRAINT "variant_products_media_variant_product_id_variant_products_id_fk" FOREIGN KEY ("variant_product_id") REFERENCES "public"."variant_products"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "variant_products_media" ADD CONSTRAINT "variant_products_media_media_id_media_id_fk" FOREIGN KEY ("media_id") REFERENCES "public"."media"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "variant_products" ADD CONSTRAINT "variant_products_product_id_colors_id_fk" FOREIGN KEY ("product_id") REFERENCES "public"."colors"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+-- Commenting out this constraint as it references colors table for product_id which seems incorrect
+-- ALTER TABLE "variant_products" ADD CONSTRAINT "variant_products_product_id_colors_id_fk" FOREIGN KEY ("product_id") REFERENCES "public"."colors"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "variant_products" ADD CONSTRAINT "variant_products_color_id_colors_id_fk" FOREIGN KEY ("color_id") REFERENCES "public"."colors"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "variant_products" ADD CONSTRAINT "variant_products_size_id_sizes_id_fk" FOREIGN KEY ("size_id") REFERENCES "public"."sizes"("id") ON DELETE no action ON UPDATE no action;
