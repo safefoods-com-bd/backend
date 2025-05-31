@@ -23,5 +23,5 @@ export const registerRoutes = (app: Express) => {
 
   //general-settings
   app.use("/api", settingsRoutes);
-  app.use("/api/media", mediaRoutes);
+  app.use("/api/v1/media", mediaRoutes);
 };

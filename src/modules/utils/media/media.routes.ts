@@ -7,9 +7,9 @@ import {
 } from "./controllers/delete-a-media.controller";
 
 const router = Router();
-router.get("/v1/", listAllMediaV100 as RequestHandler);
-router.post("/v1/", createMediaV100 as RequestHandler);
-router.delete("/v1/", deleteMediaSingleV100 as RequestHandler);
-router.delete("/v1/batch", deleteMediaBatchV100 as RequestHandler);
+router.get("/", listAllMediaV100 as RequestHandler);
+router.post("/", createMediaV100 as RequestHandler);
+router.delete("/", deleteMediaSingleV100 as RequestHandler);
+router.delete("/batch", deleteMediaBatchV100 as RequestHandler);
 
 export default router;

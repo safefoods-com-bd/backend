@@ -33,7 +33,7 @@ export const deleteMediaSingleV100 = async (req: Request, res: Response) => {
       data: deletedMedia[0],
     });
   } catch (error) {
-    handleError(error, res, "DELETE: /api/media/v1");
+    handleError(error, res, "DELETE: /api/v1/media");
   }
 };
 
