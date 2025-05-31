@@ -15,6 +15,20 @@
       "when": 1748690249293,
       "tag": "0001_hard_valkyrie",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1748706502964,
+      "tag": "0002_brief_deadpool",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1748711048116,
+      "tag": "0003_curious_hiroim",
+      "breakpoints": true
     }
   ]
 }

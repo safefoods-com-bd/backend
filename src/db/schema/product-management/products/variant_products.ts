@@ -9,6 +9,7 @@ import {
 import productsTables from "./products";
 import colorTables from "../../utils/colors";
 import sizeTables from "../../utils/sizes";
+import unitsTable from "../../utils/units";
 
 const variantProductTables = pgTable("variant_products", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -35,8 +36,9 @@ const variantProductTables = pgTable("variant_products", {
   colorId: uuid("color_id")
     .notNull()
     .references(() => colorTables.id),
-  sizeId: uuid("size_id")
+  sizeId: uuid("size_id").references(() => sizeTables.id),
+  unitId: uuid("unit_id")
     .notNull()
-    .references(() => sizeTables.id),
+    .references(() => unitsTable.id),
 });
 export default variantProductTables;

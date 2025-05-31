@@ -18,6 +18,7 @@ export { default as mediaTable } from "./utils/media";
 export { default as brandsTable } from "./utils/brands";
 export { default as sizesTables } from "./utils/sizes";
 export { default as colorsTable } from "./utils/colors";
+export { default as unitsTable } from "./utils/units";
 
 // -----------product management-----------------
 // products
