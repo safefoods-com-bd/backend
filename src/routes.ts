@@ -10,6 +10,8 @@ import colorRoutes from "@/modules/utils/colors/colors.routes";
 import brandRoutes from "@/modules/utils/brands/brands.routes";
 import warehouseRoutes from "@/modules/stock-management/warehouses/warehouses.routes";
 import unitsRoutes from "@/modules/utils/units/units.routes";
+import categoryLevelsRoutes from "@/modules/product/category-level/categoryLevel.routes";
+import categoryRoutes from "@/modules/product/category/category.routes";
 
 import { validateApiKey } from "./middleware/apiKeyMiddleware";
 import { isProduction } from "./constants/variables";
@@ -34,4 +36,8 @@ export const registerRoutes = (app: Express) => {
 
   // stock management
   app.use("/api/v1/warehouses", warehouseRoutes);
+
+  // product management
+  app.use("/api/v1/category-levels", categoryLevelsRoutes);
+  app.use("/api/v1/categories", categoryRoutes);
 };

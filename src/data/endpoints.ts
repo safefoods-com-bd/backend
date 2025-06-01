@@ -31,3 +31,13 @@ export const UNIT_ENDPOINTS = {
   DELETE_UNIT: "DELETE /api/v1/units/:id",
   DELETE_UNITS_BATCH: "DELETE /api/v1/units/batch",
 };
+
+// categories
+export const CATEGORY_ENDPOINTS = {
+  LIST_ALL_CATEGORIES: "GET /api/v1/categories",
+  GET_SINGLE_CATEGORY: "GET /api/v1/categories/:id",
+  CREATE_CATEGORY: "POST /api/v1/categories",
+  UPDATE_CATEGORY: "PATCH /api/v1/categories/:id",
+  DELETE_CATEGORY: "DELETE /api/v1/categories/:id",
+  DELETE_CATEGORIES_BATCH: "DELETE /api/v1/categories/batch",
+};

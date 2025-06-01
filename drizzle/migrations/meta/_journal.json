@@ -50,6 +50,13 @@
       "when": 1748773485134,
       "tag": "0006_tearful_chimera",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1748792361615,
+      "tag": "0007_charming_mandroid",
+      "breakpoints": true
     }
   ]
 }
