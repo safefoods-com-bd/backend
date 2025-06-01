@@ -20,6 +20,14 @@ export const ERROR_TYPES = {
   INTERNAL_SERVER_ERROR: "internal_server_error",
   FILE_TOO_LARGE: "file_too_large",
   FILE_TYPE_NOT_SUPPORTED: "file_type_not_supported",
+  CONFLICT: "conflict",
+  UNPROCESSABLE_ENTITY: "unprocessable_entity",
+  SERVICE_UNAVAILABLE: "service_unavailable",
+  TIMEOUT: "timeout",
+  GATEWAY_TIMEOUT: "gateway_timeout",
+  TOO_MANY_REQUESTS: "too_many_requests",
+  NOT_IMPLEMENTED: "not_implemented",
+  BAD_GATEWAY: "bad_gateway",
 };
 
 /**
@@ -101,6 +109,56 @@ export const handleError = (
       case ERROR_TYPES.BAD_REQUEST:
         statusCode = 400;
         message = err.message || "Bad request";
+        details = err.details || {};
+        break;
+      case ERROR_TYPES.NOT_FOUND:
+        statusCode = 404;
+        message = err.message || "Resource not found";
+        details = err.details || {};
+        break;
+      case ERROR_TYPES.CONFLICT:
+        statusCode = 409;
+        message = err.message || "Conflict";
+        details = err.details || {};
+        break;
+      case ERROR_TYPES.UNPROCESSABLE_ENTITY:
+        statusCode = 422;
+        message = err.message || "Unprocessable entity";
+        details = err.details || {};
+        break;
+      case ERROR_TYPES.SERVICE_UNAVAILABLE:
+        statusCode = 503;
+        message = err.message || "Service unavailable";
+        details = err.details || {};
+        break;
+      case ERROR_TYPES.TIMEOUT:
+        statusCode = 504;
+        message = err.message || "Request timed out";
+        details = err.details || {};
+        break;
+      case ERROR_TYPES.GATEWAY_TIMEOUT:
+        statusCode = 504;
+        message = err.message || "Gateway timeout";
+        details = err.details || {};
+        break;
+      case ERROR_TYPES.TOO_MANY_REQUESTS:
+        statusCode = 429;
+        message = err.message || "Too many requests";
+        details = err.details || {};
+        break;
+      case ERROR_TYPES.NOT_IMPLEMENTED:
+        statusCode = 501;
+        message = err.message || "Not implemented";
+        details = err.details || {};
+        break;
+      case ERROR_TYPES.BAD_GATEWAY:
+        statusCode = 502;
+        message = err.message || "Bad gateway";
+        details = err.details || {};
+        break;
+      case ERROR_TYPES.INTERNAL_SERVER_ERROR:
+        statusCode = 500;
+        message = err.message || "Internal server error";
         details = err.details || {};
         break;
       default:

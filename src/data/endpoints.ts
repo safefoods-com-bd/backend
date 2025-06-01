@@ -13,3 +13,12 @@ export const BRAND_ENDPOINTS = {
   UPDATE_BRAND: "PATCH /api/v1/brands/:id",
   DELETE_BRAND: "DELETE /api/v1/brands/:id",
 };
+
+// warehouses
+export const WAREHOUSE_ENDPOINTS = {
+  LIST_ALL_WAREHOUSES: "GET /api/v1/warehouses",
+  CREATE_WAREHOUSE: "POST /api/v1/warehouses",
+  UPDATE_WAREHOUSE: "PATCH /api/v1/warehouses/:id",
+  DELETE_WAREHOUSE: "DELETE /api/v1/warehouses/:id",
+  DELETE_WAREHOUSES_BATCH: "DELETE /api/v1/warehouses/batch",
+};
