@@ -22,3 +22,12 @@ export const WAREHOUSE_ENDPOINTS = {
   DELETE_WAREHOUSE: "DELETE /api/v1/warehouses/:id",
   DELETE_WAREHOUSES_BATCH: "DELETE /api/v1/warehouses/batch",
 };
+
+// units
+export const UNIT_ENDPOINTS = {
+  LIST_ALL_UNITS: "GET /api/v1/units",
+  CREATE_UNIT: "POST /api/v1/units",
+  UPDATE_UNIT: "PATCH /api/v1/units/:id",
+  DELETE_UNIT: "DELETE /api/v1/units/:id",
+  DELETE_UNITS_BATCH: "DELETE /api/v1/units/batch",
+};

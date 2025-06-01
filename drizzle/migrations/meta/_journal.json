@@ -36,6 +36,20 @@
       "when": 1748711913309,
       "tag": "0004_magenta_maelstrom",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1748771645331,
+      "tag": "0005_mean_jamie_braddock",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1748773485134,
+      "tag": "0006_tearful_chimera",
+      "breakpoints": true
     }
   ]
 }
