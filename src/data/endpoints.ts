@@ -41,3 +41,13 @@ export const CATEGORY_ENDPOINTS = {
   DELETE_CATEGORY: "DELETE /api/v1/categories/:id",
   DELETE_CATEGORIES_BATCH: "DELETE /api/v1/categories/batch",
 };
+
+// products
+export const PRODUCT_ENDPOINTS = {
+  LIST_ALL_PRODUCTS: "GET /api/v1/products",
+  GET_SINGLE_PRODUCT: "GET /api/v1/products/:id",
+  CREATE_PRODUCT: "POST /api/v1/products",
+  UPDATE_PRODUCT: "PATCH /api/v1/products/:id",
+  DELETE_PRODUCT: "DELETE /api/v1/products/:id",
+  DELETE_PRODUCTS_BATCH: "DELETE /api/v1/products/batch",
+};

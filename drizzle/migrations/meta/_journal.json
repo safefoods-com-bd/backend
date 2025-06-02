@@ -5,57 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1748661431087,
-      "tag": "0000_common_mentor",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1748690249293,
-      "tag": "0001_hard_valkyrie",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1748706502964,
-      "tag": "0002_brief_deadpool",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1748711048116,
-      "tag": "0003_curious_hiroim",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "7",
-      "when": 1748711913309,
-      "tag": "0004_magenta_maelstrom",
-      "breakpoints": true
-    },
-    {
-      "idx": 5,
-      "version": "7",
-      "when": 1748771645331,
-      "tag": "0005_mean_jamie_braddock",
-      "breakpoints": true
-    },
-    {
-      "idx": 6,
-      "version": "7",
-      "when": 1748773485134,
-      "tag": "0006_tearful_chimera",
-      "breakpoints": true
-    },
-    {
-      "idx": 7,
-      "version": "7",
-      "when": 1748792361615,
-      "tag": "0007_charming_mandroid",
+      "when": 1748823973769,
+      "tag": "0000_colorful_hercules",
       "breakpoints": true
     }
   ]

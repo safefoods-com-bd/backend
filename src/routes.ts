@@ -12,6 +12,7 @@ import warehouseRoutes from "@/modules/stock-management/warehouses/warehouses.ro
 import unitsRoutes from "@/modules/utils/units/units.routes";
 import categoryLevelsRoutes from "@/modules/product/category-level/categoryLevel.routes";
 import categoryRoutes from "@/modules/product/category/category.routes";
+import productsRoutes from "@/modules/product/products/products.routes";
 
 import { validateApiKey } from "./middleware/apiKeyMiddleware";
 import { isProduction } from "./constants/variables";
@@ -40,4 +41,5 @@ export const registerRoutes = (app: Express) => {
   // product management
   app.use("/api/v1/category-levels", categoryLevelsRoutes);
   app.use("/api/v1/categories", categoryRoutes);
+  app.use("/api/v1/products", productsRoutes);
 };

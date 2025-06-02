@@ -8,7 +8,7 @@ import {
 import categoriesTable from "../categories/categories";
 import brandTables from "../../utils/brands";
 
-const productsTables = pgTable("colors", {
+const productsTables = pgTable("products", {
   id: uuid("id").primaryKey().defaultRandom(),
   title: varchar("title", { length: 255 }).notNull(),
   slug: varchar("slug", { length: 255 }).notNull().unique(),
@@ -22,9 +22,7 @@ const productsTables = pgTable("colors", {
   categoryId: uuid("category_id")
     .notNull()
     .references(() => categoriesTable.id),
-  brandId: uuid("brand_id")
-    .notNull()
-    .references(() => brandTables.id),
+  brandId: uuid("brand_id").references(() => brandTables.id),
 });
 
 export default productsTables;
