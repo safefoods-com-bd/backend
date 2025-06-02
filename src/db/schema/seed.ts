@@ -6,6 +6,7 @@ const connectionString = process.env.DATABASE_URL!;
 export const db = drizzle(connectionString, { schema, logger: true });
 
 import {
+  categoryData,
   categoryLevelsData,
   permissionData,
   roleData,
@@ -112,6 +113,15 @@ async function seedCategoryLevels() {
   }
 }
 
+async function seedCategories() {
+  for (const category of categoryData) {
+    await db
+      .insert(schema.categoriesTable)
+      .values(category)
+      .onConflictDoNothing();
+  }
+}
+
 async function seedAll() {
   await seedPermissions();
   await seedRoles();
@@ -119,6 +129,7 @@ async function seedAll() {
   await seedUserRolePermissions();
   await seedUsers();
   await seedCategoryLevels();
+  await seedCategories();
 }
 
 const handleError = (error: Error) => {
