@@ -8,6 +8,20 @@
       "when": 1748823973769,
       "tag": "0000_colorful_hercules",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1749731084487,
+      "tag": "0001_orange_kat_farrell",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1749731764766,
+      "tag": "0002_lonely_havok",
+      "breakpoints": true
     }
   ]
 }

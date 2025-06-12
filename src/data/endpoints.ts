@@ -51,3 +51,15 @@ export const PRODUCT_ENDPOINTS = {
   DELETE_PRODUCT: "DELETE /api/v1/products/:id",
   DELETE_PRODUCTS_BATCH: "DELETE /api/v1/products/batch",
 };
+
+// variant products
+export const VARIANT_PRODUCT_ENDPOINTS = {
+  LIST_ALL_VARIANT_PRODUCTS: "GET /api/v1/variant-products",
+  GET_SINGLE_VARIANT_PRODUCT: "GET /api/v1/variant-products/:id",
+  GET_VARIANT_PRODUCTS_BY_PRODUCT:
+    "GET /api/v1/variant-products/product/:productId",
+  CREATE_VARIANT_PRODUCT: "POST /api/v1/variant-products",
+  UPDATE_VARIANT_PRODUCT: "PATCH /api/v1/variant-products/:id",
+  DELETE_VARIANT_PRODUCT: "DELETE /api/v1/variant-products/:id",
+  DELETE_VARIANT_PRODUCTS_BATCH: "DELETE /api/v1/variant-products/batch",
+};

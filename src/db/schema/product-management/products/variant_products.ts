@@ -2,6 +2,7 @@ import {
   boolean,
   numeric,
   pgTable,
+  real,
   text,
   timestamp,
   uuid,
@@ -13,9 +14,8 @@ import unitsTable from "../../utils/units";
 
 const variantProductTables = pgTable("variant_products", {
   id: uuid("id").primaryKey().defaultRandom(),
-  price: numeric("price", { precision: 8, scale: 3 }),
-  originalPrice: numeric("original_price", { precision: 8, scale: 3 }),
-  stock: numeric("stock", { precision: 6, scale: 2 }),
+  price: real("price").notNull(),
+  originalPrice: real("original_price"),
   description: text("description"),
   shortDescription: text("short_description"),
   bestDeal: boolean("best_deal").default(false).notNull(),
@@ -33,12 +33,7 @@ const variantProductTables = pgTable("variant_products", {
   productId: uuid("product_id")
     .notNull()
     .references(() => productsTables.id),
-  colorId: uuid("color_id")
-    .notNull()
-    .references(() => colorTables.id),
-  sizeId: uuid("size_id").references(() => sizeTables.id),
-  unitId: uuid("unit_id")
-    .notNull()
-    .references(() => unitsTable.id),
+  colorId: uuid("color_id").references(() => colorTables.id),
+  unitId: uuid("unit_id").references(() => unitsTable.id),
 });
 export default variantProductTables;
