@@ -13,6 +13,8 @@ import unitsRoutes from "@/modules/utils/units/units.routes";
 import categoryLevelsRoutes from "@/modules/product/category-level/categoryLevel.routes";
 import categoryRoutes from "@/modules/product/category/category.routes";
 import productsRoutes from "@/modules/product/products/products.routes";
+import paymentMethodsRoutes from "@/modules/order-management/payment-methods/payment-methods.routes";
+import addressRoutes from "@/modules/order-management/addresses/addresses.routes";
 
 import { validateApiKey } from "./middleware/apiKeyMiddleware";
 import { isProduction } from "./constants/variables";
@@ -42,4 +44,8 @@ export const registerRoutes = (app: Express) => {
   app.use("/api/v1/category-levels", categoryLevelsRoutes);
   app.use("/api/v1/categories", categoryRoutes);
   app.use("/api/v1/products", productsRoutes);
+
+  // order management
+  app.use("/api/v1/payment-methods", paymentMethodsRoutes);
+  app.use("/api/v1/addresses", addressRoutes);
 };

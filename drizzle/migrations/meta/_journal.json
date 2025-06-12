@@ -22,6 +22,20 @@
       "when": 1749731764766,
       "tag": "0002_lonely_havok",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1749736741782,
+      "tag": "0003_flaky_justin_hammer",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1749737190059,
+      "tag": "0004_gorgeous_wendell_rand",
+      "breakpoints": true
     }
   ]
 }

@@ -1,9 +1,9 @@
 import warehouseTable from "./warehouses";
 import variantProductTables from "../product-management/products/variant_products";
-import { numeric, pgTable, timestamp, uuid } from "drizzle-orm/pg-core";
+import { pgTable, real, timestamp, uuid } from "drizzle-orm/pg-core";
 export const stocksTable = pgTable("stocks", {
   id: uuid("id").primaryKey().defaultRandom(),
-  quantity: numeric("quantity", { precision: 10, scale: 2 }).notNull(),
+  quantity: real("quantity").notNull(),
   warehouseId: uuid("warehouse_id")
     .notNull()
     .references(() => warehouseTable.id, { onDelete: "cascade" }),

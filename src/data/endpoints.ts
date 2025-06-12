@@ -63,3 +63,24 @@ export const VARIANT_PRODUCT_ENDPOINTS = {
   DELETE_VARIANT_PRODUCT: "DELETE /api/v1/variant-products/:id",
   DELETE_VARIANT_PRODUCTS_BATCH: "DELETE /api/v1/variant-products/batch",
 };
+
+// addresses
+export const ADDRESS_ENDPOINTS = {
+  LIST_ALL_ADDRESSES: "GET /api/v1/addresses",
+  GET_SINGLE_ADDRESS: "GET /api/v1/addresses/:id",
+  CREATE_ADDRESS: "POST /api/v1/addresses",
+  UPDATE_ADDRESS: "PATCH /api/v1/addresses/:id",
+  DELETE_ADDRESS: "DELETE /api/v1/addresses/:id",
+  DELETE_ADDRESSES_BATCH: "DELETE /api/v1/addresses/batch",
+  GET_USER_ADDRESSES: "GET /api/v1/addresses/user/:userId",
+};
+
+// payment methods
+export const PAYMENT_METHOD_ENDPOINTS = {
+  LIST_ALL_PAYMENT_METHODS: "GET /api/v1/payment-methods",
+  GET_SINGLE_PAYMENT_METHOD: "GET /api/v1/payment-methods/:id",
+  CREATE_PAYMENT_METHOD: "POST /api/v1/payment-methods",
+  UPDATE_PAYMENT_METHOD: "PATCH /api/v1/payment-methods/:id",
+  DELETE_PAYMENT_METHOD: "DELETE /api/v1/payment-methods/:id",
+  DELETE_PAYMENT_METHODS_BATCH: "DELETE /api/v1/payment-methods/batch",
+};
