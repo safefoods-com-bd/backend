@@ -84,3 +84,13 @@ export const PAYMENT_METHOD_ENDPOINTS = {
   DELETE_PAYMENT_METHOD: "DELETE /api/v1/payment-methods/:id",
   DELETE_PAYMENT_METHODS_BATCH: "DELETE /api/v1/payment-methods/batch",
 };
+
+//stocks
+export const STOCK_ENDPOINTS = {
+  GET_ALL_STOCKS: "GET /api/v1/stocks",
+  GET_SINGLE_STOCK: "GET /api/v1/stocks/:id",
+  CREATE_STOCK: "POST /api/v1/stocks",
+  UPDATE_STOCK: "PATCH /api/v1/stocks/:id",
+  DELETE_STOCK: "DELETE /api/v1/stocks/:id",
+  DELETE_STOCKS_BATCH: "DELETE /api/v1/stocks/batch",
+};
