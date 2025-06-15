@@ -6,6 +6,8 @@ import {
   timestamp,
   uuid,
 } from "drizzle-orm/pg-core";
+// import usersTable from "../user-management/users";
+// import addressesTable from "./addresses";
 
 const paymentStatusEnum = pgEnum("payment_status", [
   "paid",
@@ -32,6 +34,12 @@ const ordersTable = pgTable("orders", {
     .default("unpaid")
     .notNull(),
   orderStatus: orderStatusEnum("order_status").default("pending").notNull(),
+  // userId: uuid("user_id")
+  //   .notNull()
+  //   .references(() => usersTable.id),
+  // addressId: uuid("address_id")
+  //   .notNull()
+  //   .references(() => addressesTable.id),
   isDeleted: boolean("is_deleted").default(false).notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
