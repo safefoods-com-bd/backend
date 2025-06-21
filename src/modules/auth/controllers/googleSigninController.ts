@@ -91,7 +91,7 @@ export const googleSignIn = async (req: Request, res: Response) => {
         .from(usersTable)
         .where(eq(usersTable.email, googleData.email));
 
-      let userId: number;
+      let userId: string;
 
       if (existingUser.length === 0) {
         // Get the default role

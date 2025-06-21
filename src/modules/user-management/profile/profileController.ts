@@ -71,7 +71,7 @@ export const getUsersProfile = async (req: Request, res: Response) => {
     const existingProfile = await db
       .select()
       .from(profilesTable)
-      .where(eq(profilesTable.userId, Number(userId)));
+      .where(eq(profilesTable.userId, userId));
 
     if (existingProfile.length === 0) {
       return res.status(404).json({
@@ -110,7 +110,7 @@ export const updateProfile = async (req: Request, res: Response) => {
     const existingProfile = await db
       .select()
       .from(profilesTable)
-      .where(eq(profilesTable.userId, Number(userId)));
+      .where(eq(profilesTable.userId, userId));
 
     if (existingProfile.length === 0) {
       return res.status(404).json({
@@ -123,7 +123,7 @@ export const updateProfile = async (req: Request, res: Response) => {
     const updatedProfile = await db
       .update(profilesTable)
       .set(validation)
-      .where(eq(profilesTable.userId, Number(userId)))
+      .where(eq(profilesTable.userId, userId))
       .returning();
 
     // Return the response
@@ -152,7 +152,7 @@ export const deleteProfile = async (req: Request, res: Response) => {
     const existingProfile = await db
       .select()
       .from(profilesTable)
-      .where(eq(profilesTable.userId, Number(userId)));
+      .where(eq(profilesTable.userId, userId));
 
     if (existingProfile.length === 0) {
       return res.status(404).json({
@@ -162,9 +162,7 @@ export const deleteProfile = async (req: Request, res: Response) => {
     }
 
     // Delete the profile
-    await db
-      .delete(profilesTable)
-      .where(eq(profilesTable.userId, Number(userId)));
+    await db.delete(profilesTable).where(eq(profilesTable.userId, userId));
 
     // Return the response
     res.status(200).json({

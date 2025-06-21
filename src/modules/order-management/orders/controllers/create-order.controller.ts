@@ -38,6 +38,7 @@ export const createOrderV100 = async (req: Request, res: Response) => {
       paymentStatus,
       orderStatus,
       productOrders,
+      userId,
     } = validationResult.data;
 
     // Validate product orders are not empty
@@ -106,6 +107,7 @@ export const createOrderV100 = async (req: Request, res: Response) => {
           afterDiscountTotal,
           paymentStatus,
           orderStatus,
+          userId,
         })
         .returning();
 

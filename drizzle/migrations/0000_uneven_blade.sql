@@ -1,3 +1,6 @@
+CREATE TYPE "discount_type" AS ENUM ('percentage', 'fixed');
+CREATE TYPE "payment_status" AS ENUM ('unpaid', 'paid', 'refunded', 'failed');
+CREATE TYPE "order_status" AS ENUM ('pending', 'processing', 'shipped','completed', 'cancelled');
 CREATE TABLE "accounts" (
 	"id" integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY (sequence name "accounts_id_seq" INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START WITH 1 CACHE 1),
 	"provider_name" varchar(91) NOT NULL
@@ -6,14 +9,15 @@ CREATE TABLE "accounts" (
 CREATE TABLE "addresses" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"user_id" integer NOT NULL,
-	"flat_no" varchar(100) NOT NULL,
-	"floor_no" varchar(100) NOT NULL,
+	"flat_no" varchar(100),
+	"floor_no" varchar(100),
 	"name" varchar(100) NOT NULL,
+	"phone_no" varchar(100) NOT NULL,
 	"delivery_notes" text,
 	"city" varchar(100) NOT NULL,
-	"state" varchar(100) NOT NULL,
-	"country" varchar(100) NOT NULL,
-	"postal_code" varchar(20) NOT NULL,
+	"state" varchar(100),
+	"country" varchar(100) DEFAULT 'Bangladesh' NOT NULL,
+	"postal_code" varchar(20),
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL
 );
@@ -58,7 +62,6 @@ CREATE TABLE "colors" (
 	"updated_at" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
-CREATE TYPE "discount_type" AS ENUM ('percentage', 'fixed');
 CREATE TABLE "coupons" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"title" varchar(255) NOT NULL,
@@ -96,8 +99,6 @@ CREATE TABLE "media" (
 	"updated_at" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
-CREATE TYPE "payment_status" AS ENUM ('unpaid', 'paid', 'refunded', 'failed');
-CREATE TYPE "order_status" AS ENUM ('pending', 'processing', 'shipped','completed', 'cancelled');
 CREATE TABLE "orders" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"sub_total" numeric(10, 2) NOT NULL,
@@ -105,6 +106,7 @@ CREATE TABLE "orders" (
 	"after_discount_total" numeric(10, 2) NOT NULL,
 	"payment_status" "payment_status" DEFAULT 'unpaid' NOT NULL,
 	"order_status" "order_status" DEFAULT 'pending' NOT NULL,
+	"user_id" uuid NOT NULL,
 	"is_deleted" boolean DEFAULT false NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL
@@ -132,7 +134,7 @@ CREATE TABLE "payments" (
 --> statement-breakpoint
 CREATE TABLE "permission_to_roles" (
 	"permission_id" integer,
-	"role_id" integer,
+	"role_id" uuid,
 	CONSTRAINT "permission_to_roles_permission_id_role_id_unique" UNIQUE("permission_id","role_id")
 );
 --> statement-breakpoint
@@ -173,7 +175,7 @@ CREATE TABLE "products" (
 );
 --> statement-breakpoint
 CREATE TABLE "profiles" (
-	"id" integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY (sequence name "profiles_id_seq" INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START WITH 1 CACHE 1),
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"firstName" varchar(50) NOT NULL,
 	"lastName" varchar(50) NOT NULL,
 	"dateOfBirth" varchar(50),
@@ -190,14 +192,14 @@ CREATE TABLE "profiles" (
 	"is_active" boolean DEFAULT true,
 	"created_at" timestamp DEFAULT now(),
 	"updated_at" timestamp DEFAULT now(),
-	"user_id" integer NOT NULL,
+	"user_id" uuid NOT NULL,
 	CONSTRAINT "profiles_user_id_unique" UNIQUE("user_id")
 );
 --> statement-breakpoint
 CREATE TABLE "refresh_tokens" (
 	"id" integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY (sequence name "refresh_tokens_id_seq" INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START WITH 1 CACHE 1),
 	"token" text NOT NULL,
-	"user_id" integer NOT NULL,
+	"user_id" uuid NOT NULL,
 	"expires_at" timestamp NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"deviceInfo" varchar(255) NOT NULL,
@@ -205,7 +207,7 @@ CREATE TABLE "refresh_tokens" (
 );
 --> statement-breakpoint
 CREATE TABLE "roles" (
-	"id" integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY (sequence name "roles_id_seq" INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START WITH 1 CACHE 1),
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"name" varchar(91) NOT NULL,
 	"description" text,
 	"created_at" timestamp DEFAULT now() NOT NULL,
@@ -222,7 +224,7 @@ CREATE TABLE "sizes" (
 --> statement-breakpoint
 CREATE TABLE "stocks" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"quantity" numeric(10, 2) NOT NULL,
+	"quantity" real NOT NULL,
 	"warehouse_id" uuid NOT NULL,
 	"variant_product_id" uuid NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
@@ -243,7 +245,7 @@ CREATE TABLE "units" (
 );
 --> statement-breakpoint
 CREATE TABLE "users" (
-	"id" integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY (sequence name "users_id_seq" INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START WITH 1 CACHE 1),
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"email" varchar(91) NOT NULL,
 	"password" varchar(91) NOT NULL,
 	"isVerified" boolean DEFAULT false NOT NULL,
@@ -251,13 +253,13 @@ CREATE TABLE "users" (
 	"registered_at" timestamp,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL,
-	"role_id" integer NOT NULL,
+	"role_id" uuid NOT NULL,
 	CONSTRAINT "users_email_unique" UNIQUE("email")
 );
 --> statement-breakpoint
 CREATE TABLE "users_to_accounts" (
 	"id" integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY (sequence name "users_to_accounts_id_seq" INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START WITH 1 CACHE 1),
-	"user_id" integer,
+	"user_id" uuid,
 	"account_id" integer
 );
 --> statement-breakpoint
@@ -272,9 +274,8 @@ CREATE TABLE "variant_products_media" (
 --> statement-breakpoint
 CREATE TABLE "variant_products" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"price" numeric(8, 3),
-	"original_price" numeric(8, 3),
-	"stock" numeric(6, 2),
+	"price" real NOT NULL,
+	"original_price" real,
 	"description" text,
 	"short_description" text,
 	"best_deal" boolean DEFAULT false NOT NULL,
@@ -284,9 +285,8 @@ CREATE TABLE "variant_products" (
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"product_id" uuid NOT NULL,
-	"color_id" uuid NOT NULL,
-	"size_id" uuid,
-	"unit_id" uuid NOT NULL
+	"color_id" uuid,
+	"unit_id" uuid
 );
 --> statement-breakpoint
 CREATE TABLE "warehouses" (
@@ -306,6 +306,7 @@ ALTER TABLE "categories" ADD CONSTRAINT "categories_category_level_id_category_l
 ALTER TABLE "categories" ADD CONSTRAINT "categories_parent_id_categories_id_fk" FOREIGN KEY ("parent_id") REFERENCES "public"."categories"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "categories" ADD CONSTRAINT "categories_media_id_media_id_fk" FOREIGN KEY ("media_id") REFERENCES "public"."media"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "category_levels" ADD CONSTRAINT "category_levels_parent_id_category_levels_id_fk" FOREIGN KEY ("parent_id") REFERENCES "public"."category_levels"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "orders" ADD CONSTRAINT "orders_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "payments" ADD CONSTRAINT "payments_order_id_orders_id_fk" FOREIGN KEY ("order_id") REFERENCES "public"."orders"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "payments" ADD CONSTRAINT "payments_payment_method_payment_methods_id_fk" FOREIGN KEY ("payment_method") REFERENCES "public"."payment_methods"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "permission_to_roles" ADD CONSTRAINT "permission_to_roles_permission_id_permissions_id_fk" FOREIGN KEY ("permission_id") REFERENCES "public"."permissions"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
@@ -324,5 +325,4 @@ ALTER TABLE "variant_products_media" ADD CONSTRAINT "variant_products_media_vari
 ALTER TABLE "variant_products_media" ADD CONSTRAINT "variant_products_media_media_id_media_id_fk" FOREIGN KEY ("media_id") REFERENCES "public"."media"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "variant_products" ADD CONSTRAINT "variant_products_product_id_products_id_fk" FOREIGN KEY ("product_id") REFERENCES "public"."products"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "variant_products" ADD CONSTRAINT "variant_products_color_id_colors_id_fk" FOREIGN KEY ("color_id") REFERENCES "public"."colors"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "variant_products" ADD CONSTRAINT "variant_products_size_id_sizes_id_fk" FOREIGN KEY ("size_id") REFERENCES "public"."sizes"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "variant_products" ADD CONSTRAINT "variant_products_unit_id_units_id_fk" FOREIGN KEY ("unit_id") REFERENCES "public"."units"("id") ON DELETE no action ON UPDATE no action;

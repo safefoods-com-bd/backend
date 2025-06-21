@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { and, eq, inArray } from "drizzle-orm";
+import { eq, inArray } from "drizzle-orm";
 import { ERROR_TYPES, handleError } from "@/utils/errorHandler";
 import { db } from "@/db/db";
 import categoriesTable from "@/db/schema/product-management/categories/categories";

@@ -103,7 +103,7 @@ export async function verifySession(token: string): Promise<any> {
 //   };
 // };
 
-export const getPermissions = async (userId: number) => {
+export const getPermissions = async (userId: string) => {
   // Check Redis cache first
   const cachedPermissions = await RedisService.get(
     `user:permissions:${userId}`,
@@ -118,7 +118,7 @@ export const getPermissions = async (userId: number) => {
       permissions: sql<string>`STRING_AGG(${permissionsTable.name}, ',')`,
     })
     .from(usersTable)
-    .where(eq(usersTable.id, +userId))
+    .where(eq(usersTable.id, userId))
     .leftJoin(rolesTable, sql`${usersTable.roleId} = ${rolesTable.id}`)
     .leftJoin(
       permissionToRolesTable,

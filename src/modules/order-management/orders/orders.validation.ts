@@ -59,6 +59,9 @@ const baseOrderSchema = z.object({
   productOrders: z
     .array(productOrderSchema)
     .min(1, "At least one product order is required"),
+  userId: z
+    .string({ required_error: "User ID is required" })
+    .uuid("Invalid user ID format"),
 });
 
 // Apply refine to orderValidationSchema

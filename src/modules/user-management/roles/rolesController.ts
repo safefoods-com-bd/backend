@@ -56,7 +56,7 @@ export const listAllRoles = async (req: Request, res: Response) => {
     const roles = await query;
     // Group permissions by role id
     const rolesMap = new Map<
-      number,
+      string,
       {
         role: (typeof roles)[number]["roles"];
         permissions: (typeof roles)[number]["permissions"][];
@@ -194,7 +194,7 @@ export const createRoles = async (req: Request, res: Response) => {
     // Create relation with permissions
 
     interface RolePermissionMapping {
-      roleId: number;
+      roleId: string;
       permissionId: number;
     }
 
@@ -255,7 +255,7 @@ export const updateSingleRole = async (req: Request, res: Response) => {
       .where(sql`${rolesTable.name} = ${sql.param(name)}`);
     if (
       roleExistsWithSameName.length > 0 &&
-      roleExistsWithSameName[0].id !== +id
+      roleExistsWithSameName[0].id !== id
     ) {
       return res.status(409).json({
         success: false,
