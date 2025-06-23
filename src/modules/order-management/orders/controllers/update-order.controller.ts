@@ -1,16 +1,15 @@
 import { Request, Response } from "express";
 import { db } from "@/db/db";
 import { ERROR_TYPES, handleError } from "@/utils/errorHandler";
-import { ordersTable } from "@/db/schema";
-
+import { ordersTable, orderHistoryTable } from "@/db/schema";
 import { updateOrderValidationSchema } from "../orders.validation";
 import { eq, and, sql } from "drizzle-orm";
-
 import stocksTable from "@/db/schema/stock-management/stocks";
 import productOrdersTable from "@/db/schema/order-management/products_orders";
 import { ORDER_ENDPOINTS } from "@/data/endpoints";
+
 /**
- * Updates an existing order and decreases stock if status changes to shipped
+ * Updates an existing order, decreases stock if status changes to shipped, and creates order history if status changes
  * @param req Express request object containing order ID in params and update data in body
  * @param res Express response object
  * @returns JSON response with the updated order data or error message
@@ -32,7 +31,7 @@ export const updateOrderV100 = async (req: Request, res: Response) => {
       };
     }
 
-    const { id, orderStatus, ...updateData } = validationResult.data;
+    const { id, orderStatus, changedBy, ...updateData } = validationResult.data;
 
     // Check if order exists and is not deleted
     const existingOrder = await db
@@ -70,7 +69,7 @@ export const updateOrderV100 = async (req: Request, res: Response) => {
     }
 
     let updatedOrder;
-    // Handle stock decrease if status changes to shipped
+    // Handle stock decrease and order history if status changes to shipped
     if (orderStatus === "shipped" && currentStatus !== "shipped") {
       updatedOrder = await db.transaction(async (tx) => {
         // Fetch product orders
@@ -119,7 +118,7 @@ export const updateOrderV100 = async (req: Request, res: Response) => {
           ),
         );
 
-        return await tx
+        const updated = await tx
           .update(ordersTable)
           .set({
             ...filteredUpdateData,
@@ -127,23 +126,47 @@ export const updateOrderV100 = async (req: Request, res: Response) => {
           })
           .where(eq(ordersTable.id, id))
           .returning();
+
+        // Create order history record
+        await tx.insert(orderHistoryTable).values({
+          orderId: id,
+          status: orderStatus,
+          changedBy: changedBy || existingOrder[0].userId, // Default to order's userId if changedBy not provided
+          createdAt: new Date(),
+        });
+
+        return updated;
       });
     } else {
-      // Regular update without stock changes
-      const filteredUpdateData = Object.fromEntries(
-        Object.entries({ ...updateData, orderStatus }).filter(
-          ([, value]) => value !== undefined,
-        ),
-      );
+      // Regular update with order history if status changes
+      updatedOrder = await db.transaction(async (tx) => {
+        const filteredUpdateData = Object.fromEntries(
+          Object.entries({ ...updateData, orderStatus }).filter(
+            ([, value]) => value !== undefined,
+          ),
+        );
 
-      updatedOrder = await db
-        .update(ordersTable)
-        .set({
-          ...filteredUpdateData,
-          updatedAt: new Date(),
-        })
-        .where(eq(ordersTable.id, id))
-        .returning();
+        const updated = await tx
+          .update(ordersTable)
+          .set({
+            ...filteredUpdateData,
+            updatedAt: new Date(),
+          })
+          .where(eq(ordersTable.id, id))
+          .returning();
+
+        // Create order history record if status changed
+        if (orderStatus && orderStatus !== currentStatus) {
+          await tx.insert(orderHistoryTable).values({
+            orderId: id,
+            status: orderStatus,
+            changedBy: changedBy || existingOrder[0].userId, // Default to order's userId if changedBy not provided
+            createdAt: new Date(),
+          });
+        }
+
+        return updated;
+      });
     }
 
     return res.status(200).json({

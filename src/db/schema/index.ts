@@ -35,6 +35,7 @@ export { default as couponsTable } from "./order-management/coupons";
 export { default as paymentsTable } from "./order-management/payments";
 export { default as paymentMethodsTable } from "./order-management/payment_methods";
 export { default as productsOrdersTable } from "./order-management/products_orders";
+export { default as orderHistoryTable } from "./order-management/order-history";
 
 // ------------stock management-----------------
 export { default as stockTable } from "./stock-management/stocks";

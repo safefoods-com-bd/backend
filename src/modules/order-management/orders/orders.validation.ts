@@ -62,6 +62,10 @@ const baseOrderSchema = z.object({
   userId: z
     .string({ required_error: "User ID is required" })
     .uuid("Invalid user ID format"),
+  changedBy: z
+    .string({ required_error: "Changed by user ID is required" })
+    .uuid("Invalid changed by user ID format")
+    .optional(), // Optional for creation, defaults to userId in controller
 });
 
 // Apply refine to orderValidationSchema
@@ -82,6 +86,10 @@ export const updateOrderValidationSchema = baseOrderSchema
     id: z
       .string({ required_error: "Order ID is required" })
       .uuid("Invalid ID format"),
+    changedBy: z
+      .string({ required_error: "Changed by user ID is required" })
+      .uuid("Invalid changed by user ID format")
+      .optional(), // Optional for updates, defaults to userId or provided value in controller
   })
   .omit({ productOrders: true }) // Product orders cannot be updated via this endpoint
   .refine(

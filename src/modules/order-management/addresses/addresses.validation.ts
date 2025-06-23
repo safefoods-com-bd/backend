@@ -1,9 +1,9 @@
 import { z } from "zod";
 
 export const addressValidationSchema = z.object({
-  userId: z.coerce.number().int().positive({
-    message: "User ID must be a positive integer",
-  }),
+  userId: z
+    .string({ required_error: "User ID is required" })
+    .uuid("Invalid user ID format"),
   flatNo: z
     .string()
     .min(1, "Flat number cannot be empty")
@@ -69,10 +69,7 @@ export type DeleteAddressesBatchValidationType = z.infer<
 export const getUserAddressesValidationSchema = z.object({
   userId: z
     .string({ required_error: "User ID is required" })
-    .transform((val) => parseInt(val, 10))
-    .refine((val) => !isNaN(val) && val > 0, {
-      message: "User ID must be a positive integer",
-    }),
+    .uuid("Invalid user ID format"),
 });
 
 export type GetUserAddressesValidationType = z.infer<

@@ -1,18 +1,16 @@
 import { Request, Response } from "express";
 import { db } from "@/db/db";
 import { ERROR_TYPES, handleError } from "@/utils/errorHandler";
-import { ordersTable } from "@/db/schema";
-
+import { ordersTable, orderHistoryTable } from "@/db/schema";
 import { orderValidationSchema } from "../orders.validation";
 import { eq, and } from "drizzle-orm";
-
 import variantProductTables from "@/db/schema/product-management/products/variant_products";
 import stocksTable from "@/db/schema/stock-management/stocks";
 import productOrdersTable from "@/db/schema/order-management/products_orders";
 import { ORDER_ENDPOINTS } from "@/data/endpoints";
 
 /**
- * Creates a new order with associated product orders in a transaction
+ * Creates a new order with associated product orders and initial order history record in a transaction
  * @param req Express request object containing order and product orders data
  * @param res Express response object
  * @returns JSON response with the created order data or error message
@@ -39,6 +37,7 @@ export const createOrderV100 = async (req: Request, res: Response) => {
       orderStatus,
       productOrders,
       userId,
+      changedBy,
     } = validationResult.data;
 
     // Validate product orders are not empty
@@ -76,7 +75,7 @@ export const createOrderV100 = async (req: Request, res: Response) => {
           };
         }
 
-        // Check stock availability (assuming one warehouse for simplicity)
+        // Check stock availability
         const stock = await tx
           .select()
           .from(stocksTable)
@@ -110,6 +109,14 @@ export const createOrderV100 = async (req: Request, res: Response) => {
           userId,
         })
         .returning();
+
+      // Create initial order history record
+      await tx.insert(orderHistoryTable).values({
+        orderId: newOrder[0].id,
+        status: "pending",
+        changedBy: changedBy || userId, // Default to userId if changedBy not provided
+        createdAt: new Date(),
+      });
 
       // Create product orders
       const newProductOrders = await tx
