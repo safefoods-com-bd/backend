@@ -1,1 +1,0 @@
-ALTER TABLE "stocks" ALTER COLUMN "quantity" SET DATA TYPE real;

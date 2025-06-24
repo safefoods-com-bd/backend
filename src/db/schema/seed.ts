@@ -8,12 +8,18 @@ export const db = drizzle(connectionString, { schema, logger: true });
 import {
   categoryData,
   categoryLevelsData,
+  orderData,
   permissionData,
+  productData,
+  productOrderData,
   roleData,
+  stockData,
   userData,
+  variantProductData,
+  warehouseData,
 } from "./seeders/seedData";
 import { hash } from "bcryptjs";
-import { eq, inArray, sql } from "drizzle-orm";
+import { eq, inArray } from "drizzle-orm";
 
 async function seedPermissions() {
   for (const permission of permissionData) {
@@ -122,6 +128,51 @@ async function seedCategories() {
   }
 }
 
+async function seedWarehouses() {
+  for (const warehouse of warehouseData) {
+    await db
+      .insert(schema.warehouseTable)
+      .values(warehouse)
+      .onConflictDoNothing();
+  }
+}
+
+async function seedProducts() {
+  for (const product of productData) {
+    await db.insert(schema.productsTable).values(product).onConflictDoNothing();
+  }
+}
+
+async function seedVariantProducts() {
+  for (const variant of variantProductData) {
+    await db
+      .insert(schema.variantProductsTable)
+      .values(variant)
+      .onConflictDoNothing();
+  }
+}
+
+async function seedStocks() {
+  for (const stock of stockData) {
+    await db.insert(schema.stockTable).values(stock).onConflictDoNothing();
+  }
+}
+
+async function seedOrders() {
+  for (const order of orderData) {
+    await db.insert(schema.ordersTable).values(order).onConflictDoNothing();
+  }
+}
+
+async function seedOrderProducts() {
+  for (const order of productOrderData) {
+    await db
+      .insert(schema.productsOrdersTable)
+      .values(order)
+      .onConflictDoNothing();
+  }
+}
+
 async function seedAll() {
   await seedPermissions();
   await seedRoles();
@@ -130,6 +181,12 @@ async function seedAll() {
   await seedUsers();
   await seedCategoryLevels();
   await seedCategories();
+  await seedWarehouses();
+  await seedProducts();
+  await seedVariantProducts();
+  await seedStocks();
+  await seedOrders();
+  await seedOrderProducts();
 }
 
 const handleError = (error: Error) => {

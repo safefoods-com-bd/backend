@@ -144,13 +144,79 @@ export const productData = [
   },
 ];
 
-// export const categoryData = [
-//   {
-//     id: "ff544434-5843-4609-8475-3fe7737dfca9",
-//     title: "Seasonal Food",
-//     slug: "seasonal-food",
-//     parentId: null,
-//     createdAt: new Date(),
-//     updatedAt: new Date(),
-//   },
-// ];
+export const variantProductData = [
+  {
+    id: "21775847-f5d1-4079-bb7b-a267742b87b5",
+    price: 10,
+    originalPrice: 20,
+    description: null,
+    shortDescription: null,
+    bestDeal: false,
+    discountedSale: false,
+    isActive: true,
+    isDeleted: false,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    productId: "20e4cf65-ba20-4804-a0ee-b81f4fc2ea3d",
+    colorId: null,
+    unitId: null,
+  },
+];
+
+export const warehouseData = [
+  {
+    id: "257b861a-50e6-4b79-a5fd-ae87ddefc88b",
+    name: "warehouse-1",
+    location: "Ctg",
+    contactNumber: "01676042170",
+    email: "warehouse-1@safefoods.com.bd",
+    isActive: true,
+    isDeleted: false,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+];
+
+export const stockData = [
+  {
+    id: "f360e275-7142-4bb2-a44b-3f1148f3f074",
+    quantity: 100,
+    warehouseId: "257b861a-50e6-4b79-a5fd-ae87ddefc88b",
+    variantProductId: "21775847-f5d1-4079-bb7b-a267742b87b5",
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+];
+
+export const orderData = [
+  {
+    id: "e5d14d6f-1640-426f-8673-9c808272079f",
+    subTotal: "20.00",
+    total: "20.00",
+    afterDiscountTotal: "18.00",
+    paymentStatus: "unpaid" as "paid" | "unpaid" | "refunded" | "failed",
+    orderStatus: "pending" as
+      | "pending"
+      | "processing"
+      | "shipped"
+      | "delivered"
+      | "cancelled",
+    userId: "d6caabd3-31a1-425a-97e4-32999663b474",
+    isDeleted: false,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+];
+
+export const productOrderData = [
+  {
+    id: "3cf14bc2-0e8e-4692-b152-13efc379c1d4",
+    variantProductId: "21775847-f5d1-4079-bb7b-a267742b87b5",
+    orderId: "e5d14d6f-1640-426f-8673-9c808272079f",
+    price: "10.00",
+    quantity: "2.00",
+    isDeleted: false,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+];

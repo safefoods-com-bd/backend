@@ -1,6 +1,6 @@
 {
-  "id": "0e43b0a6-4c00-40d4-8493-a34a4342f741",
-  "prevId": "54fc63ea-ba44-47bf-9923-4cf923afaede",
+  "id": "be535fdf-f03f-48b3-b162-cfd685549958",
+  "prevId": "e8554e12-7d14-4712-8c22-86fa4b0c99ba",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -53,7 +53,7 @@
         },
         "user_id": {
           "name": "user_id",
-          "type": "integer",
+          "type": "uuid",
           "primaryKey": false,
           "notNull": true
         },
@@ -61,13 +61,13 @@
           "name": "flat_no",
           "type": "varchar(100)",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "floor_no": {
           "name": "floor_no",
           "type": "varchar(100)",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "name": {
           "name": "name",
@@ -97,19 +97,20 @@
           "name": "state",
           "type": "varchar(100)",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "country": {
           "name": "country",
           "type": "varchar(100)",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "default": "'Bangladesh'"
         },
         "postal_code": {
           "name": "postal_code",
           "type": "varchar(20)",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "created_at": {
           "name": "created_at",
@@ -124,10 +125,69 @@
           "primaryKey": false,
           "notNull": true,
           "default": "now()"
+        },
+        "is_active": {
+          "name": "is_active",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
         }
       },
-      "indexes": {},
-      "foreignKeys": {},
+      "indexes": {
+        "unique_active_address_per_user": {
+          "name": "unique_active_address_per_user",
+          "columns": [
+            {
+              "expression": "user_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "is_active",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "where": "is_active = true",
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_user_id": {
+          "name": "idx_user_id",
+          "columns": [
+            {
+              "expression": "user_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "addresses_user_id_users_id_fk": {
+          "name": "addresses_user_id_users_id_fk",
+          "tableFrom": "addresses",
+          "tableTo": "users",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "policies": {},
@@ -670,6 +730,78 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
+    "public.order_history": {
+      "name": "order_history",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "order_id": {
+          "name": "order_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "status": {
+          "name": "status",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "changed_by": {
+          "name": "changed_by",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "order_history_order_id_orders_id_fk": {
+          "name": "order_history_order_id_orders_id_fk",
+          "tableFrom": "order_history",
+          "tableTo": "orders",
+          "columnsFrom": [
+            "order_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "order_history_changed_by_users_id_fk": {
+          "name": "order_history_changed_by_users_id_fk",
+          "tableFrom": "order_history",
+          "tableTo": "users",
+          "columnsFrom": [
+            "changed_by"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
     "public.orders": {
       "name": "orders",
       "schema": "",
@@ -715,6 +847,12 @@
           "notNull": true,
           "default": "'pending'"
         },
+        "user_id": {
+          "name": "user_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
         "is_deleted": {
           "name": "is_deleted",
           "type": "boolean",
@@ -738,7 +876,21 @@
         }
       },
       "indexes": {},
-      "foreignKeys": {},
+      "foreignKeys": {
+        "orders_user_id_users_id_fk": {
+          "name": "orders_user_id_users_id_fk",
+          "tableFrom": "orders",
+          "tableTo": "users",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "policies": {},
@@ -903,7 +1055,7 @@
         },
         "role_id": {
           "name": "role_id",
-          "type": "integer",
+          "type": "uuid",
           "primaryKey": false,
           "notNull": false
         }
@@ -1240,20 +1392,10 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "integer",
+          "type": "uuid",
           "primaryKey": true,
           "notNull": true,
-          "identity": {
-            "type": "always",
-            "name": "profiles_id_seq",
-            "schema": "public",
-            "increment": "1",
-            "startWith": "1",
-            "minValue": "1",
-            "maxValue": "2147483647",
-            "cache": "1",
-            "cycle": false
-          }
+          "default": "gen_random_uuid()"
         },
         "firstName": {
           "name": "firstName",
@@ -1361,7 +1503,7 @@
         },
         "user_id": {
           "name": "user_id",
-          "type": "integer",
+          "type": "uuid",
           "primaryKey": false,
           "notNull": true
         }
@@ -1425,7 +1567,7 @@
         },
         "user_id": {
           "name": "user_id",
-          "type": "integer",
+          "type": "uuid",
           "primaryKey": false,
           "notNull": true
         },
@@ -1470,20 +1612,10 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "integer",
+          "type": "uuid",
           "primaryKey": true,
           "notNull": true,
-          "identity": {
-            "type": "always",
-            "name": "roles_id_seq",
-            "schema": "public",
-            "increment": "1",
-            "startWith": "1",
-            "minValue": "1",
-            "maxValue": "2147483647",
-            "cache": "1",
-            "cycle": false
-          }
+          "default": "gen_random_uuid()"
         },
         "name": {
           "name": "name",
@@ -1581,7 +1713,7 @@
         },
         "quantity": {
           "name": "quantity",
-          "type": "numeric(10, 2)",
+          "type": "real",
           "primaryKey": false,
           "notNull": true
         },
@@ -1732,20 +1864,10 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "integer",
+          "type": "uuid",
           "primaryKey": true,
           "notNull": true,
-          "identity": {
-            "type": "always",
-            "name": "users_id_seq",
-            "schema": "public",
-            "increment": "1",
-            "startWith": "1",
-            "minValue": "1",
-            "maxValue": "2147483647",
-            "cache": "1",
-            "cycle": false
-          }
+          "default": "gen_random_uuid()"
         },
         "email": {
           "name": "email",
@@ -1795,7 +1917,7 @@
         },
         "role_id": {
           "name": "role_id",
-          "type": "integer",
+          "type": "uuid",
           "primaryKey": false,
           "notNull": true
         }
@@ -1853,7 +1975,7 @@
         },
         "user_id": {
           "name": "user_id",
-          "type": "integer",
+          "type": "uuid",
           "primaryKey": false,
           "notNull": false
         },
@@ -1992,19 +2114,13 @@
         },
         "price": {
           "name": "price",
-          "type": "numeric(8, 3)",
+          "type": "real",
           "primaryKey": false,
           "notNull": true
         },
         "original_price": {
           "name": "original_price",
-          "type": "numeric(8, 3)",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "stock": {
-          "name": "stock",
-          "type": "numeric(6, 2)",
+          "type": "real",
           "primaryKey": false,
           "notNull": false
         },

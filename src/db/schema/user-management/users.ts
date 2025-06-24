@@ -1,14 +1,14 @@
 import {
   boolean,
-  integer,
   pgTable,
   timestamp,
+  uuid,
   varchar,
 } from "drizzle-orm/pg-core";
 import rolesTable from "./roles";
 
 const usersTable = pgTable("users", {
-  id: integer().primaryKey().generatedAlwaysAsIdentity(),
+  id: uuid("id").primaryKey().defaultRandom(),
   email: varchar({ length: 91 }).notNull().unique(),
   password: varchar({ length: 91 }).notNull(),
   isVerified: boolean().notNull().default(false),
@@ -18,7 +18,7 @@ const usersTable = pgTable("users", {
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 
   // foreign key
-  roleId: integer("role_id")
+  roleId: uuid("role_id")
     .references(() => rolesTable.id)
     .notNull(),
 });

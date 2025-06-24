@@ -113,7 +113,7 @@ export const getSingleUser = async (req: Request, res: Response) => {
         permissions: sql<string>`STRING_AGG(${permissionsTable.name}, ',')`,
       })
       .from(usersTable)
-      .where(eq(usersTable.id, +id))
+      .where(eq(usersTable.id, id))
       .leftJoin(rolesTable, sql`${usersTable.roleId} = ${rolesTable.id}`)
       .leftJoin(
         permissionToRolesTable,
@@ -168,7 +168,7 @@ export const getUserPermissions = async (req: Request, res: Response) => {
       });
     }
 
-    const permissions = await getPermissions(+id);
+    const permissions = await getPermissions(id);
 
     res.status(200).json({
       success: true,

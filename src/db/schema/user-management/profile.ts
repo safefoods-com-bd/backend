@@ -1,16 +1,16 @@
 import {
   boolean,
-  integer,
   jsonb,
   pgTable,
   text,
   timestamp,
+  uuid,
   varchar,
 } from "drizzle-orm/pg-core";
 import usersTable from "./users";
 
 const profileTable = pgTable("profiles", {
-  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+  id: uuid("id").primaryKey().defaultRandom(),
 
   // Basic Info
   firstName: varchar({ length: 50 }).notNull(),
@@ -47,7 +47,7 @@ const profileTable = pgTable("profiles", {
   updatedAt: timestamp("updated_at").defaultNow(),
 
   // Foreign Key
-  userId: integer("user_id")
+  userId: uuid("user_id")
     .references(() => usersTable.id)
     .notNull()
     .unique(),

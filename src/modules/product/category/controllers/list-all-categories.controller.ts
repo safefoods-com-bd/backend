@@ -1,7 +1,7 @@
 import { db } from "@/db/db";
 import categoriesTable from "@/db/schema/product-management/categories/categories";
 import categoryLevelsTable from "@/db/schema/product-management/categories/category_levels";
-import { count, eq, and, isNull } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { Request, Response } from "express";
 import { handleError } from "@/utils/errorHandler";
 import { generateHateoasLinksForCollection } from "@/utils/generateHateoasLinks";

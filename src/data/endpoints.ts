@@ -84,3 +84,23 @@ export const PAYMENT_METHOD_ENDPOINTS = {
   DELETE_PAYMENT_METHOD: "DELETE /api/v1/payment-methods/:id",
   DELETE_PAYMENT_METHODS_BATCH: "DELETE /api/v1/payment-methods/batch",
 };
+
+//stocks
+export const STOCK_ENDPOINTS = {
+  GET_ALL_STOCKS: "GET /api/v1/stocks",
+  GET_SINGLE_STOCK: "GET /api/v1/stocks/:id",
+  CREATE_STOCK: "POST /api/v1/stocks",
+  UPDATE_STOCK: "PATCH /api/v1/stocks/:id",
+  DELETE_STOCK: "DELETE /api/v1/stocks/:id",
+  DELETE_STOCKS_BATCH: "DELETE /api/v1/stocks/batch",
+};
+
+// orders
+export const ORDER_ENDPOINTS = {
+  CREATE_ORDER: "POST /api/v1/orders",
+  UPDATE_ORDER: "PATCH /api/v1/orders/:id",
+  DELETE_ORDER: "DELETE /api/v1/orders",
+  DELETE_ORDERS_BATCH: "DELETE /api/v1/orders/batch",
+  GET_ORDER_BY_ID: "GET /api/v1/orders/:id",
+  GET_USER_ORDERS: "GET /api/v1/orders/user/:userId",
+};

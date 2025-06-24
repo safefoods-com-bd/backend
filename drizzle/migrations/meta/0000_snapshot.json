@@ -1,5 +1,5 @@
 {
-  "id": "54fc63ea-ba44-47bf-9923-4cf923afaede",
+  "id": "e8554e12-7d14-4712-8c22-86fa4b0c99ba",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -61,13 +61,13 @@
           "name": "flat_no",
           "type": "varchar(100)",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "floor_no": {
           "name": "floor_no",
           "type": "varchar(100)",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "name": {
           "name": "name",
@@ -97,19 +97,20 @@
           "name": "state",
           "type": "varchar(100)",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "country": {
           "name": "country",
           "type": "varchar(100)",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "default": "'Bangladesh'"
         },
         "postal_code": {
           "name": "postal_code",
           "type": "varchar(20)",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "created_at": {
           "name": "created_at",
@@ -715,6 +716,12 @@
           "notNull": true,
           "default": "'pending'"
         },
+        "user_id": {
+          "name": "user_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
         "is_deleted": {
           "name": "is_deleted",
           "type": "boolean",
@@ -738,7 +745,21 @@
         }
       },
       "indexes": {},
-      "foreignKeys": {},
+      "foreignKeys": {
+        "orders_user_id_users_id_fk": {
+          "name": "orders_user_id_users_id_fk",
+          "tableFrom": "orders",
+          "tableTo": "users",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "policies": {},
@@ -903,7 +924,7 @@
         },
         "role_id": {
           "name": "role_id",
-          "type": "integer",
+          "type": "uuid",
           "primaryKey": false,
           "notNull": false
         }
@@ -1240,20 +1261,10 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "integer",
+          "type": "uuid",
           "primaryKey": true,
           "notNull": true,
-          "identity": {
-            "type": "always",
-            "name": "profiles_id_seq",
-            "schema": "public",
-            "increment": "1",
-            "startWith": "1",
-            "minValue": "1",
-            "maxValue": "2147483647",
-            "cache": "1",
-            "cycle": false
-          }
+          "default": "gen_random_uuid()"
         },
         "firstName": {
           "name": "firstName",
@@ -1361,7 +1372,7 @@
         },
         "user_id": {
           "name": "user_id",
-          "type": "integer",
+          "type": "uuid",
           "primaryKey": false,
           "notNull": true
         }
@@ -1425,7 +1436,7 @@
         },
         "user_id": {
           "name": "user_id",
-          "type": "integer",
+          "type": "uuid",
           "primaryKey": false,
           "notNull": true
         },
@@ -1470,20 +1481,10 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "integer",
+          "type": "uuid",
           "primaryKey": true,
           "notNull": true,
-          "identity": {
-            "type": "always",
-            "name": "roles_id_seq",
-            "schema": "public",
-            "increment": "1",
-            "startWith": "1",
-            "minValue": "1",
-            "maxValue": "2147483647",
-            "cache": "1",
-            "cycle": false
-          }
+          "default": "gen_random_uuid()"
         },
         "name": {
           "name": "name",
@@ -1581,7 +1582,7 @@
         },
         "quantity": {
           "name": "quantity",
-          "type": "numeric(10, 2)",
+          "type": "real",
           "primaryKey": false,
           "notNull": true
         },
@@ -1732,20 +1733,10 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "integer",
+          "type": "uuid",
           "primaryKey": true,
           "notNull": true,
-          "identity": {
-            "type": "always",
-            "name": "users_id_seq",
-            "schema": "public",
-            "increment": "1",
-            "startWith": "1",
-            "minValue": "1",
-            "maxValue": "2147483647",
-            "cache": "1",
-            "cycle": false
-          }
+          "default": "gen_random_uuid()"
         },
         "email": {
           "name": "email",
@@ -1795,7 +1786,7 @@
         },
         "role_id": {
           "name": "role_id",
-          "type": "integer",
+          "type": "uuid",
           "primaryKey": false,
           "notNull": true
         }
@@ -1853,7 +1844,7 @@
         },
         "user_id": {
           "name": "user_id",
-          "type": "integer",
+          "type": "uuid",
           "primaryKey": false,
           "notNull": false
         },
@@ -1992,19 +1983,13 @@
         },
         "price": {
           "name": "price",
-          "type": "numeric(8, 3)",
+          "type": "real",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "original_price": {
           "name": "original_price",
-          "type": "numeric(8, 3)",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "stock": {
-          "name": "stock",
-          "type": "numeric(6, 2)",
+          "type": "real",
           "primaryKey": false,
           "notNull": false
         },
@@ -2072,19 +2057,13 @@
           "name": "color_id",
           "type": "uuid",
           "primaryKey": false,
-          "notNull": true
-        },
-        "size_id": {
-          "name": "size_id",
-          "type": "uuid",
-          "primaryKey": false,
           "notNull": false
         },
         "unit_id": {
           "name": "unit_id",
           "type": "uuid",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         }
       },
       "indexes": {},
@@ -2108,19 +2087,6 @@
           "tableTo": "colors",
           "columnsFrom": [
             "color_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        },
-        "variant_products_size_id_sizes_id_fk": {
-          "name": "variant_products_size_id_sizes_id_fk",
-          "tableFrom": "variant_products",
-          "tableTo": "sizes",
-          "columnsFrom": [
-            "size_id"
           ],
           "columnsTo": [
             "id"

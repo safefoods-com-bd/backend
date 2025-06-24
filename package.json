@@ -13,7 +13,7 @@
     "lint": "eslint 'src/**/*.{ts,tsx}' --fix",
     "prettier": "prettier --write 'src/**/*.{ts,tsx,js,jsx,json,css,md}'",
     "prepare": "husky",
-    "seed": "ts-node --compiler-options '{\"module\":\"CommonJS\"}' src/db/schema/seed.ts"
+    "seed": "ts-node  src/db/schema/seed.ts"
   },
   "lint-staged": {
     "src/**/*.{ts,tsx,js,jsx}": [

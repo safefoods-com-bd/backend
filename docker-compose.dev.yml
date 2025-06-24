@@ -49,6 +49,7 @@ services:
         condition: service_healthy
     volumes:
       - .:/usr/src/app
+      - safefoods-node-modules:/usr/src/app/node_modules # Add this line
     command: sh -c "pnpm install && pnpm run dev"
     networks:
       - safefoods-app-network
@@ -74,16 +75,24 @@ services:
     networks:
       - safefoods-app-network
     healthcheck:
-      test:
-        ["CMD-SHELL", "pg_isready", "-U", "${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
       interval: 15s
       timeout: 5s
       retries: 3
       start_period: 5s
+    # healthcheck:
+    #   test:
+    #     ["CMD-SHELL", "pg_isready", "-U", "${POSTGRES_USER} -d ${POSTGRES_DB}"]
+    #   interval: 15s
+    #   timeout: 5s
+    #   retries: 3
+    #   start_period: 5s
 volumes:
   safefoods-pg-data:
     driver: local
   safefoods-redis-data:
+    driver: local
+  safefoods-node-modules: # Add this volume
     driver: local
 networks:
   safefoods-app-network:

@@ -43,7 +43,7 @@ export const generateHateoasLinksForSingleRecord = ({
   id,
 }: {
   baseUrl: string;
-  id: number;
+  id: number | string;
 }) => {
   return {
     self: {
