@@ -8,6 +8,7 @@ export const db = drizzle(connectionString, { schema, logger: true });
 import {
   categoryData,
   categoryLevelsData,
+  couponsData,
   orderData,
   permissionData,
   productData,
@@ -173,6 +174,12 @@ async function seedOrderProducts() {
   }
 }
 
+async function seedCoupons() {
+  for (const coupon of couponsData) {
+    await db.insert(schema.couponsTable).values(coupon).onConflictDoNothing();
+  }
+}
+
 async function seedAll() {
   await seedPermissions();
   await seedRoles();
@@ -187,6 +194,7 @@ async function seedAll() {
   await seedStocks();
   await seedOrders();
   await seedOrderProducts();
+  await seedCoupons();
 }
 
 const handleError = (error: Error) => {

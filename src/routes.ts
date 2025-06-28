@@ -17,6 +17,7 @@ import paymentMethodsRoutes from "@/modules/order-management/payment-methods/pay
 import addressRoutes from "@/modules/order-management/addresses/addresses.routes";
 import stocksRoutes from "@/modules/stock-management/stocks/stocks.routes";
 import orderRoutes from "@/modules/order-management/orders/orders.routes";
+import couponRoutes from "@/modules/order-management/coupon/coupon.routes";
 
 // import { validateApiKey } from "./middleware/apiKeyMiddleware";
 // import { isProduction } from "./constants/variables";
@@ -51,6 +52,7 @@ export const registerRoutes = (app: Express) => {
   app.use("/api/v1/order", orderRoutes);
   app.use("/api/v1/payment-methods", paymentMethodsRoutes);
   app.use("/api/v1/addresses", addressRoutes);
+  app.use("/api/v1/coupons", couponRoutes);
 
   //stock management
   app.use("/api/v1/stocks", stocksRoutes);
