@@ -104,3 +104,14 @@ export const ORDER_ENDPOINTS = {
   GET_ORDER_BY_ID: "GET /api/v1/orders/:id",
   GET_USER_ORDERS: "GET /api/v1/orders/user/:userId",
 };
+
+//coupons
+export const COUPON_ENDPOINTS = {
+  LIST_ALL_COUPONS: "GET /api/v1/coupons",
+  GET_SINGLE_COUPON: "GET /api/v1/coupons/:id",
+  CREATE_COUPON: "POST /api/v1/coupons",
+  UPDATE_COUPON: "PATCH /api/v1/coupons/:id",
+  DELETE_COUPON: "DELETE /api/v1/coupons/:id",
+  DELETE_COUPONS_BATCH: "DELETE /api/v1/coupons/batch",
+  VALIDATE_COUPON: "POST /api/v1/coupons/validate",
+};
