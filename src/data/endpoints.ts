@@ -113,4 +113,5 @@ export const COUPON_ENDPOINTS = {
   UPDATE_COUPON: "PATCH /api/v1/coupons/:id",
   DELETE_COUPON: "DELETE /api/v1/coupons/:id",
   DELETE_COUPONS_BATCH: "DELETE /api/v1/coupons/batch",
+  VALIDATE_COUPON: "POST /api/v1/coupons/validate",
 };

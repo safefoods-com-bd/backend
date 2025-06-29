@@ -23,6 +23,16 @@ export const couponValidationSchema = z.object({
 
 export type CouponValidationType = z.infer<typeof couponValidationSchema>;
 
+export const validateCouponValidationSchema = z.object({
+  couponId: z
+    .string({ required_error: "Coupon ID is required" })
+    .uuid("Invalid coupon ID format"),
+});
+
+export type ValidateCouponValidationType = z.infer<
+  typeof validateCouponValidationSchema
+>;
+
 export const updateCouponValidationSchema = couponValidationSchema
   .partial()
   .extend({
