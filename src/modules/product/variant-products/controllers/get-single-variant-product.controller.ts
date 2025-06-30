@@ -6,8 +6,8 @@ import { eq } from "drizzle-orm";
 import { VARIANT_PRODUCT_ENDPOINTS } from "@/data/endpoints";
 import productsTables from "@/db/schema/product-management/products/products";
 import colorTables from "@/db/schema/utils/colors";
-import sizeTables from "@/db/schema/utils/sizes";
 import unitsTable from "@/db/schema/utils/units";
+import { stockTable } from "@/db/schema";
 
 /**
  * Gets a single variant product by ID
@@ -34,7 +34,7 @@ export const getSingleVariantProductV100 = async (
         id: variantProductTables.id,
         price: variantProductTables.price,
         originalPrice: variantProductTables.originalPrice,
-        stock: variantProductTables.stock,
+        stock: stockTable.quantity,
         description: variantProductTables.description,
         shortDescription: variantProductTables.shortDescription,
         bestDeal: variantProductTables.bestDeal,
@@ -45,11 +45,9 @@ export const getSingleVariantProductV100 = async (
         updatedAt: variantProductTables.updatedAt,
         productId: variantProductTables.productId,
         colorId: variantProductTables.colorId,
-        sizeId: variantProductTables.sizeId,
         unitId: variantProductTables.unitId,
         productTitle: productsTables.title,
         colorName: colorTables.title,
-        sizeName: sizeTables.title,
         unitName: unitsTable.title,
       })
       .from(variantProductTables)
@@ -58,7 +56,10 @@ export const getSingleVariantProductV100 = async (
         eq(variantProductTables.productId, productsTables.id),
       )
       .leftJoin(colorTables, eq(variantProductTables.colorId, colorTables.id))
-      .leftJoin(sizeTables, eq(variantProductTables.sizeId, sizeTables.id))
+      .leftJoin(
+        stockTable,
+        eq(variantProductTables.id, stockTable.variantProductId),
+      )
       .leftJoin(unitsTable, eq(variantProductTables.unitId, unitsTable.id))
       .where(eq(variantProductTables.id, id));
 

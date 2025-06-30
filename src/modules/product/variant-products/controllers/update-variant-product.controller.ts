@@ -3,11 +3,10 @@ import { db } from "@/db/db";
 import { ERROR_TYPES, handleError } from "@/utils/errorHandler";
 import variantProductTables from "@/db/schema/product-management/products/variant_products";
 import { updateVariantProductValidationSchema } from "../variant-products.validation";
-import { and, eq, ne } from "drizzle-orm";
+import { and, eq, ne, sql } from "drizzle-orm";
 import { VARIANT_PRODUCT_ENDPOINTS } from "@/data/endpoints";
 import productsTables from "@/db/schema/product-management/products/products";
 import colorTables from "@/db/schema/utils/colors";
-import sizeTables from "@/db/schema/utils/sizes";
 import unitsTable from "@/db/schema/utils/units";
 
 /**
@@ -47,7 +46,6 @@ export const updateVariantProductV100 = async (
       id,
       price,
       originalPrice,
-      stock,
       description,
       shortDescription,
       bestDeal,
@@ -55,7 +53,6 @@ export const updateVariantProductV100 = async (
       isActive,
       productId,
       colorId,
-      sizeId,
       unitId,
     } = validation.data;
 
@@ -102,21 +99,6 @@ export const updateVariantProductV100 = async (
       }
     }
 
-    // Check if the size exists (if sizeId is provided)
-    if (sizeId) {
-      const sizeExists = await db
-        .select()
-        .from(sizeTables)
-        .where(eq(sizeTables.id, sizeId));
-
-      if (sizeExists.length === 0) {
-        throw {
-          type: ERROR_TYPES.VALIDATION,
-          message: "Size not found",
-        };
-      }
-    }
-
     // Check if the unit exists (if unitId is provided)
     if (unitId) {
       const unitExists = await db
@@ -133,24 +115,23 @@ export const updateVariantProductV100 = async (
     }
 
     // Check for duplicate combinations if any of productId, colorId, or sizeId are updated
-    if (productId || colorId || sizeId !== undefined) {
+    if (productId || colorId) {
       const checkProductId = productId || existingVariantProduct[0].productId;
       const checkColorId = colorId || existingVariantProduct[0].colorId;
-      const checkSizeId =
-        sizeId !== undefined ? sizeId : existingVariantProduct[0].sizeId;
 
       const existingVariant = await db
         .select()
         .from(variantProductTables)
-        .where(eq(variantProductTables.productId, checkProductId))
-        .where(eq(variantProductTables.colorId, checkColorId))
         .where(
-          checkSizeId
-            ? eq(variantProductTables.sizeId, checkSizeId)
-            : eq(variantProductTables.sizeId, null),
-        )
-        .where(ne(variantProductTables.id, id))
-        .where(eq(variantProductTables.isDeleted, false));
+          and(
+            eq(variantProductTables.productId, checkProductId),
+            checkColorId !== null
+              ? eq(variantProductTables.colorId, checkColorId)
+              : sql`(${variantProductTables.colorId} IS NULL)`,
+            ne(variantProductTables.id, id),
+            eq(variantProductTables.isDeleted, false),
+          ),
+        );
 
       if (existingVariant.length > 0) {
         throw {
@@ -170,7 +151,6 @@ export const updateVariantProductV100 = async (
           originalPrice !== undefined
             ? originalPrice
             : existingVariantProduct[0].originalPrice,
-        stock: stock !== undefined ? stock : existingVariantProduct[0].stock,
         description:
           description !== undefined
             ? description
@@ -193,8 +173,6 @@ export const updateVariantProductV100 = async (
             : existingVariantProduct[0].isActive,
         productId: productId || existingVariantProduct[0].productId,
         colorId: colorId || existingVariantProduct[0].colorId,
-        sizeId:
-          sizeId !== undefined ? sizeId : existingVariantProduct[0].sizeId,
         unitId: unitId || existingVariantProduct[0].unitId,
         updatedAt: new Date(),
       })

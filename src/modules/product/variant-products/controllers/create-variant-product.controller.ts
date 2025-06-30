@@ -8,6 +8,7 @@ import { VARIANT_PRODUCT_ENDPOINTS } from "@/data/endpoints";
 import productsTables from "@/db/schema/product-management/products/products";
 import colorTables from "@/db/schema/utils/colors";
 import unitsTable from "@/db/schema/utils/units";
+import { stockTable } from "@/db/schema";
 
 /**
  * Creates a new variant product record in the database
@@ -49,6 +50,7 @@ export const createVariantProductV100 = async (
       bestDeal,
       discountedSale,
       isActive,
+      initialStock,
       productId,
       colorId,
       unitId,
@@ -135,6 +137,12 @@ export const createVariantProductV100 = async (
         unitId,
       })
       .returning();
+    // Create initial stock record
+    await db.insert(stockTable).values({
+      warehouseId: "257b861a-50e6-4b79-a5fd-ae87ddefc88b", // Assuming a default warehouse ID
+      variantProductId: newVariantProduct[0].id,
+      quantity: initialStock,
+    });
 
     return res.status(201).json({
       success: true,
