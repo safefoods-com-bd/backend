@@ -167,8 +167,8 @@ export const warehouseData = [
   {
     id: "257b861a-50e6-4b79-a5fd-ae87ddefc88b",
     name: "warehouse-1",
-    location: "Ctg",
-    contactNumber: "01676042170",
+    location: "Dhaka",
+    contactNumber: "00000000000",
     email: "warehouse-1@safefoods.com.bd",
     isActive: true,
     isDeleted: false,

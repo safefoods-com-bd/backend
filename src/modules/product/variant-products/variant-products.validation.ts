@@ -10,6 +10,9 @@ export const variantProductValidationSchema = z.object({
   bestDeal: z.boolean().optional().default(false),
   discountedSale: z.boolean().optional().default(false),
   isActive: z.boolean().optional().default(true),
+  initialStock: z
+    .number({ required_error: "Initial stock is required" })
+    .min(0, "Initial stock cannot be negative"),
   productId: z
     .string({ required_error: "Product ID is required" })
     .uuid("Invalid product ID format"),
@@ -37,6 +40,7 @@ export const updateVariantProductValidationSchema =
       bestDeal: true,
       discountedSale: true,
       isActive: true,
+      initialStock: true,
       productId: true,
       colorId: true,
       unitId: true,

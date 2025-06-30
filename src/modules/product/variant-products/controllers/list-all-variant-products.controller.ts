@@ -1,13 +1,13 @@
 import { Request, Response } from "express";
 import { db } from "@/db/db";
 import { handleError } from "@/utils/errorHandler";
-import { asc, desc, eq, sql } from "drizzle-orm";
+import { and, asc, desc, eq, sql } from "drizzle-orm";
 import { VARIANT_PRODUCT_ENDPOINTS } from "@/data/endpoints";
 import variantProductTables from "@/db/schema/product-management/products/variant_products";
 import productsTables from "@/db/schema/product-management/products/products";
 import colorTables from "@/db/schema/utils/colors";
-import sizeTables from "@/db/schema/utils/sizes";
 import unitsTable from "@/db/schema/utils/units";
+import { stockTable } from "@/db/schema";
 
 /**
  * Lists all variant product records from the database with optional filtering and pagination
@@ -35,12 +35,7 @@ function applySorting(query: any, sortBy: string, sortOrder: string) {
           ? asc(variantProductTables.price)
           : desc(variantProductTables.price),
       );
-    case "stock":
-      return query.orderBy(
-        isAsc
-          ? asc(variantProductTables.stock)
-          : desc(variantProductTables.stock),
-      );
+
     case "updatedAt":
       return query.orderBy(
         isAsc
@@ -79,7 +74,7 @@ export const listAllVariantProductsV100 = async (
         id: variantProductTables.id,
         price: variantProductTables.price,
         originalPrice: variantProductTables.originalPrice,
-        stock: variantProductTables.stock,
+        // stock: variantProductTables.stock,
         description: variantProductTables.description,
         shortDescription: variantProductTables.shortDescription,
         bestDeal: variantProductTables.bestDeal,
@@ -89,12 +84,12 @@ export const listAllVariantProductsV100 = async (
         updatedAt: variantProductTables.updatedAt,
         productId: variantProductTables.productId,
         colorId: variantProductTables.colorId,
-        sizeId: variantProductTables.sizeId,
+        // sizeId: variantProductTables.sizeId,
         unitId: variantProductTables.unitId,
         productTitle: productsTables.title,
         colorName: colorTables.title,
-        sizeName: sizeTables.title,
         unitName: unitsTable.title,
+        stock: stockTable.quantity,
       })
       .from(variantProductTables)
       .leftJoin(
@@ -102,9 +97,11 @@ export const listAllVariantProductsV100 = async (
         eq(variantProductTables.productId, productsTables.id),
       )
       .leftJoin(colorTables, eq(variantProductTables.colorId, colorTables.id))
-      .leftJoin(sizeTables, eq(variantProductTables.sizeId, sizeTables.id))
-      .leftJoin(unitsTable, eq(variantProductTables.unitId, unitsTable.id))
-      .where(eq(variantProductTables.isDeleted, false));
+      .leftJoin(
+        stockTable,
+        eq(variantProductTables.id, stockTable.variantProductId),
+      )
+      .leftJoin(unitsTable, eq(variantProductTables.unitId, unitsTable.id));
 
     // Apply search filter if provided
     if (search) {
@@ -112,7 +109,9 @@ export const listAllVariantProductsV100 = async (
                              ${variantProductTables.description} LIKE ${"%" + search + "%"} OR
                              ${variantProductTables.shortDescription} LIKE ${"%" + search + "%"}`;
 
-      const filteredQuery = selectQueryBuilder.where(searchQuery);
+      const selectQueryWithSearch = selectQueryBuilder.where(
+        sql`${eq(variantProductTables.isDeleted, false)} AND (${searchQuery})`,
+      );
 
       // Count with search filter
       const countResult = await db
@@ -124,13 +123,18 @@ export const listAllVariantProductsV100 = async (
           productsTables,
           eq(variantProductTables.productId, productsTables.id),
         )
-        .where(searchQuery)
-        .where(eq(variantProductTables.isDeleted, false));
+        .where(
+          and(eq(variantProductTables.isDeleted, false), sql`${searchQuery}`),
+        );
 
       const countValue = countResult[0]?.count || 0;
 
       // Apply sorting
-      const results = await applySorting(filteredQuery, sortBy, sortOrder)
+      const results = await applySorting(
+        selectQueryWithSearch,
+        sortBy,
+        sortOrder,
+      )
         .limit(limit)
         .offset(offset);
 

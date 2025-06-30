@@ -1,6 +1,5 @@
 import {
   boolean,
-  numeric,
   pgTable,
   real,
   text,
@@ -9,7 +8,6 @@ import {
 } from "drizzle-orm/pg-core";
 import productsTables from "./products";
 import colorTables from "../../utils/colors";
-import sizeTables from "../../utils/sizes";
 import unitsTable from "../../utils/units";
 
 const variantProductTables = pgTable("variant_products", {
