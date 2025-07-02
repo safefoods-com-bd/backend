@@ -115,3 +115,12 @@ export const COUPON_ENDPOINTS = {
   DELETE_COUPONS_BATCH: "DELETE /api/v1/coupons/batch",
   VALIDATE_COUPON: "POST /api/v1/coupons/validate",
 };
+
+// delivery zones
+export const DELIVERY_ZONE_ENDPOINTS = {
+  LIST_ALL_DELIVERY_ZONES: "GET /api/v1/delivery-zones",
+  CREATE_DELIVERY_ZONE: "POST /api/v1/delivery-zones",
+  UPDATE_DELIVERY_ZONE: "PATCH /api/v1/delivery-zones/:id",
+  DELETE_DELIVERY_ZONE: "DELETE /api/v1/delivery-zones/:id",
+  DELETE_DELIVERY_ZONES_BATCH: "DELETE /api/v1/delivery-zones/batch",
+};

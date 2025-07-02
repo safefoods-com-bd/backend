@@ -233,3 +233,33 @@ export const couponsData = [
     updatedAt: new Date(),
   },
 ];
+
+export const deliveryZoneData = [
+  {
+    id: "d6caabd3-31a1-425a-97e4-32999663b474",
+    areaName: "Khilgaon",
+    deliveryCharge: 50,
+    isActive: true,
+    isDeleted: false,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    id: "f360e275-7142-4bb2-a44b-3f1148f3f074",
+    areaName: "Dhanmondi",
+    deliveryCharge: 70,
+    isActive: true,
+    isDeleted: false,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    id: "e5d14d6f-1640-426f-8673-9c808272079f",
+    areaName: "Gulshan",
+    deliveryCharge: 100,
+    isActive: true,
+    isDeleted: false,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+];

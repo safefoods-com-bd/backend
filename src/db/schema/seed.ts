@@ -9,6 +9,7 @@ import {
   categoryData,
   categoryLevelsData,
   couponsData,
+  deliveryZoneData,
   orderData,
   permissionData,
   productData,
@@ -180,6 +181,15 @@ async function seedCoupons() {
   }
 }
 
+async function seedDeliveryZones() {
+  for (const zone of deliveryZoneData) {
+    await db
+      .insert(schema.deliveryZoneTable)
+      .values(zone)
+      .onConflictDoNothing();
+  }
+}
+
 async function seedAll() {
   await seedPermissions();
   await seedRoles();
@@ -195,6 +205,7 @@ async function seedAll() {
   await seedOrders();
   await seedOrderProducts();
   await seedCoupons();
+  await seedDeliveryZones();
 }
 
 const handleError = (error: Error) => {

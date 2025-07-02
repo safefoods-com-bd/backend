@@ -36,6 +36,7 @@ export { default as paymentsTable } from "./order-management/payments";
 export { default as paymentMethodsTable } from "./order-management/payment_methods";
 export { default as productsOrdersTable } from "./order-management/products_orders";
 export { default as orderHistoryTable } from "./order-management/order-history";
+export { default as deliveryZoneTable } from "./order-management/delivery-zones";
 
 // ------------stock management-----------------
 export { default as stockTable } from "./stock-management/stocks";

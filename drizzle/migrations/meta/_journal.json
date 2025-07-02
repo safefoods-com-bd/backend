@@ -15,6 +15,13 @@
       "when": 1750701559561,
       "tag": "0001_strange_agent_zero",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1751478782668,
+      "tag": "0002_romantic_maelstrom",
+      "breakpoints": true
     }
   ]
 }

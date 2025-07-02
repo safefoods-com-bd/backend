@@ -8,6 +8,7 @@ import {
 } from "../addresses.validation";
 import { eq, inArray } from "drizzle-orm";
 import { ADDRESS_ENDPOINTS } from "@/data/endpoints";
+import { z } from "zod";
 
 /**
  * Deletes a single address record from the database
@@ -100,3 +101,26 @@ export const deleteAddressesBatchV100 = async (req: Request, res: Response) => {
     handleError(error, res, ADDRESS_ENDPOINTS.DELETE_ADDRESSES_BATCH);
   }
 };
+
+export const createDeliveryZoneSchema = z.object({
+  areaName: z.string().min(1, "Area name is required"),
+  description: z.string().optional(),
+  deliveryCharge: z.number().min(0, "Delivery charge must be non-negative"),
+  isActive: z.boolean().optional(),
+});
+
+export const updateDeliveryZoneSchema = createDeliveryZoneSchema
+  .partial()
+  .extend({
+    id: z.string().uuid("Invalid ID format"),
+  });
+
+export const deleteDeliveryZoneSchema = z.object({
+  id: z.string().uuid("Invalid ID format"),
+});
+
+export const deleteDeliveryZonesBatchSchema = z.object({
+  ids: z
+    .array(z.string().uuid("Invalid ID format"))
+    .min(1, "At least one ID is required"),
+});
