@@ -38,18 +38,40 @@ const baseOrderSchema = z.object({
       /^\d+(\.\d{1,2})?$/,
       "Subtotal must be a valid number with up to 2 decimal places",
     ),
-  total: z
-    .string({ required_error: "Total is required" })
-    .regex(
-      /^\d+(\.\d{1,2})?$/,
-      "Total must be a valid number with up to 2 decimal places",
-    ),
+  discount: z
+    .number({ required_error: "Discount is required" })
+    .min(0, "Discount must be non-negative"),
+  couponId: z.string().uuid("Invalid coupon ID format").optional(),
   afterDiscountTotal: z
     .string({ required_error: "After discount total is required" })
     .regex(
       /^\d+(\.\d{1,2})?$/,
       "After discount total must be a valid number with up to 2 decimal places",
     ),
+  deliveryCharge: z
+    .number({ required_error: "Delivery charge is required" })
+    .min(0, "Delivery charge must be non-negative"),
+  deliveryZoneId: z
+    .string({ required_error: "Delivery zone ID is required" })
+    .uuid("Invalid delivery zone ID format"),
+  total: z
+    .number({ required_error: "Total is required" })
+    .min(0, "Total must be non-negative"),
+  preferredDeliveryDateAndTime: z
+    .string({ required_error: "Preferred delivery date and time is required" })
+    .datetime("Invalid date format for preferred delivery date and time"),
+  paymentMethodId: z
+    .string({ required_error: "Payment method ID is required" })
+    .uuid("Invalid payment method ID format"),
+  transactionNo: z.string().max(100, "Transaction number too long").optional(),
+  transactionPhoneNo: z
+    .string()
+    .max(15, "Transaction phone number too long")
+    .optional(),
+  transactionDate: z
+    .string()
+    .datetime("Invalid date format for transaction date")
+    .optional(),
   paymentStatus: paymentStatusEnum.default("unpaid"),
   orderStatus: orderStatusEnum
     .default("pending")
@@ -70,9 +92,9 @@ const baseOrderSchema = z.object({
 
 // Apply refine to orderValidationSchema
 export const orderValidationSchema = baseOrderSchema.refine(
-  (data) => Number(data.afterDiscountTotal) <= Number(data.total),
+  (data) => Number(data.afterDiscountTotal) <= Number(data.subTotal),
   {
-    message: "After discount total must be less than or equal to total",
+    message: "After discount total must be less than or equal to subtotal",
     path: ["afterDiscountTotal"],
   },
 );
@@ -95,10 +117,10 @@ export const updateOrderValidationSchema = baseOrderSchema
   .refine(
     (data) =>
       !data.afterDiscountTotal ||
-      !data.total ||
-      Number(data.afterDiscountTotal) <= Number(data.total),
+      !data.subTotal ||
+      Number(data.afterDiscountTotal) <= Number(data.subTotal),
     {
-      message: "After discount total must be less than or equal to total",
+      message: "After discount total must be less than or equal to subtotal",
       path: ["afterDiscountTotal"],
     },
   );

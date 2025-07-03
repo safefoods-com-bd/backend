@@ -31,8 +31,17 @@ export const createOrderV100 = async (req: Request, res: Response) => {
 
     const {
       subTotal,
-      total,
+      discount,
+      couponId,
       afterDiscountTotal,
+      deliveryCharge,
+      deliveryZoneId,
+      total,
+      preferredDeliveryDateAndTime,
+      paymentMethodId,
+      transactionNo,
+      transactionPhoneNo,
+      transactionDate,
       paymentStatus,
       orderStatus,
       productOrders,
@@ -102,8 +111,19 @@ export const createOrderV100 = async (req: Request, res: Response) => {
         .insert(ordersTable)
         .values({
           subTotal,
-          total,
+          discount,
+          couponId,
           afterDiscountTotal,
+          deliveryCharge,
+          deliveryZoneId,
+          total,
+          preferredDeliveryDateAndTime: new Date(preferredDeliveryDateAndTime),
+          paymentMethodId,
+          transactionNo,
+          transactionPhoneNo,
+          transactionDate: transactionDate
+            ? new Date(transactionDate)
+            : undefined,
           paymentStatus,
           orderStatus,
           userId,
@@ -127,6 +147,7 @@ export const createOrderV100 = async (req: Request, res: Response) => {
             orderId: newOrder[0].id,
             price: po.price,
             quantity: po.quantity,
+            warehouseId: po.warehouseId,
           })),
         )
         .returning();
