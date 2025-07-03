@@ -12,6 +12,7 @@ import usersTable from "../user-management/users";
 import couponsTable from "./coupons";
 import deliveryZoneTable from "./delivery-zones";
 import paymentMethodTable from "./payment_methods";
+import addressesTable from "./addresses";
 
 const paymentStatusEnum = pgEnum("payment_status", [
   "paid",
@@ -52,6 +53,9 @@ const ordersTable = pgTable("orders", {
   transactionNo: varchar("transaction_no", { length: 100 }), // transaction number
   transactionPhoneNo: varchar("transaction_phone_no", { length: 15 }), // transaction phone number
   transactionDate: timestamp("transaction_date"), //
+  addressId: uuid("address_id")
+    .references(() => addressesTable.id)
+    .notNull(), // delivery address
   paymentStatus: paymentStatusEnum("payment_status")
     .default("unpaid")
     .notNull(),

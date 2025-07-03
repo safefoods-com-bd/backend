@@ -72,6 +72,9 @@ const baseOrderSchema = z.object({
     .string()
     .datetime("Invalid date format for transaction date")
     .optional(),
+  addressId: z
+    .string({ required_error: "Address ID is required" })
+    .uuid("Invalid address ID format"),
   paymentStatus: paymentStatusEnum.default("unpaid"),
   orderStatus: orderStatusEnum
     .default("pending")

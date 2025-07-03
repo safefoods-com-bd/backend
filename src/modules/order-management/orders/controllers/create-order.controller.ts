@@ -42,6 +42,7 @@ export const createOrderV100 = async (req: Request, res: Response) => {
       transactionNo,
       transactionPhoneNo,
       transactionDate,
+      addressId,
       paymentStatus,
       orderStatus,
       productOrders,
@@ -124,6 +125,7 @@ export const createOrderV100 = async (req: Request, res: Response) => {
           transactionDate: transactionDate
             ? new Date(transactionDate)
             : undefined,
+          addressId,
           paymentStatus,
           orderStatus,
           userId,
