@@ -6,6 +6,15 @@ export const COLOR_ENDPOINTS = {
   DELETE_COLOR: "DELETE /api/v1/colors/:id",
 };
 
+// cart
+export const CART_ENDPOINTS = {
+  LIST_CART_ITEMS: "GET /api/v1/cart",
+  ADD_TO_CART: "POST /api/v1/cart",
+  UPDATE_CART_ITEM: "PATCH /api/v1/cart",
+  DELETE_CART_ITEM: "DELETE /api/v1/cart/:id",
+  DELETE_CART_ITEMS_BATCH: "DELETE /api/v1/cart/batch",
+};
+
 // brands
 export const BRAND_ENDPOINTS = {
   LIST_ALL_BRANDS: "GET /api/v1/brands",

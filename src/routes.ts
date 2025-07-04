@@ -19,6 +19,7 @@ import stocksRoutes from "@/modules/stock-management/stocks/stocks.routes";
 import orderRoutes from "@/modules/order-management/orders/orders.routes";
 import couponRoutes from "@/modules/order-management/coupon/coupon.routes";
 import deliveryZonesRoutes from "@/modules/order-management/delivery-zones/delivery-zones.routes";
+import { cartRoutes } from "@/modules/order-management/cart";
 
 // import { validateApiKey } from "./middleware/apiKeyMiddleware";
 // import { isProduction } from "./constants/variables";
@@ -50,11 +51,12 @@ export const registerRoutes = (app: Express) => {
   app.use("/api/v1/products", productsRoutes);
 
   // order management
-  app.use("/api/v1/order", orderRoutes);
   app.use("/api/v1/payment-methods", paymentMethodsRoutes);
   app.use("/api/v1/addresses", addressRoutes);
+  app.use("/api/v1/orders", orderRoutes);
   app.use("/api/v1/coupons", couponRoutes);
   app.use("/api/v1/delivery-zones", deliveryZonesRoutes);
+  app.use("/api/v1/cart", cartRoutes);
 
   //stock management
   app.use("/api/v1/stocks", stocksRoutes);
