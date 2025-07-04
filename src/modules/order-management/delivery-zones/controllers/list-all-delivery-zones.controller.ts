@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import deliveryZoneTable from "@/db/schema/order-management/delivery-zones";
+import deliveryZoneTable from "@/db/schema/order-management/delivery_zones";
 import { db } from "@/db/db";
 import { and, count, desc, eq } from "drizzle-orm";
 import { generateHateoasLinksForCollection } from "@/utils/generateHateoasLinks";

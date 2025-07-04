@@ -36,6 +36,13 @@
       "when": 1751586165281,
       "tag": "0004_old_tarantula",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1751588561087,
+      "tag": "0005_added_to_cart",
+      "breakpoints": true
     }
   ]
 }

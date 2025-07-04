@@ -10,7 +10,7 @@ import {
 } from "drizzle-orm/pg-core";
 import usersTable from "../user-management/users";
 import couponsTable from "./coupons";
-import deliveryZoneTable from "./delivery-zones";
+import deliveryZoneTable from "./delivery_zones";
 import paymentMethodTable from "./payment_methods";
 import addressesTable from "./addresses";
 
