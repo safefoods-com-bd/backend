@@ -8,9 +8,7 @@ export const productValidationSchema = z.object({
   sku: z
     .string({ required_error: "SKU is required" })
     .min(1, "SKU cannot be empty"),
-  season: z
-    .string({ required_error: "Season is required" })
-    .min(1, "Season cannot be empty"),
+  season: z.string().optional(),
   categoryId: z
     .string({ required_error: "Category ID is required" })
     .uuid("Invalid category ID format"),

@@ -6,6 +6,25 @@ import { PRODUCT_ENDPOINTS } from "@/data/endpoints";
 import productsTables from "@/db/schema/product-management/products/products";
 import categoriesTable from "@/db/schema/product-management/categories/categories";
 import brandTables from "@/db/schema/utils/brands";
+import variantProductTables from "@/db/schema/product-management/products/variant_products";
+import colorTables from "@/db/schema/utils/colors";
+import unitsTable from "@/db/schema/utils/units";
+
+// Define product interface for type checking
+interface Product {
+  id: string;
+  title: string;
+  slug: string;
+  sku: string;
+  season: string;
+  isActive: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+  categoryId: string;
+  brandId: string | null;
+  categoryTitle: string | null;
+  brandTitle: string | null;
+}
 
 /**
  * Lists all product records from the database with optional filtering and pagination
@@ -63,7 +82,7 @@ export const listAllProductsV100 = async (
     const sortOrder = (req.query.sortOrder as string) || "desc";
     const search = req.query.search as string;
 
-    // Build the select query
+    // Build the select query for products
     const selectQueryBuilder = db
       .select({
         id: productsTables.id,
@@ -85,78 +104,103 @@ export const listAllProductsV100 = async (
         eq(productsTables.categoryId, categoriesTable.id),
       )
       .leftJoin(brandTables, eq(productsTables.brandId, brandTables.id));
-    //   .where(eq(productsTables.isDeleted, false));
 
     // Apply search filter if provided
+    let filteredQuery;
+    let countResult;
+    let countValue;
+
     if (search) {
       const searchQuery = sql`${productsTables.title} LIKE ${"%" + search + "%"} OR 
                               ${productsTables.sku} LIKE ${"%" + search + "%"} OR
                               ${productsTables.season} LIKE ${"%" + search + "%"}`;
 
-      const filteredQuery = selectQueryBuilder.where(
+      filteredQuery = selectQueryBuilder.where(
         sql`${eq(productsTables.isDeleted, false)} AND (${searchQuery})`,
       );
 
       // Count with search filter
-      const countResult = await db
+      countResult = await db
         .select({
           count: sql<number>`count(*)`,
         })
         .from(productsTables)
-        .where(searchQuery);
+        .where(
+          sql`${eq(productsTables.isDeleted, false)} AND (${searchQuery})`,
+        );
 
-      const countValue = countResult[0]?.count || 0;
-
-      // Apply sorting
-      const results = await applySorting(filteredQuery, sortBy, sortOrder)
-        .limit(limit)
-        .offset(offset);
-
-      const pagination = {
-        page,
-        limit,
-        totalRecords: countValue,
-        totalPages: Math.ceil(countValue / limit),
-      };
-
-      return res.status(200).json({
-        success: true,
-        message: "Products retrieved successfully",
-        data: results,
-        meta: pagination,
-      });
+      countValue = countResult[0]?.count || 0;
     } else {
       // No search filter
-      const countResult = await db
+      filteredQuery = selectQueryBuilder.where(
+        eq(productsTables.isDeleted, false),
+      );
+
+      countResult = await db
         .select({
           count: sql<number>`count(*)`,
         })
         .from(productsTables)
         .where(eq(productsTables.isDeleted, false));
 
-      const countValue = countResult[0]?.count || 0;
-
-      // Apply sorting
-      const results = await applySorting(
-        selectQueryBuilder.where(eq(productsTables.isDeleted, false)),
-        sortBy,
-        sortOrder,
-      )
-        .limit(limit)
-        .offset(offset);
-
-      return res.status(200).json({
-        success: true,
-        message: "Products retrieved successfully",
-        data: results,
-        pagination: {
-          page,
-          limit,
-          totalRecords: Number(countValue),
-          totalPages: Math.ceil(countValue / limit),
-        },
-      });
+      countValue = countResult[0]?.count || 0;
     }
+
+    // Apply sorting and fetch the products
+    const products = await applySorting(filteredQuery, sortBy, sortOrder)
+      .limit(limit)
+      .offset(offset);
+
+    // Now fetch variant products for each product
+    const productsWithVariants = await Promise.all(
+      products.map(async (product: Product) => {
+        const variants = await db
+          .select({
+            id: variantProductTables.id,
+            price: variantProductTables.price,
+            originalPrice: variantProductTables.originalPrice,
+            description: variantProductTables.description,
+            shortDescription: variantProductTables.shortDescription,
+            bestDeal: variantProductTables.bestDeal,
+            discountedSale: variantProductTables.discountedSale,
+            isActive: variantProductTables.isActive,
+            createdAt: variantProductTables.createdAt,
+            updatedAt: variantProductTables.updatedAt,
+            colorId: variantProductTables.colorId,
+            unitId: variantProductTables.unitId,
+            colorTitle: colorTables.title,
+            unitTitle: unitsTable.title,
+          })
+          .from(variantProductTables)
+          .leftJoin(
+            colorTables,
+            eq(variantProductTables.colorId, colorTables.id),
+          )
+          .leftJoin(unitsTable, eq(variantProductTables.unitId, unitsTable.id))
+          .where(
+            sql`${eq(variantProductTables.productId, product.id)} AND ${eq(variantProductTables.isDeleted, false)}`,
+          );
+
+        return {
+          ...product,
+          variants,
+        };
+      }),
+    );
+
+    const pagination = {
+      page,
+      limit,
+      totalRecords: Number(countValue),
+      totalPages: Math.ceil(countValue / limit),
+    };
+
+    return res.status(200).json({
+      success: true,
+      message: "Products with variants retrieved successfully",
+      data: productsWithVariants,
+      pagination,
+    });
   } catch (error) {
     return handleError(error, res, PRODUCT_ENDPOINTS.LIST_ALL_PRODUCTS);
   }

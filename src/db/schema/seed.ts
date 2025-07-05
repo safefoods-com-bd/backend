@@ -10,6 +10,7 @@ import {
   categoryLevelsData,
   couponsData,
   deliveryZoneData,
+  mediaData,
   orderData,
   permissionData,
   productData,
@@ -130,6 +131,12 @@ async function seedCategories() {
   }
 }
 
+async function seedMedia() {
+  for (const media of mediaData) {
+    await db.insert(schema.mediaTable).values(media).onConflictDoNothing();
+  }
+}
+
 async function seedWarehouses() {
   for (const warehouse of warehouseData) {
     await db
@@ -160,11 +167,11 @@ async function seedStocks() {
   }
 }
 
-async function seedOrders() {
-  for (const order of orderData) {
-    await db.insert(schema.ordersTable).values(order).onConflictDoNothing();
-  }
-}
+// async function seedOrders() {
+//   for (const order of orderData) {
+//     await db.insert(schema.ordersTable).values(order).onConflictDoNothing();
+//   }
+// }
 
 async function seedOrderProducts() {
   for (const order of productOrderData) {
@@ -201,10 +208,11 @@ async function seedAll() {
   await seedWarehouses();
   await seedProducts();
   await seedVariantProducts();
-  await seedStocks();
-  await seedOrders();
-  await seedOrderProducts();
-  await seedCoupons();
+  await seedMedia();
+  // await seedStocks();
+  // await seedOrders();
+  // await seedOrderProducts();
+  // await seedCoupons();
   await seedDeliveryZones();
 }
 

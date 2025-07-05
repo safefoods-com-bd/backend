@@ -11,7 +11,8 @@ const router = Router();
 router.get("/", listCartItemsV100 as unknown as RequestHandler);
 router.post("/", addToCartV100 as unknown as RequestHandler);
 router.patch("/", updateCartItemV100 as unknown as RequestHandler);
-router.delete("/:id", deleteCartSingleV100 as unknown as RequestHandler);
+// Important: More specific routes must come before parameterized routes
 router.delete("/batch", deleteCartBatchV100 as unknown as RequestHandler);
+router.delete("/:id", deleteCartSingleV100 as unknown as RequestHandler);
 
 export default router;

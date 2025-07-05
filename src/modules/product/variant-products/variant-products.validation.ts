@@ -16,7 +16,7 @@ export const variantProductValidationSchema = z.object({
   productId: z
     .string({ required_error: "Product ID is required" })
     .uuid("Invalid product ID format"),
-  colorId: z.string().uuid("Invalid color ID format").optional(),
+  colorId: z.string().uuid().optional(),
   unitId: z
     .string({ required_error: "Unit ID is required" })
     .uuid("Invalid unit ID format"),

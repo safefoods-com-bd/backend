@@ -43,6 +43,13 @@
       "when": 1751588561087,
       "tag": "0005_added_to_cart",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1751742376561,
+      "tag": "0006_dizzy_wolf_cub",
+      "breakpoints": true
     }
   ]
 }
