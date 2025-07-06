@@ -19,6 +19,7 @@ import {
   stockData,
   userData,
   variantProductData,
+  variantProductMediaData,
   warehouseData,
 } from "./seeders/seedData";
 import { hash } from "bcryptjs";
@@ -197,6 +198,15 @@ async function seedDeliveryZones() {
   }
 }
 
+async function seedVariantProductsMedia() {
+  for (const variantMedia of variantProductMediaData) {
+    await db
+      .insert(schema.variantProductsMediaTables)
+      .values(variantMedia)
+      .onConflictDoNothing();
+  }
+}
+
 async function seedAll() {
   await seedPermissions();
   await seedRoles();
@@ -212,8 +222,9 @@ async function seedAll() {
   // await seedStocks();
   // await seedOrders();
   // await seedOrderProducts();
-  // await seedCoupons();
+  await seedCoupons();
   await seedDeliveryZones();
+  await seedVariantProductsMedia();
 }
 
 const handleError = (error: Error) => {
