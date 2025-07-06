@@ -73,6 +73,17 @@ export const VARIANT_PRODUCT_ENDPOINTS = {
   DELETE_VARIANT_PRODUCTS_BATCH: "DELETE /api/v1/variant-products/batch",
 };
 
+// variant product media
+export const VARIANT_PRODUCT_MEDIA_ENDPOINTS = {
+  LIST_MEDIA_BY_VARIANT_PRODUCT:
+    "GET /api/v1/variant-product-media/variant/:variantProductId",
+  ADD_MEDIA_TO_VARIANT_PRODUCT: "POST /api/v1/variant-product-media",
+  UPDATE_MEDIA_FOR_VARIANT_PRODUCT: "PATCH /api/v1/variant-product-media",
+  DELETE_MEDIA_FROM_VARIANT_PRODUCT: "DELETE /api/v1/variant-product-media/:id",
+  DELETE_ALL_MEDIA_FROM_VARIANT_PRODUCT:
+    "DELETE /api/v1/variant-product-media/variant/:variantProductId",
+};
+
 // addresses
 export const ADDRESS_ENDPOINTS = {
   LIST_ALL_ADDRESSES: "GET /api/v1/addresses",

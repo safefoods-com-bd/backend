@@ -21,6 +21,7 @@ import couponRoutes from "@/modules/order-management/coupon/coupon.routes";
 import deliveryZonesRoutes from "@/modules/order-management/delivery-zones/delivery-zones.routes";
 import cartRoutes from "@/modules/order-management/cart/cart.routes";
 import variantProductsRoutes from "./modules/product/variant-products/variant-products.routes";
+import variantProductMediaRoutes from "./modules/product/variant-product-media/variant-product-media.routes";
 
 // import { validateApiKey } from "./middleware/apiKeyMiddleware";
 // import { isProduction } from "./constants/variables";
@@ -51,6 +52,7 @@ export const registerRoutes = (app: Express) => {
   app.use("/api/v1/categories", categoryRoutes);
   app.use("/api/v1/products", productsRoutes);
   app.use("/api/v1/products/variants", variantProductsRoutes);
+  app.use("/api/v1/variant-product-media", variantProductMediaRoutes);
 
   // order management
   app.use("/api/v1/payment-methods", paymentMethodsRoutes);
@@ -62,4 +64,5 @@ export const registerRoutes = (app: Express) => {
 
   //stock management
   app.use("/api/v1/stocks", stocksRoutes);
+  app.use("/api/v1/products/variants/media", variantProductMediaRoutes);
 };

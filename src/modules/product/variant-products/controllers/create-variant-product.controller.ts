@@ -117,7 +117,7 @@ export const createVariantProductV100 = async (
       throw {
         type: ERROR_TYPES.VALIDATION,
         message:
-          "A variant with the same product, color, and size combination already exists",
+          "A variant with the same product, color, and unit combination already exists",
       };
     }
 

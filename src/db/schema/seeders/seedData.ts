@@ -67,6 +67,16 @@ export const unitData = [
     updatedAt: "2025-07-05T17:05:41.629Z",
   },
   {
+    id: "00abdaf6-f4c5-48b6-a1e4-4bd15842f093",
+    code: "2kg",
+    title: "2kg",
+    baseUnit: "1kg",
+    operator: "*",
+    operationValue: "2",
+    createdAt: "2025-07-06T01:24:47.694Z",
+    updatedAt: "2025-07-06T01:24:47.694Z",
+  },
+  {
     id: "6e700908-6061-4aed-8d91-9f77f198f213",
     code: "5kg",
     title: "5kg",
@@ -183,22 +193,21 @@ export const productData = [
 
 export const variantProductData = [
   {
-    id: "21775847-f5d1-4079-bb7b-a267742b87b5",
-    price: 870,
-    originalPrice: 870,
+    id: "66c423c5-8789-45a3-bcbd-8ce0a9d3e6fb",
+    price: 4000,
+    originalPrice: 4000,
     description: "প্রতি সোমবার ও বৃহস্পতিবার গরু জবাই করা হয়।",
     shortDescription: null,
     bestDeal: false,
     discountedSale: false,
     isActive: true,
     isDeleted: false,
-    createdAt: new Date(),
-    updatedAt: new Date(),
     productId: "20e4cf65-ba20-4804-a0ee-b81f4fc2ea3d",
     colorId: null,
     unitId: "8ec1d954-1814-46cf-981b-2d02ed3cc2ea",
   },
   {
+    id: "e95f72f8-cdfc-4aa4-8595-2a60a6149397",
     price: 800,
     originalPrice: 800,
     description: "প্রতি সোমবার ও বৃহস্পতিবার গরু জবাই করা হয়।",
@@ -212,6 +221,21 @@ export const variantProductData = [
     unitId: "8ec1d954-1814-46cf-981b-2d02ed3cc2ea",
   },
   {
+    id: "0bb99001-7c01-45c5-b4aa-b164854a6413",
+    price: 1600,
+    originalPrice: 1600,
+    description: "প্রতি সোমবার ও বৃহস্পতিবার গরু জবাই করা হয়।",
+    shortDescription: "",
+    bestDeal: false,
+    discountedSale: false,
+    isActive: true,
+    isDeleted: false,
+    productId: "20e4cf65-ba20-4804-a0ee-b81f4fc2ea3d",
+    colorId: null,
+    unitId: "00abdaf6-f4c5-48b6-a1e4-4bd15842f093",
+  },
+  {
+    id: "e9caf159-e9a2-4301-a5c4-944fbdf334ad",
     price: 110,
     originalPrice: 120,
     description: "fresh milk",
@@ -223,6 +247,19 @@ export const variantProductData = [
     isDeleted: false,
     productId: "909b455c-5054-4b1e-9d4b-56f206da3d54",
     unitId: "88824719-0cbe-4f8f-a7da-375494f4de23",
+  },
+];
+
+export const variantProductMediaData = [
+  {
+    id: "c1d37851-9779-483f-a86d-57c7b5515d0b",
+    variantProductId: "66c423c5-8789-45a3-bcbd-8ce0a9d3e6fb",
+    mediaId: "23f5ec04-5cd7-415e-8559-6d67005e3e57",
+  },
+  {
+    id: "fdc2e021-a9c6-4e2f-87b3-2a06c7fb6d85",
+    variantProductId: "e95f72f8-cdfc-4aa4-8595-2a60a6149397",
+    mediaId: "23f5ec04-5cd7-415e-8559-6d67005e3e57",
   },
 ];
 
