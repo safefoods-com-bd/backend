@@ -23,7 +23,7 @@ export const sendEmailWithNodemailer = async (emailData: any) => {
 
 export const sendEmailUsingMailhog = async (emailData: any) => {
   const transporter = nodeMailer.createTransport({
-    host: `mailhog`,
+    host: `safefoods-mailhog`,
     port: 1025,
     secure: false,
     requireTLS: false,

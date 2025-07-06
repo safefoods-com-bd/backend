@@ -30,7 +30,7 @@ export const roleData = [{ name: "admin" }, { name: "user" }];
 
 export const userData = [
   {
-    email: "development@softeko.co",
+    email: "softpiper.dev@softpiper.com",
     password: "admin123",
     registeredAt: new Date(),
     isVerified: true,

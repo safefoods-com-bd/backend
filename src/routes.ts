@@ -35,7 +35,7 @@ export const registerRoutes = (app: Express) => {
   app.use("/api/user-management/profile", profileRoutes);
 
   // auth
-  app.use("/api/auth", authRoutes);
+  app.use("/api/v1/auth", authRoutes);
 
   //general-settings
   app.use("/api", settingsRoutes);
