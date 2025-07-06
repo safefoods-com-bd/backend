@@ -9,8 +9,8 @@ export const cartValidationSchema = z.object({
     .uuid("Invalid variant product ID format"),
   quantity: z
     .number({ required_error: "Quantity is required" })
-    .int("Quantity must be an integer")
-    .positive("Quantity must be positive"),
+    .int("Quantity must be an integer"),
+  // .positive("Quantity must be positive"),
   addedToCheckOut: z.boolean().optional(),
   isPurchased: z.boolean().optional(),
   isDiscarded: z.boolean().optional(),
