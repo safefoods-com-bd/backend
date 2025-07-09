@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { db } from "@/db/db";
 import { handleError } from "@/utils/errorHandler";
-import { asc, desc, eq, sql } from "drizzle-orm";
+import { and, asc, desc, eq, sql } from "drizzle-orm";
 import addedToCartsTable from "@/db/schema/order-management/added_to_carts";
 import { CART_ENDPOINTS } from "@/data/endpoints";
 import variantProductTables from "@/db/schema/product-management/products/variant_products";
@@ -37,7 +37,11 @@ export const listCartItemsV100 = async (
 
     // Handle filtering by userId if provided
     if (userId) {
-      const userFilter = eq(addedToCartsTable.userId, userId);
+      const userFilter = and(
+        eq(addedToCartsTable.userId, userId),
+        eq(addedToCartsTable.isDiscarded, false),
+        eq(addedToCartsTable.isPurchased, false),
+      );
 
       // Get filtered cart items
       cartItems = await db
