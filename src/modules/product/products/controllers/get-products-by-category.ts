@@ -54,13 +54,13 @@ export const listProductsByCategoryV100 = async (
     const offset = (page - 1) * limit;
     const sortBy = (req.query.sortBy as string) || "createdAt";
     const sortOrder = (req.query.sortOrder as string) || "desc";
-    const categoryId = req.params.categoryId as string;
+    const categorySlug = req.params.slug as string;
     // First, build a subquery to find matching product IDs
 
-    if (!categoryId) {
+    if (!categorySlug) {
       return res.status(400).json({
         success: false,
-        message: "Category ID is required",
+        message: "Category slug is required",
       });
     }
 
@@ -68,7 +68,11 @@ export const listProductsByCategoryV100 = async (
     const matchingProductIdsQuery = db
       .selectDistinct({ id: productsTables.id })
       .from(productsTables)
-      .where(eq(productsTables.categoryId, categoryId));
+      .leftJoin(
+        categoriesTable,
+        eq(productsTables.categoryId, categoriesTable.id),
+      )
+      .where(eq(categoriesTable.slug, categorySlug));
 
     // Get the count of matching products
     const countResult = await db

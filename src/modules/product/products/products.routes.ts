@@ -19,7 +19,7 @@ router.get("/:id", getSingleProductV100 as RequestHandler);
 
 // Get products by category
 router.get(
-  "/category/:categoryId",
+  "/category/:slug",
   listProductsByCategoryV100 as unknown as RequestHandler,
 );
 
