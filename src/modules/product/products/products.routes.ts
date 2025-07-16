@@ -7,6 +7,7 @@ import {
   deleteProductSingleV100,
   deleteProductBatchV100,
 } from "./controllers/delete-product.controller";
+import { listProductsByCategoryV100 } from "./controllers/get-products-by-category";
 
 const router = Router();
 
@@ -15,6 +16,12 @@ router.get("/", listAllProductsV100 as unknown as RequestHandler);
 
 // Get a single product by ID
 router.get("/:id", getSingleProductV100 as RequestHandler);
+
+// Get products by category
+router.get(
+  "/category/:categoryId",
+  listProductsByCategoryV100 as unknown as RequestHandler,
+);
 
 // Create a new product
 router.post("/", createProductV100 as unknown as RequestHandler);

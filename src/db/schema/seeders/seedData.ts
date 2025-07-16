@@ -53,6 +53,11 @@ export const mediaData = [
     title: "Boneless Beef-1kg",
     url: "https://safefoods.com.bd/_next/image?url=http%3A%2F%2Fres.cloudinary.com%2Fdymnymsph%2Fimage%2Fupload%2Fv1746605231%2Fsafefoods%2Fzddhpxkzwvull3i9xlof.png&w=640&q=75",
   },
+  {
+    id: "bf28d2c1-cb5e-4b09-b23c-04c028999417",
+    title: "Safe Broiler",
+    url: "https://safefoods.com.bd/_next/image?url=http%3A%2F%2Fres.cloudinary.com%2Fdymnymsph%2Fimage%2Fupload%2Fv1751343252%2Fsafefoods%2Fgiyxzxzd0sf75lrrw0a7.webp&w=640&q=75",
+  },
 ];
 
 export const unitData = [
