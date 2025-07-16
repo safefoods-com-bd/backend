@@ -5,6 +5,12 @@ import { and, asc, desc, eq, sql } from "drizzle-orm";
 import addedToCartsTable from "@/db/schema/order-management/added_to_carts";
 import { CART_ENDPOINTS } from "@/data/endpoints";
 import variantProductTables from "@/db/schema/product-management/products/variant_products";
+import {
+  mediaTable,
+  productsTable,
+  unitsTable,
+  variantProductsMediaTables,
+} from "@/db/schema";
 
 /**
  * Lists all cart items from the database with optional filtering and pagination
@@ -104,14 +110,47 @@ export const listCartItemsV100 = async (
         }
 
         const productInfo = await db
-          .select({ price: variantProductTables.price })
+          .select({
+            price: variantProductTables.price,
+            title: productsTable.title,
+            slug: productsTable.slug,
+            imageId: variantProductsMediaTables.mediaId,
+            unitId: variantProductTables.unitId,
+            unitCode: unitsTable.code,
+            unitTitle: unitsTable.title,
+          })
           .from(variantProductTables)
+          .leftJoin(
+            productsTable,
+            eq(variantProductTables.productId, productsTable.id),
+          )
+          .leftJoin(
+            variantProductsMediaTables,
+            eq(
+              variantProductTables.id,
+              variantProductsMediaTables.variantProductId,
+            ),
+          )
+          .leftJoin(unitsTable, eq(variantProductTables.unitId, unitsTable.id))
           .where(eq(variantProductTables.id, item.variantProductId as string))
           .limit(1);
+
+        const mediaUrl = productInfo[0]?.imageId
+          ? await db
+              .select({ url: mediaTable.url })
+              .from(mediaTable)
+              .where(eq(mediaTable.id, productInfo[0].imageId))
+          : null;
 
         return {
           ...item,
           productPrice: productInfo[0]?.price || 0,
+          productTitle: productInfo[0]?.title || "Unknown Product",
+          productSlug: productInfo[0]?.slug || "unknown-product",
+          productImageUrl: mediaUrl ? mediaUrl[0]?.url : null,
+          unitId: productInfo[0]?.unitId || null,
+          unitCode: productInfo[0]?.unitCode || null,
+          unitTitle: productInfo[0]?.unitTitle || "Unit",
         };
       }),
     );
