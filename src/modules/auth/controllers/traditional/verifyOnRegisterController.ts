@@ -6,7 +6,7 @@ import { db } from "@/db/db";
 import { accountsTable, usersTable, usersToAccountsTable } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { decryptTokenData } from "@/lib/authFunctions";
-import { ACCESS_TOKEN_NAME } from "@/constants/variables";
+import { EMAIL_VERIFICATION_TOKEN_NAME } from "@/constants/variables";
 import { USER_ACCOUNT_TYPE } from "@/data/constants";
 
 export const verifyOnRegister = async (req: Request, res: Response) => {
@@ -87,7 +87,7 @@ export const verifyOnRegister = async (req: Request, res: Response) => {
     });
 
     // Clear the access token cookie
-    res.clearCookie(ACCESS_TOKEN_NAME);
+    res.clearCookie(EMAIL_VERIFICATION_TOKEN_NAME);
 
     return res.status(200).json({
       success: true,
