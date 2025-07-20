@@ -1,16 +1,16 @@
 import { Router } from "express";
-import { register } from "./controllers/registerController";
-import { verifyOnRegister } from "./controllers/verifyOnRegisterController";
-import { login } from "./controllers/loginController";
+import { register } from "./controllers/traditional/registerController";
+import { verifyOnRegister } from "./controllers/traditional/verifyOnRegisterController";
+import { login } from "./controllers/traditional/loginController";
 import { refreshTokenRequest } from "./controllers/refreshTokenController";
-import { forgotPassword } from "./controllers/forgotPassword";
-import { resetPassword } from "./controllers/resetPassword";
-import { googleSignIn } from "./controllers/googleSigninController";
+import { forgotPassword } from "./controllers/traditional/forgotPassword";
+import { resetPassword } from "./controllers/traditional/resetPassword";
+import { googleSignIn } from "./controllers/traditional/googleSigninController";
 import {
   rateLimitingOnIndividualIp,
   rateLimitingOnIndividualUserAndIp,
 } from "@/middleware/rateLimiting";
-import { logout } from "./controllers/logout";
+import { logout } from "./controllers/traditional/logout";
 
 const router = Router();
 router.post(

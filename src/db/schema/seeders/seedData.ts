@@ -28,6 +28,27 @@ export const permissionData = [
 
 export const roleData = [{ name: "admin" }, { name: "user" }];
 
+export const accountData = [
+  {
+    provider_name: "traditional",
+  },
+  {
+    provider_name: "mobile_otp",
+  },
+  {
+    provider_name: "google",
+  },
+  {
+    provider_name: "facebook",
+  },
+  {
+    provider_name: "apple",
+  },
+  {
+    provider_name: "github",
+  },
+];
+
 export const userData = [
   {
     email: "softpiper.dev@softpiper.com",

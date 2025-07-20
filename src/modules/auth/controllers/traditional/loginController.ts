@@ -1,5 +1,5 @@
 import { validateZodSchema } from "@/middleware/validationMiddleware";
-import { loginUserSchema } from "../authValidations";
+import { loginUserSchema } from "../../authValidations";
 import {
   permissionsTable,
   permissionToRolesTable,

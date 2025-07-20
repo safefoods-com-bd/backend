@@ -1,12 +1,13 @@
 import { handleError } from "@/utils/errorHandler";
 import { Request, Response } from "express";
-import { verifyOnRegisterSchema } from "../authValidations";
+import { verifyOnRegisterSchema } from "../../authValidations";
 import { validateZodSchema } from "@/middleware/validationMiddleware";
 import { db } from "@/db/db";
-import { usersTable } from "@/db/schema";
+import { accountsTable, usersTable, usersToAccountsTable } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { decryptTokenData } from "@/lib/authFunctions";
 import { ACCESS_TOKEN_NAME } from "@/constants/variables";
+import { USER_ACCOUNT_TYPE } from "@/data/constants";
 
 export const verifyOnRegister = async (req: Request, res: Response) => {
   try {
@@ -73,6 +74,17 @@ export const verifyOnRegister = async (req: Request, res: Response) => {
         isVerified: usersTable.isVerified,
         registeredAt: usersTable.registeredAt,
       });
+
+    // Add provider to the accounts tables
+    const accountId = await db
+      .select({ id: accountsTable.id })
+      .from(accountsTable)
+      .where(eq(accountsTable.provider_name, USER_ACCOUNT_TYPE.TRADITIONAL))
+      .limit(1);
+    await db.insert(usersToAccountsTable).values({
+      userId: updatedUser[0].id,
+      accountId: accountId[0].id,
+    });
 
     // Clear the access token cookie
     res.clearCookie(ACCESS_TOKEN_NAME);

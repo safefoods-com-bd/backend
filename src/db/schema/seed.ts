@@ -6,6 +6,7 @@ const connectionString = process.env.DATABASE_URL!;
 export const db = drizzle(connectionString, { schema, logger: true });
 
 import {
+  accountData,
   categoryData,
   categoryLevelsData,
   couponsData,
@@ -61,6 +62,13 @@ async function seedPermissionToRoles() {
       .onConflictDoNothing();
   }
 }
+//Insert Different Types of Accounts
+async function seedAccounts() {
+  for (const account of accountData) {
+    await db.insert(schema.accountsTable).values(account).onConflictDoNothing();
+  }
+}
+
 // Assign specific permissions to 'user' role
 async function seedUserRolePermissions() {
   try {
@@ -105,11 +113,24 @@ async function seedUsers() {
     .select({ id: schema.rolesTable.id })
     .from(schema.rolesTable)
     .where(eq(schema.rolesTable.name, "admin"));
+  const accountId = await db
+    .select({ id: schema.accountsTable.id })
+    .from(schema.accountsTable)
+    .where(eq(schema.accountsTable.provider_name, "traditional"));
   for (const user of userData) {
     const hashedPassword = await hash(user.password, 10);
-    await db
+    const newUser = await db
       .insert(schema.usersTable)
       .values({ ...user, roleId: roleId[0].id, password: hashedPassword })
+      .returning()
+      .onConflictDoNothing();
+
+    await db
+      .insert(schema.usersToAccountsTable)
+      .values({
+        userId: newUser[0].id,
+        accountId: accountId[0].id,
+      })
       .onConflictDoNothing();
   }
 }
@@ -212,6 +233,7 @@ async function seedAll() {
   await seedRoles();
   await seedPermissionToRoles();
   await seedUserRolePermissions();
+  await seedAccounts();
   await seedUsers();
   await seedCategoryLevels();
   await seedCategories();

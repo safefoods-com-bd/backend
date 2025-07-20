@@ -1,5 +1,5 @@
 import { validateZodSchema } from "@/middleware/validationMiddleware";
-import { registerUserSchema } from "../authValidations";
+import { registerUserSchema } from "../../authValidations";
 import { rolesTable, usersTable } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { db } from "@/db/db";
