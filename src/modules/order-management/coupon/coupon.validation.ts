@@ -24,9 +24,10 @@ export const couponValidationSchema = z.object({
 export type CouponValidationType = z.infer<typeof couponValidationSchema>;
 
 export const validateCouponValidationSchema = z.object({
-  couponId: z
-    .string({ required_error: "Coupon ID is required" })
-    .uuid("Invalid coupon ID format"),
+  couponTitle: z
+    .string({ required_error: "Coupon title is required" })
+    .min(1, "Coupon title cannot be empty")
+    .max(255, "Coupon title too long"),
 });
 
 export type ValidateCouponValidationType = z.infer<

@@ -95,6 +95,7 @@ export const login = async (req: Request, res: Response) => {
       isVerified: userExists[0].isVerified,
       isDeleted: userExists[0].isDeleted,
       registeredAt: userExists[0].registeredAt,
+      accessToken: "", // will be set later
     };
 
     // Generate access token and refresh token
@@ -110,6 +111,8 @@ export const login = async (req: Request, res: Response) => {
       },
       REFRESH_TOKEN_AGE,
     );
+
+    userDetails.accessToken = accessToken;
 
     // Save the refresh token in the database
     const userAgent: string = req.headers["user-agent"] || "unknown";
