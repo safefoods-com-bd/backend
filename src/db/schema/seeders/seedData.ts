@@ -68,8 +68,6 @@ export const unitData = [
     baseUnit: "1kg",
     operator: null,
     operationValue: null,
-    createdAt: "2025-07-05T17:05:41.629Z",
-    updatedAt: "2025-07-05T17:05:41.629Z",
   },
   {
     id: "00abdaf6-f4c5-48b6-a1e4-4bd15842f093",
@@ -78,8 +76,6 @@ export const unitData = [
     baseUnit: "1kg",
     operator: "*",
     operationValue: "2",
-    createdAt: "2025-07-06T01:24:47.694Z",
-    updatedAt: "2025-07-06T01:24:47.694Z",
   },
   {
     id: "6e700908-6061-4aed-8d91-9f77f198f213",
@@ -88,8 +84,6 @@ export const unitData = [
     baseUnit: "1kg",
     operator: "*",
     operationValue: "5",
-    createdAt: "2025-07-05T17:24:08.003Z",
-    updatedAt: "2025-07-05T17:24:08.003Z",
   },
   {
     id: "88824719-0cbe-4f8f-a7da-375494f4de23",
@@ -98,8 +92,6 @@ export const unitData = [
     baseUnit: "1L",
     operator: null,
     operationValue: null,
-    createdAt: "2025-07-05T19:08:38.575Z",
-    updatedAt: "2025-07-05T19:08:38.575Z",
   },
 ];
 

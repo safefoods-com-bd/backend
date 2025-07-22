@@ -17,6 +17,7 @@ import {
   productOrderData,
   roleData,
   stockData,
+  unitData,
   userData,
   variantProductData,
   variantProductMediaData,
@@ -153,6 +154,13 @@ async function seedProducts() {
   }
 }
 
+//unitData
+async function seedUnits() {
+  for (const unit of unitData) {
+    await db.insert(schema.unitsTable).values(unit).onConflictDoNothing();
+  }
+}
+
 async function seedVariantProducts() {
   for (const variant of variantProductData) {
     await db
@@ -217,6 +225,7 @@ async function seedAll() {
   await seedCategories();
   await seedWarehouses();
   await seedProducts();
+  await seedUnits();
   await seedVariantProducts();
   await seedMedia();
   // await seedStocks();
