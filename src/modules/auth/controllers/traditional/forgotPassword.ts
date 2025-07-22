@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
 import { Request, Response } from "express";
-import { forgotPasswordSchema } from "../authValidations";
+import { forgotPasswordSchema } from "../../authValidations";
 
 import { db } from "@/db/db";
 import { usersTable } from "@/db/schema";
