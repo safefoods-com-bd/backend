@@ -28,9 +28,11 @@ export const validateCouponV100: RequestHandler = async (
       return;
     }
 
-    const { couponId } = validationResult.data;
+    const { couponTitle } = validationResult.data;
 
     // Check if coupon is valid
+    const formattedTitle = couponTitle.replace(/\s+/g, "").toLowerCase();
+
     const coupon = await db
       .select({
         id: couponsTable.id,
@@ -43,9 +45,9 @@ export const validateCouponV100: RequestHandler = async (
       .from(couponsTable)
       .where(
         and(
-          eq(couponsTable.id, couponId),
+          // Compare after removing spaces and converting to lowercase
+          sql`LOWER(REPLACE(${couponsTable.title}, ' ', '')) = ${formattedTitle}`,
           eq(couponsTable.isActive, true),
-          //   eq(couponsTable.isDeleted, false),
           sql`valid_date >= ${new Date().toISOString().split("T")[0]}`,
         ),
       );
