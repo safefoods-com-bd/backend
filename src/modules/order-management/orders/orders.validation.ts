@@ -33,21 +33,15 @@ const productOrderSchema = z.object({
 // Define base schema without refine
 const baseOrderSchema = z.object({
   subTotal: z
-    .string({ required_error: "Subtotal is required" })
-    .regex(
-      /^\d+(\.\d{1,2})?$/,
-      "Subtotal must be a valid number with up to 2 decimal places",
-    ),
+    .number({ required_error: "Subtotal is required" })
+    .min(0, "Subtotal must be non-negative"),
   discount: z
     .number({ required_error: "Discount is required" })
     .min(0, "Discount must be non-negative"),
   couponId: z.string().uuid("Invalid coupon ID format").optional(),
   afterDiscountTotal: z
-    .string({ required_error: "After discount total is required" })
-    .regex(
-      /^\d+(\.\d{1,2})?$/,
-      "After discount total must be a valid number with up to 2 decimal places",
-    ),
+    .number({ required_error: "After discount total is required" })
+    .min(0, "After discount total must be non-negative"),
   deliveryCharge: z
     .number({ required_error: "Delivery charge is required" })
     .min(0, "Delivery charge must be non-negative"),

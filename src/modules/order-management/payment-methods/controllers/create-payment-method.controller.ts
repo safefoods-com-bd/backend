@@ -57,6 +57,7 @@ export const createPaymentMethodV100 = async (req: Request, res: Response) => {
       data: newPaymentMethod[0],
     });
   } catch (error) {
+    console.error("Error creating payment method:", error);
     handleError(error, res, PAYMENT_METHOD_ENDPOINTS.CREATE_PAYMENT_METHOD);
   }
 };

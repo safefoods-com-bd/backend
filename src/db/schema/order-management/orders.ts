@@ -32,13 +32,10 @@ const ordersTable = pgTable("orders", {
   userId: uuid("user_id")
     .notNull()
     .references(() => usersTable.id),
-  subTotal: numeric("sub_total", { precision: 10, scale: 2 }).notNull(), // products prices
+  subTotal: real("sub_total").notNull(), // products prices
   discount: real("discount").notNull().default(0), // discounts
   couponId: uuid("coupon_id").references(() => couponsTable.id), // coupon applied
-  afterDiscountTotal: numeric("after_discount_total", {
-    precision: 10,
-    scale: 2,
-  }).notNull(),
+  afterDiscountTotal: real("after_discount_total").notNull(),
   deliveryCharge: real("delivery_charge").notNull().default(0), // delivery charges
   deliveryZoneId: uuid("delivery_zone_id")
     .references(() => deliveryZoneTable.id)

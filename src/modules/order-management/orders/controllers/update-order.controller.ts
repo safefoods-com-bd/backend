@@ -175,6 +175,7 @@ export const updateOrderV100 = async (req: Request, res: Response) => {
       data: updatedOrder[0],
     });
   } catch (error) {
+    console.log("Error in updateOrderV100:", error);
     handleError(error, res, ORDER_ENDPOINTS.UPDATE_ORDER);
   }
 };

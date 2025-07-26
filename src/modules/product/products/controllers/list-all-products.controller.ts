@@ -11,6 +11,7 @@ import variantProductsMediaTables from "@/db/schema/product-management/products/
 import colorTables from "@/db/schema/utils/colors";
 import unitsTable from "@/db/schema/utils/units";
 import mediaTables from "@/db/schema/utils/media";
+import { stockTable } from "@/db/schema";
 
 // Define product interface for type checking
 interface Product {
@@ -169,6 +170,7 @@ export const listAllProductsV100 = async (
             unitId: variantProductTables.unitId,
             colorTitle: colorTables.title,
             unitTitle: unitsTable.title,
+            stock: stockTable.quantity,
           })
           .from(variantProductTables)
           .leftJoin(
@@ -176,6 +178,10 @@ export const listAllProductsV100 = async (
             eq(variantProductTables.colorId, colorTables.id),
           )
           .leftJoin(unitsTable, eq(variantProductTables.unitId, unitsTable.id))
+          .leftJoin(
+            stockTable,
+            eq(variantProductTables.id, stockTable.variantProductId),
+          )
           .where(
             sql`${eq(variantProductTables.productId, product.id)} AND ${eq(variantProductTables.isDeleted, false)}`,
           );

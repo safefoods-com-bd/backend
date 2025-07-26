@@ -184,9 +184,19 @@ async function seedUnits() {
 
 async function seedVariantProducts() {
   for (const variant of variantProductData) {
-    await db
+    const result = await db
       .insert(schema.variantProductsTable)
       .values(variant)
+      .returning()
+      .onConflictDoNothing();
+    console.log("Variant Product Result:", result);
+    await db
+      .insert(schema.stockTable)
+      .values({
+        variantProductId: result[0].id,
+        quantity: variant.initialStock,
+        warehouseId: "257b861a-50e6-4b79-a5fd-ae87ddefc88b",
+      })
       .onConflictDoNothing();
   }
 }

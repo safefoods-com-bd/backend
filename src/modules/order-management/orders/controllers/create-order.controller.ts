@@ -166,6 +166,7 @@ export const createOrderV100 = async (req: Request, res: Response) => {
       },
     });
   } catch (error) {
+    console.log("Error creating order:", error);
     handleError(error, res, ORDER_ENDPOINTS.CREATE_ORDER);
   }
 };
