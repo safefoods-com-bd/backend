@@ -14,6 +14,12 @@ export const addressValidationSchema = z.object({
     .min(1, "Floor number cannot be empty")
     .max(100, "Floor number too long")
     .optional(),
+  addressLine: z
+    .string({
+      required_error: "Address line is required",
+    })
+    .min(1, "Address line cannot be empty")
+    .max(500, "Address line too long"),
   name: z.string().min(1, "Name cannot be empty").max(100, "Name too long"),
   phoneNo: z
     .string({ required_error: "Phone number is required" })
@@ -30,6 +36,7 @@ export const addressValidationSchema = z.object({
     .min(1, "Postal code cannot be empty")
     .max(20, "Postal code too long")
     .optional(),
+  isActive: z.boolean().default(false),
 });
 
 export type AddressValidationType = z.infer<typeof addressValidationSchema>;

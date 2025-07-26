@@ -3,7 +3,7 @@ import { db } from "@/db/db";
 import { ERROR_TYPES, handleError } from "@/utils/errorHandler";
 import { addressesTable } from "@/db/schema";
 import { updateAddressValidationSchema } from "../addresses.validation";
-import { eq } from "drizzle-orm";
+import { and, eq, not } from "drizzle-orm";
 import { ADDRESS_ENDPOINTS } from "@/data/endpoints";
 
 /**
@@ -46,20 +46,40 @@ export const updateAddressV100 = async (req: Request, res: Response) => {
       };
     }
 
-    // Remove undefined values from updateData to avoid updating fields with undefined
-    const filteredUpdateData = Object.fromEntries(
-      Object.entries(updateData).filter(([, value]) => value !== undefined),
-    );
-
     // Update the address record with updatedAt timestamp
     const updatedAddress = await db
       .update(addressesTable)
       .set({
-        ...filteredUpdateData,
+        ...updateData,
         updatedAt: new Date(),
       })
       .where(eq(addressesTable.id, id))
       .returning();
+
+    if (updateData.isActive === true && updatedAddress[0].isActive === true) {
+      //get all other addresses of the user except the updated one
+      const otherAddresses = await db
+        .select()
+        .from(addressesTable)
+        .where(
+          and(
+            eq(addressesTable.userId, updatedAddress[0].userId),
+            not(eq(addressesTable.id, id)),
+          ), // Exclude the updated address
+        );
+      // Deactivate all other addresses
+      if (otherAddresses.length > 0) {
+        await db
+          .update(addressesTable)
+          .set({ isActive: false })
+          .where(
+            and(
+              eq(addressesTable.userId, updatedAddress[0].userId),
+              not(eq(addressesTable.id, id)),
+            ),
+          );
+      }
+    }
 
     return res.status(200).json({
       success: true,

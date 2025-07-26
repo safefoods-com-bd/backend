@@ -30,13 +30,13 @@ export const createOrderV100 = async (req: Request, res: Response) => {
     }
 
     const {
-      subTotal,
-      discount,
+      subTotal, // products prices
+      discount, // coupon discount
       couponId,
-      afterDiscountTotal,
-      deliveryCharge,
+      afterDiscountTotal, // total after discount
+      deliveryCharge, // delivery charge
       deliveryZoneId,
-      total,
+      total, // after delivery charge
       preferredDeliveryDateAndTime,
       paymentMethodId,
       transactionNo,

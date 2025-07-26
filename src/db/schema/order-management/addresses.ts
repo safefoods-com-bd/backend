@@ -20,6 +20,7 @@ const addressesTable = pgTable(
       .references(() => usersTable.id, { onDelete: "cascade" }),
     flatNo: varchar("flat_no", { length: 100 }),
     floorNo: varchar("floor_no", { length: 100 }),
+    addressLine: text("address_line").notNull(),
     name: varchar("name", { length: 100 }).notNull(),
     phoneNo: varchar("phone_no", { length: 100 }).notNull(),
     deliveryNotes: text("delivery_notes"),

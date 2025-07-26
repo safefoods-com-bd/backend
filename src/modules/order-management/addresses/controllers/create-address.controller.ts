@@ -4,6 +4,7 @@ import { ERROR_TYPES, handleError } from "@/utils/errorHandler";
 import { addressesTable } from "@/db/schema";
 import { addressValidationSchema } from "../addresses.validation";
 import { ADDRESS_ENDPOINTS } from "@/data/endpoints";
+import { eq } from "drizzle-orm";
 
 /**
  * Creates a new address record in the database
@@ -29,6 +30,7 @@ export const createAddressV100 = async (req: Request, res: Response) => {
       userId,
       flatNo,
       floorNo,
+      addressLine,
       name,
       phoneNo,
       deliveryNotes,
@@ -36,7 +38,14 @@ export const createAddressV100 = async (req: Request, res: Response) => {
       state,
       country,
       postalCode,
+      isActive = false, // Default to false if not provided
     } = validationResult.data;
+
+    // check the users already has addresses
+    const existingAddress = await db
+      .select()
+      .from(addressesTable)
+      .where(eq(addressesTable.userId, userId));
 
     // Create address record
     const newAddress = await db
@@ -45,6 +54,7 @@ export const createAddressV100 = async (req: Request, res: Response) => {
         userId,
         flatNo,
         floorNo,
+        addressLine,
         name,
         phoneNo,
         deliveryNotes,
@@ -52,6 +62,7 @@ export const createAddressV100 = async (req: Request, res: Response) => {
         state,
         country,
         postalCode,
+        isActive: existingAddress.length === 0 ? true : isActive, // Set isActive to true only if no existing addresses
       })
       .returning();
 

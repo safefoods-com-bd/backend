@@ -19,7 +19,7 @@ router.post("/", createAddressV100 as RequestHandler);
 router.patch("/:id", updateAddressV100 as RequestHandler);
 
 // Delete a single address
-router.delete("/", deleteAddressV100 as RequestHandler);
+router.delete("/:id", deleteAddressV100 as RequestHandler);
 
 router.delete("/batch", deleteAddressesBatchV100 as RequestHandler);
 

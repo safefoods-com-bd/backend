@@ -8,7 +8,7 @@ CREATE TABLE "accounts" (
 --> statement-breakpoint
 CREATE TABLE "addresses" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"user_id" integer NOT NULL,
+	"user_id" uuid NOT NULL,
 	"flat_no" varchar(100),
 	"floor_no" varchar(100),
 	"name" varchar(100) NOT NULL,
@@ -18,6 +18,7 @@ CREATE TABLE "addresses" (
 	"state" varchar(100),
 	"country" varchar(100) DEFAULT 'Bangladesh' NOT NULL,
 	"postal_code" varchar(20),
+	"is_active" boolean DEFAULT false NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL
 );

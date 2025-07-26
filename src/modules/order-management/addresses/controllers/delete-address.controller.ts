@@ -6,7 +6,7 @@ import {
   deleteAddressValidationSchema,
   deleteAddressesBatchValidationSchema,
 } from "../addresses.validation";
-import { eq, inArray } from "drizzle-orm";
+import { and, eq, inArray, not } from "drizzle-orm";
 import { ADDRESS_ENDPOINTS } from "@/data/endpoints";
 import { z } from "zod";
 
@@ -19,7 +19,9 @@ import { z } from "zod";
 export const deleteAddressV100 = async (req: Request, res: Response) => {
   try {
     // Validate input using Zod schema
-    const validationResult = deleteAddressValidationSchema.safeParse(req.body);
+    const validationResult = deleteAddressValidationSchema.safeParse(
+      req.params,
+    );
 
     if (!validationResult.success) {
       throw {
@@ -51,6 +53,24 @@ export const deleteAddressV100 = async (req: Request, res: Response) => {
       .delete(addressesTable)
       .where(eq(addressesTable.id, id))
       .returning();
+
+    // if user has multiple addresses, and the active one is deleted, make another one active
+    const otherAddresses = await db
+      .select()
+      .from(addressesTable)
+      .where(
+        and(
+          eq(addressesTable.userId, existingAddress[0].userId),
+          not(eq(addressesTable.id, id)),
+        ), // Exclude the updated address
+      );
+    // Deactivate all other addresses
+    if (otherAddresses.length > 0) {
+      await db
+        .update(addressesTable)
+        .set({ isActive: true })
+        .where(eq(addressesTable.id, otherAddresses[0].id));
+    }
 
     return res.status(200).json({
       success: true,
