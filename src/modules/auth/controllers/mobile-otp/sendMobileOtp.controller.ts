@@ -1,27 +1,28 @@
 import {
+  EMAIL_VERIFICATION_COOKIE_MAX_AGE,
+  isProduction,
   OTP_VERIFICATION_TOKEN_AGE,
-  REFRESH_TOKEN_AGE,
+  OTP_VERIFICATION_TOKEN_NAME,
 } from "@/constants/variables";
+import { AUTH_ENDPOINTS } from "@/data/endpoints";
 import { encrypt } from "@/lib/authFunctions";
+import { handleError } from "@/utils/errorHandler";
 import axios from "axios";
 import { Request, Response } from "express";
 
-export const sendMobileOtpController = async (req: Request, res: Response) => {
+export const sendMobileOtpControllerV100 = async (
+  req: Request,
+  res: Response,
+) => {
   try {
-    const { mobileNumber } = req.body;
-
-    // Validate mobile number format
-    if (!/^\d{10}$/.test(mobileNumber)) {
-      return res.status(400).json({ error: "Invalid mobile number format" });
-    }
+    const { phoneNumber } = req.body;
 
     // Simulate sending OTP
     const otp = Math.floor(100000 + Math.random() * 900000); // Generate a 6-digit OTP
-    console.log(`OTP sent to ${mobileNumber}: ${otp}`); // Replace with actual sending logic
 
     const token = await encrypt(
       {
-        mobileNumber,
+        phoneNumber,
         otp,
       },
       OTP_VERIFICATION_TOKEN_AGE,
@@ -30,9 +31,9 @@ export const sendMobileOtpController = async (req: Request, res: Response) => {
     const greenwebsms = new URLSearchParams();
     greenwebsms.append(
       "token",
-      "11366213142172675990283780b925db54e5ae6eff6d55d95a4ec",
+      "96220949491686887389228ffc24f27e5b6ad7592542e365b212",
     );
-    greenwebsms.append("to", mobileNumber);
+    greenwebsms.append("to", phoneNumber);
     greenwebsms.append("message", `আপনার লগইন OTP: ${otp}`);
     const response = await axios.post(
       "http://api.greenweb.com.bd/api.php",
@@ -40,11 +41,14 @@ export const sendMobileOtpController = async (req: Request, res: Response) => {
     );
 
     if (response.data.includes("Ok")) {
+      res.cookie(OTP_VERIFICATION_TOKEN_NAME, token, {
+        httpOnly: true,
+        sameSite: isProduction ? "none" : "lax", // "none" for production, "lax" for development
+        secure: isProduction, // true for production, false for development
+        maxAge: EMAIL_VERIFICATION_COOKIE_MAX_AGE, // 1 hour
+      });
       return res.status(200).json({
         message: "OTP sent successfully",
-        otp,
-        token,
-        mobileNumber,
         success: true,
       });
     } else if (response.data.includes("Invalid")) {
@@ -53,7 +57,6 @@ export const sendMobileOtpController = async (req: Request, res: Response) => {
       return res.status(500).json({ error: "Something went wrong" });
     }
   } catch (error) {
-    console.error("Error sending OTP:", error);
-    return res.status(500).json({ error: "Internal server error" });
+    handleError(error, res, AUTH_ENDPOINTS.SEND_MOBILE_OTP);
   }
 };

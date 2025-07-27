@@ -1,4 +1,4 @@
-import { Router } from "express";
+import { RequestHandler, Router } from "express";
 import { register } from "./controllers/traditional/registerController";
 import { verifyOnRegister } from "./controllers/traditional/verifyOnRegisterController";
 import { login } from "./controllers/traditional/loginController";
@@ -11,6 +11,8 @@ import {
   rateLimitingOnIndividualUserAndIp,
 } from "@/middleware/rateLimiting";
 import { logout } from "./controllers/traditional/logout";
+import { sendMobileOtpControllerV100 } from "./controllers/mobile-otp/sendMobileOtp.controller";
+import { verifyMobileOtpV100 } from "./controllers/mobile-otp/verifyMobileOtp.controller";
 
 const router = Router();
 router.post(
@@ -64,5 +66,9 @@ router.post("/logout", (req, res) => {
 router.get("/google", (req, res) => {
   googleSignIn(req, res);
 });
+
+// Mobile OTP routes
+router.post("/send-mobile-otp", sendMobileOtpControllerV100 as RequestHandler);
+router.post("/verify-mobile-otp", verifyMobileOtpV100 as RequestHandler);
 
 export default router;

@@ -3,7 +3,7 @@ import { Request, Response } from "express";
 import { verifyOnRegisterSchema } from "../../authValidations";
 import { validateZodSchema } from "@/middleware/validationMiddleware";
 import { db } from "@/db/db";
-import { accountsTable, usersTable, usersToAccountsTable } from "@/db/schema";
+import { usersTable, usersToAccountsTable } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { decryptTokenData } from "@/lib/authFunctions";
 import { EMAIL_VERIFICATION_TOKEN_NAME } from "@/constants/variables";
@@ -75,15 +75,10 @@ export const verifyOnRegister = async (req: Request, res: Response) => {
         registeredAt: usersTable.registeredAt,
       });
 
-    // Add provider to the accounts tables
-    const accountId = await db
-      .select({ id: accountsTable.id })
-      .from(accountsTable)
-      .where(eq(accountsTable.provider_name, USER_ACCOUNT_TYPE.TRADITIONAL))
-      .limit(1);
+    // Add provider to the accounts tables;
     await db.insert(usersToAccountsTable).values({
       userId: updatedUser[0].id,
-      accountId: accountId[0].id,
+      providerName: USER_ACCOUNT_TYPE.TRADITIONAL,
     });
 
     // Clear the access token cookie

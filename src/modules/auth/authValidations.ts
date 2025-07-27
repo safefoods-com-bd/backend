@@ -28,3 +28,11 @@ export const verifyOnResetPasswordSchema = z.object({
   password: z.string().min(8),
   confirmPassword: z.string().min(8),
 });
+
+export const verifyMobileOtpSchema = z.object({
+  otp: z.number({ required_error: "otp is required" }),
+  phoneNumber: z
+    .string({ required_error: "phoneNumber is required" })
+    .min(10)
+    .max(15),
+});

@@ -64,6 +64,20 @@
       "when": 1753557354445,
       "tag": "0008_solid_matthew_murdock",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1753578850637,
+      "tag": "0009_breezy_bloodscream",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1753581229372,
+      "tag": "0010_special_fixer",
+      "breakpoints": true
     }
   ]
 }

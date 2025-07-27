@@ -23,6 +23,7 @@ import {
 } from "@/constants/variables";
 import { DEFAULT_ROLE } from "@/constants/permissionsAndRoles";
 import { encrypt } from "@/lib/authFunctions";
+import { USER_ACCOUNT_TYPE } from "@/data/constants";
 
 interface GoogleUser {
   email: string;
@@ -137,7 +138,7 @@ export const googleSignIn = async (req: Request, res: Response) => {
         .where(
           and(
             eq(usersToAccountsTable.userId, userId),
-            eq(usersToAccountsTable.accountId, 2), // Google account ID
+            eq(usersToAccountsTable.providerName, USER_ACCOUNT_TYPE.GOOGLE), // Google account ID
           ),
         );
 
@@ -145,7 +146,7 @@ export const googleSignIn = async (req: Request, res: Response) => {
       if (existingRelation.length === 0) {
         await tx.insert(usersToAccountsTable).values({
           userId: userId,
-          accountId: 2,
+          providerName: USER_ACCOUNT_TYPE.GOOGLE,
         });
       }
 

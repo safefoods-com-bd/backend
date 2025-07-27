@@ -152,7 +152,7 @@ export async function decryptTokenData(token: string): Promise<any> {
       success: false,
     };
   }
-  if (tokenData.email) {
+  if (tokenData.email || tokenData.phoneNumber) {
     return {
       data: tokenData,
       success: true,

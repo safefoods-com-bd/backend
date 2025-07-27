@@ -144,3 +144,8 @@ export const DELIVERY_ZONE_ENDPOINTS = {
   DELETE_DELIVERY_ZONE: "DELETE /api/v1/delivery-zones/:id",
   DELETE_DELIVERY_ZONES_BATCH: "DELETE /api/v1/delivery-zones/batch",
 };
+
+export const AUTH_ENDPOINTS = {
+  SEND_MOBILE_OTP: "POST /api/v1/send-mobile-otp",
+  VERIFY_MOBILE_OTP: "POST  /api/v1/verify-mobile-otp",
+};
