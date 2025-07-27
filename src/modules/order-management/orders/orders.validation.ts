@@ -70,11 +70,10 @@ const baseOrderSchema = z.object({
     .string({ required_error: "Address ID is required" })
     .uuid("Invalid address ID format"),
   paymentStatus: paymentStatusEnum.default("unpaid"),
-  orderStatus: orderStatusEnum
-    .default("pending")
-    .refine((val) => !["shipped", "delivered"].includes(val), {
-      message: "Initial order status cannot be shipped or delivered",
-    }),
+  orderStatus: orderStatusEnum.default("pending"),
+  // .refine((val) => !["shipped", "delivered"].includes(val), {
+  //   message: "Initial order status cannot be shipped or delivered",
+  // }),
   productOrders: z
     .array(productOrderSchema)
     .min(1, "At least one product order is required"),
