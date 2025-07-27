@@ -10,7 +10,7 @@ export const couponValidationSchema = z.object({
     .positive("Discount must be positive")
     .max(999.99, "Discount too large"),
   discountType: z
-    .enum(["percentage", "fixed_amount"], {
+    .enum(["percentage", "fixed"], {
       required_error: "Discount type is required",
     })
     .default("percentage"),

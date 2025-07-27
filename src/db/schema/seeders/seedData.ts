@@ -346,7 +346,7 @@ export const couponsData = [
     id: "07b36f9a-0703-41ea-b721-1686f2500da4",
     title: "Save 10%",
     discount: "10.00",
-    discountType: "percentage" as "percentage" | "fixed_amount",
+    discountType: "percentage" as "percentage" | "fixed",
     validDate: "2025-12-31",
     isActive: true,
     createdAt: new Date(),

@@ -8,10 +8,7 @@ import {
   varchar,
 } from "drizzle-orm/pg-core";
 
-const discountTypeEnum = pgEnum("discount_type", [
-  "percentage",
-  "fixed_amount",
-]);
+const discountTypeEnum = pgEnum("discount_type", ["percentage", "fixed"]);
 
 const couponsTable = pgTable("coupons", {
   id: uuid("id").primaryKey().defaultRandom(),
