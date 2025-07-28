@@ -55,6 +55,7 @@ export const userData = [
     password: "admin123",
     registeredAt: new Date(),
     isVerified: true,
+    providerName: "traditional",
   },
 ];
 

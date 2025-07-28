@@ -1,4 +1,5 @@
 import "dotenv/config";
+import "module-alias/register";
 import { drizzle } from "drizzle-orm/node-postgres";
 import * as schema from "./index";
 
@@ -26,6 +27,7 @@ import {
 } from "./seeders/seedData";
 import { hash } from "bcryptjs";
 import { eq, inArray } from "drizzle-orm";
+import { USER_ACCOUNT_TYPE } from "@/data/constants";
 
 async function seedPermissions() {
   for (const permission of permissionData) {
@@ -114,10 +116,6 @@ async function seedUsers() {
     .select({ id: schema.rolesTable.id })
     .from(schema.rolesTable)
     .where(eq(schema.rolesTable.name, "admin"));
-  const accountId = await db
-    .select({ id: schema.accountsTable.id })
-    .from(schema.accountsTable)
-    .where(eq(schema.accountsTable.provider_name, "traditional"));
   for (const user of userData) {
     const hashedPassword = await hash(user.password, 10);
     const newUser = await db
@@ -130,7 +128,7 @@ async function seedUsers() {
       .insert(schema.usersToAccountsTable)
       .values({
         userId: newUser[0].id,
-        accountId: accountId[0].id,
+        providerName: USER_ACCOUNT_TYPE.TRADITIONAL,
       })
       .onConflictDoNothing();
   }
