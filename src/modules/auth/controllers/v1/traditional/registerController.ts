@@ -1,5 +1,5 @@
 import { validateZodSchema } from "@/middleware/validationMiddleware";
-import { registerUserSchema } from "../../authValidations";
+import { registerUserSchema } from "../../../authValidations";
 import { rolesTable, usersTable } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { db } from "@/db/db";
@@ -26,12 +26,6 @@ export const register = async (req: Request, res: Response) => {
     const { email, password, confirmPassword } = await validateZodSchema(
       registerUserSchema,
     )(req.body);
-    // Delete the user if it exists in the database
-    if (!isProduction) {
-      await db
-        .delete(usersTable)
-        .where(eq(usersTable.email, "alarafatsiddique@softeko.co"));
-    }
 
     // Check if user with this email already exists
     const userExists = await db
@@ -86,12 +80,12 @@ export const register = async (req: Request, res: Response) => {
         .where(eq(usersTable.email, email));
     }
     // sending verification email
-    const code = generateRandomCode();
+    const otp = generateRandomCode();
 
     const token = await encrypt(
       {
         email,
-        code,
+        otp,
       },
       EMAIL_VERIFICATION_TOKEN_AGE,
     );
@@ -99,7 +93,7 @@ export const register = async (req: Request, res: Response) => {
       from: `${process.env.EMAIL_USER}`,
       to: email,
       subject: "Email Verification",
-      html: onRegisterVerificationEmail({ email: email, code: code }),
+      html: onRegisterVerificationEmail({ email: email, otp: otp }),
     };
 
     // eslint-disable-next-line @typescript-eslint/no-unused-expressions
@@ -117,9 +111,8 @@ export const register = async (req: Request, res: Response) => {
     });
     return res.status(200).json({
       success: true,
-      message: "Verification code sent to your email",
-      token,
-      code: isProduction ? undefined : code,
+      message: "Verification OTP sent to your email",
+      otp: isProduction ? undefined : otp, // For development purposes
     });
   } catch (error) {
     // console.log(error);

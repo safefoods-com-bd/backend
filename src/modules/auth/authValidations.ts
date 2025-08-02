@@ -9,8 +9,7 @@ export const registerUserSchema = z.object({
 });
 
 export const verifyOnRegisterSchema = z.object({
-  token: z.string({ required_error: "Token is required" }),
-  code: z.string({ required_error: "Code is required" }),
+  otp: z.number({ required_error: "OTP is required" }),
   email: z.string({ required_error: "Email is required" }).email(),
 });
 

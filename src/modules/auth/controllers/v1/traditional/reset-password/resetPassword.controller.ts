@@ -1,7 +1,7 @@
 import { hash } from "bcryptjs";
 import { eq } from "drizzle-orm";
 import { Request, Response } from "express";
-import { verifyOnResetPasswordSchema } from "../../../authValidations";
+import { verifyOnResetPasswordSchema } from "../../../../authValidations";
 
 import { db } from "@/db/db";
 import { usersTable } from "@/db/schema";

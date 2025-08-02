@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
 import { Request, Response } from "express";
-import { verifyForgotPasswordOtpVerificationSchema } from "../../../authValidations";
+import { verifyForgotPasswordOtpVerificationSchema } from "../../../../authValidations";
 
 import { db } from "@/db/db";
 import { usersTable } from "@/db/schema";
@@ -17,6 +17,12 @@ export const forgotPasswordOtpVerification = async (
       verifyForgotPasswordOtpVerificationSchema,
     )(req.body);
     const { email_verification_token } = req.cookies;
+    if (!email_verification_token) {
+      return res.status(400).json({
+        success: false,
+        message: "Email verification token is missing",
+      });
+    }
     // verify the token and otp
     const tokenData = await decryptTokenData(email_verification_token);
 

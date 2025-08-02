@@ -1,7 +1,7 @@
 import { Express } from "express";
 import { permissionsRoutes } from "@/modules/user-management/permissions/index";
 import { rolesRoutes } from "@/modules/user-management/roles/index";
-import { authRoutes } from "@/modules/auth/index";
+import authRoutesV1 from "@/modules/auth/routes/authRoutes.v1";
 import { userRoutes } from "@/modules/user-management/users/index";
 import { profileRoutes } from "@/modules/user-management/profile/index";
 import { settingsRoutes } from "@/modules/general-settings/index";
@@ -35,7 +35,7 @@ export const registerRoutes = (app: Express) => {
   app.use("/api/user-management/profile", profileRoutes);
 
   // auth
-  app.use("/api/v1/auth", authRoutes);
+  app.use("/api/v1/auth", authRoutesV1);
 
   //general-settings
   app.use("/api", settingsRoutes);

@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
 import { Request, Response } from "express";
-import { forgotPasswordSchema } from "../../../authValidations";
+import { forgotPasswordSchema } from "../../../../authValidations";
 
 import { db } from "@/db/db";
 import { usersTable } from "@/db/schema";
@@ -19,7 +19,7 @@ import {
   EMAIL_VERIFICATION_TOKEN_AGE,
 } from "@/constants/variables";
 
-export const forgotPassword = async (req: Request, res: Response) => {
+export const forgotPasswordV100 = async (req: Request, res: Response) => {
   try {
     const { email } = await validateZodSchema(forgotPasswordSchema)(req.body);
 

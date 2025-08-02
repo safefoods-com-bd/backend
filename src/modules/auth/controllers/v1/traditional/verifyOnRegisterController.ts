@@ -1,6 +1,6 @@
 import { handleError } from "@/utils/errorHandler";
 import { Request, Response } from "express";
-import { verifyOnRegisterSchema } from "../../authValidations";
+import { verifyOnRegisterSchema } from "../../../authValidations";
 import { validateZodSchema } from "@/middleware/validationMiddleware";
 import { db } from "@/db/db";
 import { usersTable, usersToAccountsTable } from "@/db/schema";
@@ -11,9 +11,17 @@ import { USER_ACCOUNT_TYPE } from "@/data/constants";
 
 export const verifyOnRegister = async (req: Request, res: Response) => {
   try {
-    const { token, code, email } = await validateZodSchema(
-      verifyOnRegisterSchema,
-    )(req.body);
+    const { otp, email } = await validateZodSchema(verifyOnRegisterSchema)(
+      req.body,
+    );
+    const { email_verification_token } = req.cookies;
+    if (!email_verification_token) {
+      return res.status(400).json({
+        success: false,
+        message: "Email verification token is missing",
+      });
+    }
+    // verify the token and otp
     // Check if user with this email already exists
     const userExists = await db
       .select()
@@ -33,8 +41,8 @@ export const verifyOnRegister = async (req: Request, res: Response) => {
         message: "User with this email is already verified",
       });
     }
-    // verify the token and code
-    const tokenData = await decryptTokenData(token);
+    // verify the token and otp
+    const tokenData = await decryptTokenData(email_verification_token);
     if (tokenData.success === false) {
       return res.status(400).json({
         success: false,
@@ -42,43 +50,46 @@ export const verifyOnRegister = async (req: Request, res: Response) => {
       });
     }
     const emailFromToken = tokenData.data.email;
-    const codeFromToken = tokenData.data.code;
-    // If token and code are invalid, return error
+    const otpFromToken = tokenData.data.otp;
+    // If token and otp are invalid, return error
     if (email !== emailFromToken) {
       return res.status(400).json({
         success: false,
         message: "Invalid email",
       });
     }
-    if (+code !== +codeFromToken) {
+    if (+otp !== +otpFromToken) {
       return res.status(400).json({
         success: false,
-        message: "Invalid code",
+        message: "Invalid OTP submitted.",
       });
     }
 
-    // ---- If token and code are valid, update the user
-
     // Update the user: set isVerified to true, and add registeredAt timestamp,
-    const updatedUser = await db
-      .update(usersTable)
-      .set({
-        isVerified: true,
-        registeredAt: new Date(),
-      })
-      .where(eq(usersTable.email, email))
-      .returning({
-        id: usersTable.id,
-        email: usersTable.email,
-        roleId: usersTable.roleId,
-        isVerified: usersTable.isVerified,
-        registeredAt: usersTable.registeredAt,
+    // Start a transaction for updating user and inserting account provider
+    const updatedUser = await db.transaction(async (tx) => {
+      const user = await tx
+        .update(usersTable)
+        .set({
+          isVerified: true,
+          registeredAt: new Date(),
+        })
+        .where(eq(usersTable.email, email))
+        .returning({
+          id: usersTable.id,
+          email: usersTable.email,
+          roleId: usersTable.roleId,
+          isVerified: usersTable.isVerified,
+          registeredAt: usersTable.registeredAt,
+        });
+
+      // Add provider to the accounts tables;
+      await tx.insert(usersToAccountsTable).values({
+        userId: user[0].id,
+        providerName: USER_ACCOUNT_TYPE.TRADITIONAL,
       });
 
-    // Add provider to the accounts tables;
-    await db.insert(usersToAccountsTable).values({
-      userId: updatedUser[0].id,
-      providerName: USER_ACCOUNT_TYPE.TRADITIONAL,
+      return user;
     });
 
     // Clear the access token cookie

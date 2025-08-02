@@ -1,19 +1,19 @@
 import { RequestHandler, Router } from "express";
-import { register } from "./controllers/traditional/registerController";
-import { verifyOnRegister } from "./controllers/traditional/verifyOnRegisterController";
-import { login } from "./controllers/traditional/loginController";
-import { refreshTokenRequest } from "./controllers/refreshTokenController";
-import { forgotPassword } from "./controllers/traditional/reset-password/forgotPassword.controller";
-import { resetPassword } from "./controllers/traditional/reset-password/resetPassword.controller";
-import { googleSignIn } from "./controllers/traditional/googleSigninController";
+import { register } from "@/modules/auth/controllers/v1/traditional/registerController";
+import { verifyOnRegister } from "@/modules/auth/controllers/v1/traditional/verifyOnRegisterController";
+import { login } from "@/modules/auth/controllers/v1/traditional/loginController";
+import { refreshTokenRequest } from "@/modules/auth/controllers/refreshTokenController";
+import { forgotPasswordV100 } from "@/modules/auth/controllers/v1/traditional/reset-password/forgotPassword.controller";
+import { resetPassword } from "@/modules/auth/controllers/v1/traditional/reset-password/resetPassword.controller";
+import { googleSignIn } from "@/modules/auth/controllers/v1/traditional/googleSigninController";
 import {
   rateLimitingOnIndividualIp,
   rateLimitingOnIndividualUserAndIp,
 } from "@/middleware/rateLimiting";
-import { logout } from "./controllers/traditional/logout";
-import { sendMobileOtpControllerV100 } from "./controllers/mobile-otp/sendMobileOtp.controller";
-import { verifyMobileOtpV100 } from "./controllers/mobile-otp/verifyMobileOtp.controller";
-import { forgotPasswordOtpVerification } from "./controllers/traditional/reset-password/forgotPasswordEmailVerification.controller";
+import { logout } from "@/modules/auth/controllers/v1/traditional/logout";
+import { sendMobileOtpControllerV100 } from "@/modules/auth/controllers/v1/mobile-otp/sendMobileOtp.controller";
+import { verifyMobileOtpV100 } from "@/modules/auth/controllers/v1/mobile-otp/verifyMobileOtp.controller";
+import { forgotPasswordOtpVerification } from "@/modules/auth/controllers/v1/traditional/reset-password/forgotPasswordEmailVerification.controller";
 
 const router = Router();
 router.post(
@@ -40,7 +40,7 @@ router.post(
   "/forgot-password",
   rateLimitingOnIndividualIp({ time: 10, maxRequests: 5 }),
   (req, res) => {
-    forgotPassword(req, res);
+    forgotPasswordV100(req, res);
   },
 );
 

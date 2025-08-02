@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { verifyMobileOtpSchema } from "../../authValidations";
+import { verifyMobileOtpSchema } from "../../../authValidations";
 import { validateZodSchema } from "@/middleware/validationMiddleware";
 import { decryptTokenData } from "@/lib/authFunctions";
 import { ERROR_TYPES, handleError } from "@/utils/errorHandler";

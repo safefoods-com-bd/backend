@@ -1,19 +1,16 @@
 import { validateZodSchema } from "@/middleware/validationMiddleware";
-import { loginUserSchema } from "../../authValidations";
+import { loginUserSchema } from "../../../authValidations";
 import {
-  accountsTable,
   permissionsTable,
   permissionToRolesTable,
   rolesTable,
   usersTable,
-  usersToAccountsTable,
 } from "@/db/schema";
 import { eq, sql } from "drizzle-orm";
 import { db } from "@/db/db";
 import { Request, Response } from "express";
 import { handleError } from "@/utils/errorHandler";
 import { compare } from "bcryptjs";
-import { USER_ACCOUNT_TYPE } from "@/data/constants";
 import { handleAuthTokens } from "@/lib/tokenUtils";
 
 export const login = async (req: Request, res: Response) => {
@@ -61,8 +58,6 @@ export const login = async (req: Request, res: Response) => {
         message: "User with this email is not verified",
       });
     }
-
-    // get user provider
 
     const permissionsArray = userExists[0].permissions.split(",");
 
