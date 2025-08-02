@@ -22,6 +22,7 @@ import deliveryZonesRoutes from "@/modules/order-management/delivery-zones/deliv
 import cartRoutes from "@/modules/order-management/cart/cart.routes";
 import variantProductsRoutes from "./modules/product/variant-products/variant-products.routes";
 import variantProductMediaRoutes from "./modules/product/variant-product-media/variant-product-media.routes";
+import authRoutesV2 from "./modules/auth/routes/authRoutes.v2";
 
 // import { validateApiKey } from "./middleware/apiKeyMiddleware";
 // import { isProduction } from "./constants/variables";
@@ -36,6 +37,7 @@ export const registerRoutes = (app: Express) => {
 
   // auth
   app.use("/api/v1/auth", authRoutesV1);
+  app.use("/api/v2/auth", authRoutesV2);
 
   //general-settings
   app.use("/api", settingsRoutes);

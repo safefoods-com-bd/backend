@@ -8,16 +8,15 @@ import { usersTable } from "@/db/schema";
 import { handleError } from "@/utils/errorHandler";
 import { validateZodSchema } from "@/middleware/validationMiddleware";
 import { decryptTokenData } from "@/lib/authFunctions";
-import { FORGOT_PASSWORD_TOKEN_NAME } from "@/constants/variables";
 
-export const resetPassword = async (req: Request, res: Response) => {
+export const resetPasswordV200 = async (req: Request, res: Response) => {
   try {
     const { email, password, confirmPassword } = await validateZodSchema(
       verifyOnResetPasswordSchema,
     )(req.body);
 
     // verify the token and code
-    const { forgot_password_token } = req.cookies;
+    const forgot_password_token = req.headers.forgot_password_token;
     if (!forgot_password_token) {
       return res.status(400).json({
         success: false,
@@ -25,7 +24,7 @@ export const resetPassword = async (req: Request, res: Response) => {
       });
     }
 
-    const tokenData = await decryptTokenData(forgot_password_token);
+    const tokenData = await decryptTokenData(forgot_password_token as string);
 
     if (tokenData.success === false) {
       return res.status(400).json({
@@ -73,8 +72,6 @@ export const resetPassword = async (req: Request, res: Response) => {
         .set({ password: hashedPassword })
         .where(eq(usersTable.email, emailFromToken));
     }
-    // Clear the cookie after password reset
-    res.clearCookie(FORGOT_PASSWORD_TOKEN_NAME);
 
     return res.status(200).json({
       success: true,

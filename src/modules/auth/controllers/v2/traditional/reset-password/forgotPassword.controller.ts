@@ -14,15 +14,11 @@ import {
 } from "@/services/emails";
 import {
   isProduction,
-  EMAIL_VERIFICATION_TOKEN_NAME,
-  EMAIL_VERIFICATION_COOKIE_MAX_AGE,
   EMAIL_VERIFICATION_TOKEN_AGE,
   FORGOT_PASSWORD_TOKEN_AGE,
-  FORGOT_PASSWORD_TOKEN_NAME,
-  FORGOT_PASSWORD_COOKIE_MAX_AGE,
 } from "@/constants/variables";
 
-export const forgotPasswordV100 = async (req: Request, res: Response) => {
+export const forgotPasswordV200 = async (req: Request, res: Response) => {
   try {
     const { email } = await validateZodSchema(forgotPasswordSchema)(req.body);
 
@@ -72,17 +68,10 @@ export const forgotPasswordV100 = async (req: Request, res: Response) => {
       : sendEmailUsingMailhog(emailData);
     //todo : HEATOS links
 
-    //set the session token
-    res.cookie(FORGOT_PASSWORD_TOKEN_NAME, token, {
-      httpOnly: true,
-      sameSite: isProduction ? "none" : "lax", // "none" for production, "lax" for development
-      secure: isProduction, // true for production, false for development
-      maxAge: FORGOT_PASSWORD_COOKIE_MAX_AGE, // 1 minute
-    });
-
     return res.status(200).json({
       success: true,
       message: "Reset Password verification otp sent to your email",
+      token: token,
       otp: isProduction ? undefined : otp,
     });
   } catch (error) {

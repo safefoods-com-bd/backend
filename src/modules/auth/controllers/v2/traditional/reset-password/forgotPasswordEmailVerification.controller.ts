@@ -1,31 +1,30 @@
-import { hash } from "bcryptjs";
 import { eq } from "drizzle-orm";
 import { Request, Response } from "express";
-import { verifyOnResetPasswordSchema } from "../../../../authValidations";
+import { verifyForgotPasswordOtpVerificationSchema } from "../../../../authValidations";
 
 import { db } from "@/db/db";
 import { usersTable } from "@/db/schema";
 import { handleError } from "@/utils/errorHandler";
 import { validateZodSchema } from "@/middleware/validationMiddleware";
 import { decryptTokenData } from "@/lib/authFunctions";
-import { FORGOT_PASSWORD_TOKEN_NAME } from "@/constants/variables";
 
-export const resetPassword = async (req: Request, res: Response) => {
+export const forgotPasswordOtpVerificationV200 = async (
+  req: Request,
+  res: Response,
+) => {
   try {
-    const { email, password, confirmPassword } = await validateZodSchema(
-      verifyOnResetPasswordSchema,
+    const { email, otp } = await validateZodSchema(
+      verifyForgotPasswordOtpVerificationSchema,
     )(req.body);
-
-    // verify the token and code
-    const { forgot_password_token } = req.cookies;
+    const forgot_password_token = req.headers.forgot_password_token;
     if (!forgot_password_token) {
       return res.status(400).json({
         success: false,
-        message: " Token is missing.",
+        message: "Forgot password token is missing",
       });
     }
-
-    const tokenData = await decryptTokenData(forgot_password_token);
+    // verify the token and otp
+    const tokenData = await decryptTokenData(forgot_password_token as string);
 
     if (tokenData.success === false) {
       return res.status(400).json({
@@ -34,6 +33,7 @@ export const resetPassword = async (req: Request, res: Response) => {
       });
     }
     const emailFromToken = tokenData.data.email;
+    const otpFromToken = tokenData.data.otp;
 
     if (email !== emailFromToken) {
       return res.status(400).json({
@@ -56,29 +56,17 @@ export const resetPassword = async (req: Request, res: Response) => {
       });
     }
 
-    // Check if password and confirmPassword match
-    if (password !== confirmPassword) {
+    // If otp is invalid, return error
+    if (+otp !== +otpFromToken) {
       return res.status(400).json({
         success: false,
-        message: "Passwords do not match",
+        message: "Invalid otp submitted.",
       });
     }
 
-    // Hash the password
-    const hashedPassword = await hash(password, 10);
-
-    if (userExists.length > 0 && userExists[0].isVerified) {
-      await db
-        .update(usersTable)
-        .set({ password: hashedPassword })
-        .where(eq(usersTable.email, emailFromToken));
-    }
-    // Clear the cookie after password reset
-    res.clearCookie(FORGOT_PASSWORD_TOKEN_NAME);
-
     return res.status(200).json({
       success: true,
-      message: "Password Reset Successfully",
+      message: "Otp verified successfully.",
     });
   } catch (error) {
     // console.log(error);

@@ -7,6 +7,7 @@ import { usersTable } from "@/db/schema";
 import { handleError } from "@/utils/errorHandler";
 import { validateZodSchema } from "@/middleware/validationMiddleware";
 import { decryptTokenData } from "@/lib/authFunctions";
+import { FORGOT_PASSWORD_TOKEN_NAME } from "@/constants/variables";
 
 export const forgotPasswordOtpVerification = async (
   req: Request,
@@ -16,15 +17,15 @@ export const forgotPasswordOtpVerification = async (
     const { email, otp } = await validateZodSchema(
       verifyForgotPasswordOtpVerificationSchema,
     )(req.body);
-    const { email_verification_token } = req.cookies;
-    if (!email_verification_token) {
+    const { forgot_password_token } = req.cookies;
+    if (!forgot_password_token) {
       return res.status(400).json({
         success: false,
-        message: "Email verification token is missing",
+        message: "Forgot password token is missing",
       });
     }
     // verify the token and otp
-    const tokenData = await decryptTokenData(email_verification_token);
+    const tokenData = await decryptTokenData(forgot_password_token);
 
     if (tokenData.success === false) {
       return res.status(400).json({
