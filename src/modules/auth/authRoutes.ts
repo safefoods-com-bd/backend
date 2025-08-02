@@ -3,8 +3,8 @@ import { register } from "./controllers/traditional/registerController";
 import { verifyOnRegister } from "./controllers/traditional/verifyOnRegisterController";
 import { login } from "./controllers/traditional/loginController";
 import { refreshTokenRequest } from "./controllers/refreshTokenController";
-import { forgotPassword } from "./controllers/traditional/forgotPassword";
-import { resetPassword } from "./controllers/traditional/resetPassword";
+import { forgotPassword } from "./controllers/traditional/reset-password/forgotPassword.controller";
+import { resetPassword } from "./controllers/traditional/reset-password/resetPassword.controller";
 import { googleSignIn } from "./controllers/traditional/googleSigninController";
 import {
   rateLimitingOnIndividualIp,
@@ -13,6 +13,7 @@ import {
 import { logout } from "./controllers/traditional/logout";
 import { sendMobileOtpControllerV100 } from "./controllers/mobile-otp/sendMobileOtp.controller";
 import { verifyMobileOtpV100 } from "./controllers/mobile-otp/verifyMobileOtp.controller";
+import { forgotPasswordOtpVerification } from "./controllers/traditional/reset-password/forgotPasswordEmailVerification.controller";
 
 const router = Router();
 router.post(
@@ -42,6 +43,10 @@ router.post(
     forgotPassword(req, res);
   },
 );
+
+router.post("/forgot-password-otp-verification", (req, res) => {
+  forgotPasswordOtpVerification(req, res);
+});
 
 router.post(
   "/reset-password",

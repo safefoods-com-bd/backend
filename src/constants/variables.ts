@@ -3,14 +3,10 @@ import { Google } from "arctic";
 export const isProduction = process.env.NODE_ENV === "production";
 export const isDevelopment = process.env.NODE_ENV === "development";
 
-export const ACCESS_TOKEN_NAME =
-  process.env.ACCESS_TOKEN_NAME || "access_token";
-export const REFRESH_TOKEN_NAME =
-  process.env.REFRESH_TOKEN_NAME || "refresh_token";
-export const EMAIL_VERIFICATION_TOKEN_NAME =
-  process.env.EMAIL_VERIFICATION_TOKEN_NAME || "email_verification_token";
-export const OTP_VERIFICATION_TOKEN_NAME =
-  process.env.OTP_VERIFICATION_TOKEN_NAME || "otp_verification_token";
+export const ACCESS_TOKEN_NAME = "access_token";
+export const REFRESH_TOKEN_NAME = "refresh_token";
+export const EMAIL_VERIFICATION_TOKEN_NAME = "email_verification_token";
+export const OTP_VERIFICATION_TOKEN_NAME = "otp_verification_token";
 export const COMMON_BASE = process.env.COMMON_BASE;
 export const DOMAIN =
   process.env.NODE_ENV === "production"

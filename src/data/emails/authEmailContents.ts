@@ -62,10 +62,10 @@ export const onRegisterVerificationEmail = ({
 
 export const onResetPasswordVerificationEmail = ({
   email,
-  code,
+  otp,
 }: {
   email: string;
-  code: number;
+  otp: number;
 }) => {
   return `
         <!DOCTYPE html>
@@ -106,9 +106,9 @@ export const onResetPasswordVerificationEmail = ({
             <body>
                 <div class="container">
                     <h2>Greetings! ${email}</h2>
-                    <h3>Use the following code to Reset Password. </h3>
-                    <h3>${code}</h3>
-                    <p>This code will be valid for 60 minutes.</p>
+                    <h3>Use the following otp to Reset Password. </h3>
+                    <h3>${otp}</h3>
+                    <p>This otp will be valid for 60 minutes.</p>
                     <p>If you didn't initiate this action or if you think you received this email by mistake, please contact</p>
                     <p style= "color:blue, font-wight:600">support@softeko.co</p>
                     <hr />

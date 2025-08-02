@@ -1,32 +1,39 @@
 import { z } from "zod";
 
 export const registerUserSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(8),
-  confirmPassword: z.string().min(8),
+  email: z.string({ required_error: "Email is required" }).email(),
+  password: z.string({ required_error: "Password is required" }).min(8),
+  confirmPassword: z
+    .string({ required_error: "Confirm Password is required" })
+    .min(8),
 });
 
 export const verifyOnRegisterSchema = z.object({
-  token: z.string(),
-  code: z.string(),
-  email: z.string().email(),
+  token: z.string({ required_error: "Token is required" }),
+  code: z.string({ required_error: "Code is required" }),
+  email: z.string({ required_error: "Email is required" }).email(),
 });
 
 export const loginUserSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(8),
+  email: z.string({ required_error: "Email is required" }).email(),
+  password: z.string({ required_error: "Password is required" }).min(8),
 });
 
 export const forgotPasswordSchema = z.object({
-  email: z.string().email(),
+  email: z.string({ required_error: "Email is required" }).email(),
 });
 
 export const verifyOnResetPasswordSchema = z.object({
-  code: z.string(),
-  token: z.string(),
-  email: z.string().email(),
-  password: z.string().min(8),
-  confirmPassword: z.string().min(8),
+  email: z.string({ required_error: "Email is required" }).email(),
+  password: z.string({ required_error: "Password is required" }).min(8),
+  confirmPassword: z
+    .string({ required_error: "Confirm Password is required" })
+    .min(8),
+});
+
+export const verifyForgotPasswordOtpVerificationSchema = z.object({
+  otp: z.number({ required_error: "OTP is required" }),
+  email: z.string({ required_error: "Email is required" }).email(),
 });
 
 export const verifyMobileOtpSchema = z.object({

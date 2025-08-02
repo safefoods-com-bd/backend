@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
 import { Request, Response } from "express";
-import { forgotPasswordSchema } from "../../authValidations";
+import { forgotPasswordSchema } from "../../../authValidations";
 
 import { db } from "@/db/db";
 import { usersTable } from "@/db/schema";
@@ -14,9 +14,9 @@ import {
 } from "@/services/emails";
 import {
   isProduction,
-  ACCESS_TOKEN_NAME,
-  ACCESS_TOKEN_AGE,
-  ACCESS_TOKEN_COOKIE_MAX_AGE,
+  EMAIL_VERIFICATION_TOKEN_NAME,
+  EMAIL_VERIFICATION_COOKIE_MAX_AGE,
+  EMAIL_VERIFICATION_TOKEN_AGE,
 } from "@/constants/variables";
 
 export const forgotPassword = async (req: Request, res: Response) => {
@@ -46,21 +46,21 @@ export const forgotPassword = async (req: Request, res: Response) => {
     }
 
     // sending verification email
-    const code = generateRandomCode();
+    const otp = generateRandomCode();
 
     const token = await encrypt(
       {
         email,
-        code,
+        otp,
       },
-      ACCESS_TOKEN_AGE,
+      EMAIL_VERIFICATION_TOKEN_AGE,
     );
 
     const emailData = {
       from: `${process.env.EMAIL_USER}`,
       to: email,
-      subject: "Reset Password Verification Code",
-      html: onResetPasswordVerificationEmail({ email: email, code: code }),
+      subject: "Reset Password Verification otp",
+      html: onResetPasswordVerificationEmail({ email: email, otp: otp }),
     };
 
     // eslint-disable-next-line @typescript-eslint/no-unused-expressions
@@ -70,18 +70,17 @@ export const forgotPassword = async (req: Request, res: Response) => {
     //todo : HEATOS links
 
     //set the session token
-    res.cookie(ACCESS_TOKEN_NAME, token, {
+    res.cookie(EMAIL_VERIFICATION_TOKEN_NAME, token, {
       httpOnly: true,
       sameSite: isProduction ? "none" : "lax", // "none" for production, "lax" for development
       secure: isProduction, // true for production, false for development
-      maxAge: ACCESS_TOKEN_COOKIE_MAX_AGE, // 1 minute
+      maxAge: EMAIL_VERIFICATION_COOKIE_MAX_AGE, // 1 minute
     });
 
     return res.status(200).json({
       success: true,
-      message: "Reset Password verification code sent to your email",
-      token,
-      code: isProduction ? undefined : code,
+      message: "Reset Password verification otp sent to your email",
+      otp: isProduction ? undefined : otp,
     });
   } catch (error) {
     // console.log(error);

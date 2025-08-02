@@ -1,22 +1,31 @@
 import { hash } from "bcryptjs";
 import { eq } from "drizzle-orm";
 import { Request, Response } from "express";
-import { verifyOnResetPasswordSchema } from "../../authValidations";
+import { verifyOnResetPasswordSchema } from "../../../authValidations";
 
 import { db } from "@/db/db";
 import { usersTable } from "@/db/schema";
 import { handleError } from "@/utils/errorHandler";
 import { validateZodSchema } from "@/middleware/validationMiddleware";
 import { decryptTokenData } from "@/lib/authFunctions";
-import { ACCESS_TOKEN_NAME } from "@/constants/variables";
+import { EMAIL_VERIFICATION_TOKEN_NAME } from "@/constants/variables";
 
 export const resetPassword = async (req: Request, res: Response) => {
   try {
-    const { email, code, token, password, confirmPassword } =
-      await validateZodSchema(verifyOnResetPasswordSchema)(req.body);
+    const { email, password, confirmPassword } = await validateZodSchema(
+      verifyOnResetPasswordSchema,
+    )(req.body);
 
     // verify the token and code
-    const tokenData = await decryptTokenData(token);
+    const { email_verification_token } = req.cookies;
+    if (!email_verification_token) {
+      return res.status(400).json({
+        success: false,
+        message: " Token is missing.",
+      });
+    }
+
+    const tokenData = await decryptTokenData(email_verification_token);
 
     if (tokenData.success === false) {
       return res.status(400).json({
@@ -25,20 +34,11 @@ export const resetPassword = async (req: Request, res: Response) => {
       });
     }
     const emailFromToken = tokenData.data.email;
-    const codeFromToken = tokenData.data.code;
 
     if (email !== emailFromToken) {
       return res.status(400).json({
         success: false,
         message: "Invalid email",
-      });
-    }
-
-    // If code is invalid, return error
-    if (+code !== +codeFromToken) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid code",
       });
     }
 
@@ -74,7 +74,7 @@ export const resetPassword = async (req: Request, res: Response) => {
         .where(eq(usersTable.email, emailFromToken));
     }
     // Clear the cookie after password reset
-    res.clearCookie(ACCESS_TOKEN_NAME);
+    res.clearCookie(EMAIL_VERIFICATION_TOKEN_NAME);
 
     return res.status(200).json({
       success: true,
