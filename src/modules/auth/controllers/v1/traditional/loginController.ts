@@ -62,7 +62,8 @@ export const login = async (req: Request, res: Response) => {
     const permissionsArray = userExists[0].permissions.split(",");
 
     // check the password from database
-    const passwordMatch = compare(password, userExists[0].password!);
+    const passwordMatch = await compare(password, userExists[0].password!);
+
     if (!passwordMatch) {
       return res.status(400).json({
         success: false,

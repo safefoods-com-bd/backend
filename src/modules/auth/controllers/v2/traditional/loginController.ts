@@ -11,7 +11,6 @@ import { db } from "@/db/db";
 import { Request, Response } from "express";
 import { handleError } from "@/utils/errorHandler";
 import { compare } from "bcryptjs";
-import { handleAuthTokens } from "@/lib/tokenUtils";
 import { encrypt } from "@/lib/authFunctions";
 import { ACCESS_TOKEN_AGE, REFRESH_TOKEN_AGE } from "@/constants/variables";
 
@@ -64,7 +63,7 @@ export const loginV200 = async (req: Request, res: Response) => {
     const permissionsArray = userExists[0].permissions.split(",");
 
     // check the password from database
-    const passwordMatch = compare(password, userExists[0].password!);
+    const passwordMatch = await compare(password, userExists[0].password!);
     if (!passwordMatch) {
       return res.status(400).json({
         success: false,
