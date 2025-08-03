@@ -140,6 +140,7 @@ export const getPermissions = async (userId: string) => {
 
 export async function decryptTokenData(token: string): Promise<any> {
   const tokenData = await decrypt(token);
+  console.log("tokenData", tokenData);
   if (tokenData.code === "ERR_JWT_EXPIRED") {
     return {
       message: "Token Expired",

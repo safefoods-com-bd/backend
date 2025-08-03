@@ -12,11 +12,7 @@ import {
   sendEmailUsingMailhog,
   sendEmailWithNodemailer,
 } from "@/services/emails";
-import {
-  isProduction,
-  EMAIL_VERIFICATION_TOKEN_AGE,
-  FORGOT_PASSWORD_TOKEN_AGE,
-} from "@/constants/variables";
+import { isProduction, FORGOT_PASSWORD_TOKEN_AGE } from "@/constants/variables";
 
 export const forgotPasswordV200 = async (req: Request, res: Response) => {
   try {

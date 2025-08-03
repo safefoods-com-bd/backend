@@ -55,6 +55,13 @@ export const forgotPasswordOtpVerificationV200 = async (
         message: "No user found with this email.",
       });
     }
+    // If user exists and is verified, return error
+    if (!userExists[0].isVerified) {
+      return res.status(400).json({
+        success: false,
+        message: "User with this email is not verified",
+      });
+    }
 
     // If otp is invalid, return error
     if (+otp !== +otpFromToken) {

@@ -11,12 +11,20 @@ import { forgotPasswordOtpVerificationV200 } from "../controllers/v2/traditional
 import { resetPasswordV200 } from "../controllers/v2/traditional/reset-password/resetPassword.controller";
 import { sendMobileOtpControllerV200 } from "../controllers/v2/mobile-otp/sendMobileOtp.controller";
 import { verifyMobileOtp200 } from "../controllers/v2/mobile-otp/verifyMobileOtp.controller";
+import { resendOtpOnRegisterV200 } from "../controllers/v2/traditional/resendRegisterOtp.controller";
+import { resendOtpOnForgotPasswordV200 } from "../controllers/v2/traditional/reset-password/resendForgotPasswordOtp.controller";
 
 const router = Router();
 router.post(
   "/register",
   rateLimitingOnIndividualIp({ time: 10, maxRequests: 5 }),
   registerV200 as RequestHandler,
+);
+
+router.get(
+  "/resend-register-otp",
+  rateLimitingOnIndividualIp({ time: 10, maxRequests: 5 }),
+  resendOtpOnRegisterV200 as RequestHandler,
 );
 
 router.post("/email-verification", verifyOnRegisterV200 as RequestHandler);
@@ -31,6 +39,11 @@ router.post(
   "/forgot-password",
   rateLimitingOnIndividualIp({ time: 10, maxRequests: 5 }),
   forgotPasswordV200 as RequestHandler,
+);
+
+router.get(
+  "/resend-forgot-password-otp",
+  resendOtpOnForgotPasswordV200 as RequestHandler,
 );
 
 router.post(

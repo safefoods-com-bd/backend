@@ -94,10 +94,11 @@ export const registerV200 = async (req: Request, res: Response) => {
       html: onRegisterVerificationEmail({ email: email, otp: otp }),
     };
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-    isProduction
-      ? sendEmailWithNodemailer(emailData)
-      : sendEmailUsingMailhog(emailData);
+    if (isProduction) {
+      sendEmailWithNodemailer(emailData);
+    } else {
+      sendEmailUsingMailhog(emailData);
+    }
     //todo : HEATOS links
 
     return res.status(200).json({

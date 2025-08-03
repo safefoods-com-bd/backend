@@ -14,6 +14,8 @@ export const verifyOnRegisterV200 = async (req: Request, res: Response) => {
       req.body,
     );
     const email_verification_token = req.headers.email_verification_token;
+    console.log("email_verification_token", email_verification_token);
+    // Check if email verification token is provided
     if (!email_verification_token) {
       return res.status(400).json({
         success: false,
@@ -26,6 +28,7 @@ export const verifyOnRegisterV200 = async (req: Request, res: Response) => {
       .select()
       .from(usersTable)
       .where(eq(usersTable.email, email));
+    console.log("userExists", userExists);
     // If user does not exist, return error
     if (userExists.length === 0) {
       return res.status(400).json({
@@ -44,6 +47,7 @@ export const verifyOnRegisterV200 = async (req: Request, res: Response) => {
     const tokenData = await decryptTokenData(
       email_verification_token as string,
     );
+    console.log("tokenData", tokenData);
     if (tokenData.success === false) {
       return res.status(400).json({
         success: false,
