@@ -46,8 +46,12 @@ export const listAllSlidersV100 = async (req: Request, res: Response) => {
       .orderBy(sort === "asc" ? slidersTable.createdAt : slidersTable.createdAt)
       .limit(limit)
       .offset(offset);
+    const countResult = await db
+      .select()
+      .from(slidersTable)
+      .where(eq(slidersTable.isDeleted, false));
 
-    const totalCount = sliders.length;
+    const totalCount = countResult.length;
 
     // Generate HATEOAS links
     const baseUrl = `${req.protocol}://${req.get("host")}${req.baseUrl}`;

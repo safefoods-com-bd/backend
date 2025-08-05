@@ -71,6 +71,16 @@ export const SLIDER_ENDPOINTS = {
   DELETE_SLIDERS_BATCH: "DELETE /api/v1/sliders/batch",
 };
 
+// banners
+export const BANNER_ENDPOINTS = {
+  LIST_ALL_BANNERS: "GET /api/v1/banners",
+  GET_SINGLE_BANNER: "GET /api/v1/banners/:id",
+  CREATE_BANNER: "POST /api/v1/banners",
+  UPDATE_BANNER: "PATCH /api/v1/banners/:id",
+  DELETE_BANNER: "DELETE /api/v1/banners/:id",
+  DELETE_BANNERS_BATCH: "DELETE /api/v1/banners/batch",
+};
+
 // variant products
 export const VARIANT_PRODUCT_ENDPOINTS = {
   LIST_ALL_VARIANT_PRODUCTS: "GET /api/v1/variant-products",

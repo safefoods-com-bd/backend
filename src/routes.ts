@@ -24,6 +24,7 @@ import variantProductsRoutes from "./modules/product/variant-products/variant-pr
 import variantProductMediaRoutes from "./modules/product/variant-product-media/variant-product-media.routes";
 import authRoutesV2 from "./modules/auth/routes/authRoutes.v2";
 import slidersRoutes from "./modules/others/sliders/slider.routes";
+import bannersRoutes from "./modules/others/banners/banner.routes";
 
 // import { validateApiKey } from "./middleware/apiKeyMiddleware";
 // import { isProduction } from "./constants/variables";
@@ -71,4 +72,5 @@ export const registerRoutes = (app: Express) => {
 
   // others
   app.use("/api/v1/sliders", slidersRoutes);
+  app.use("/api/v1/banners", bannersRoutes);
 };
