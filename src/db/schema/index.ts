@@ -42,3 +42,7 @@ export { default as addedToCartsTable } from "./order-management/added_to_carts"
 // ------------stock management-----------------
 export { default as stockTable } from "./stock-management/stocks";
 export { default as warehouseTable } from "./stock-management/warehouses";
+
+// ------------others-----------------
+export { default as bannersTable } from "./others/banners";
+export { default as slidersTable } from "./others/sliders";
