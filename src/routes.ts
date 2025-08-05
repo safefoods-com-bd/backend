@@ -23,6 +23,7 @@ import cartRoutes from "@/modules/order-management/cart/cart.routes";
 import variantProductsRoutes from "./modules/product/variant-products/variant-products.routes";
 import variantProductMediaRoutes from "./modules/product/variant-product-media/variant-product-media.routes";
 import authRoutesV2 from "./modules/auth/routes/authRoutes.v2";
+import slidersRoutes from "./modules/others/sliders/slider.routes";
 
 // import { validateApiKey } from "./middleware/apiKeyMiddleware";
 // import { isProduction } from "./constants/variables";
@@ -67,4 +68,7 @@ export const registerRoutes = (app: Express) => {
   //stock management
   app.use("/api/v1/stocks", stocksRoutes);
   app.use("/api/v1/products/variants/media", variantProductMediaRoutes);
+
+  // others
+  app.use("/api/v1/sliders", slidersRoutes);
 };

@@ -61,6 +61,16 @@ export const PRODUCT_ENDPOINTS = {
   DELETE_PRODUCTS_BATCH: "DELETE /api/v1/products/batch",
 };
 
+// sliders
+export const SLIDER_ENDPOINTS = {
+  LIST_ALL_SLIDERS: "GET /api/v1/sliders",
+  GET_SINGLE_SLIDER: "GET /api/v1/sliders/:id",
+  CREATE_SLIDER: "POST /api/v1/sliders",
+  UPDATE_SLIDER: "PATCH /api/v1/sliders/:id",
+  DELETE_SLIDER: "DELETE /api/v1/sliders/:id",
+  DELETE_SLIDERS_BATCH: "DELETE /api/v1/sliders/batch",
+};
+
 // variant products
 export const VARIANT_PRODUCT_ENDPOINTS = {
   LIST_ALL_VARIANT_PRODUCTS: "GET /api/v1/variant-products",
