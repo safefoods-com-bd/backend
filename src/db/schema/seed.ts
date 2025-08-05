@@ -8,6 +8,7 @@ export const db = drizzle(connectionString, { schema, logger: true });
 
 import {
   accountData,
+  bannersData,
   categoryData,
   categoryLevelsData,
   couponsData,
@@ -18,6 +19,7 @@ import {
   productData,
   productOrderData,
   roleData,
+  slidersData,
   stockData,
   unitData,
   userData,
@@ -244,26 +246,40 @@ async function seedVariantProductsMedia() {
   }
 }
 
+async function seedBanners() {
+  for (const banner of bannersData) {
+    await db.insert(schema.bannersTable).values(banner).onConflictDoNothing();
+  }
+}
+
+async function seedSliders() {
+  for (const slider of slidersData) {
+    await db.insert(schema.slidersTable).values(slider).onConflictDoNothing();
+  }
+}
+
 async function seedAll() {
-  await seedPermissions();
-  await seedRoles();
-  await seedPermissionToRoles();
-  await seedUserRolePermissions();
-  await seedAccounts();
-  await seedUsers();
-  await seedCategoryLevels();
-  await seedCategories();
-  await seedWarehouses();
-  await seedProducts();
-  await seedUnits();
-  await seedVariantProducts();
-  await seedMedia();
+  // await seedPermissions();
+  // await seedRoles();
+  // await seedPermissionToRoles();
+  // await seedUserRolePermissions();
+  // await seedAccounts();
+  // await seedUsers();
+  // await seedCategoryLevels();
+  // await seedCategories();
+  // await seedWarehouses();
+  // await seedProducts();
+  // await seedUnits();
+  // await seedVariantProducts();
+  // await seedMedia();
   // await seedStocks();
   // await seedOrders();
   // await seedOrderProducts();
-  await seedCoupons();
-  await seedDeliveryZones();
-  await seedVariantProductsMedia();
+  // await seedCoupons();
+  // await seedDeliveryZones();
+  // await seedVariantProductsMedia();
+  await seedBanners();
+  await seedSliders();
 }
 
 const handleError = (error: Error) => {

@@ -80,6 +80,63 @@ export const mediaData = [
     title: "Safe Broiler",
     url: "https://safefoods.com.bd/_next/image?url=http%3A%2F%2Fres.cloudinary.com%2Fdymnymsph%2Fimage%2Fupload%2Fv1751343252%2Fsafefoods%2Fgiyxzxzd0sf75lrrw0a7.webp&w=640&q=75",
   },
+  // Slider images
+  {
+    id: "2c488b28-db26-4381-9209-4b7555ff8431",
+    title: "safe omega-3 broiler",
+    url: "https://res.cloudinary.com/dymnymsph/image/upload/v1752569655/safefoods/ybsinftr0b3izioyrxow.png",
+  },
+  // Banner images
+  {
+    id: "8c384d07-a597-4c64-a421-2c0503dda2c3",
+    title: "Safe Egg",
+    url: "http://res.cloudinary.com/dymnymsph/image/upload/v1752568607/safefoods/slkwfg82txztkdjhd4sm.png",
+  },
+  {
+    id: "15ae9634-fbfb-4bf8-b1b9-1ebbe7f31518",
+    title: "Safe Broiler",
+    url: "http://res.cloudinary.com/dymnymsph/image/upload/v1752568640/safefoods/gm5pkbjnzotufnova9yu.png",
+  },
+  {
+    id: "4dee4f37-6732-4af5-b179-9512845858a7",
+    title: "Omega-3 Broiler",
+    url: "http://res.cloudinary.com/dymnymsph/image/upload/v1752568679/safefoods/gmpio2pnmi6cwyatxjy1.png",
+  },
+  {
+    id: "632e3aeb-43a8-4165-a266-2009f4947d5f",
+    title: "Omega-3 Egg",
+    url: "http://res.cloudinary.com/dymnymsph/image/upload/v1752568782/safefoods/xfefedgstnnaq4tobunx.png",
+  },
+];
+
+export const slidersData = [
+  {
+    mediaId: "2c488b28-db26-4381-9209-4b7555ff8431",
+    title: "safe omega-3 broiler",
+  },
+];
+
+export const bannersData = [
+  {
+    mediaId: "8c384d07-a597-4c64-a421-2c0503dda2c3",
+    title: "Safe Egg",
+    variantProductId: "66c423c5-8789-45a3-bcbd-8ce0a9d3e6fb",
+  },
+  {
+    mediaId: "15ae9634-fbfb-4bf8-b1b9-1ebbe7f31518",
+    title: "Safe Broiler",
+    variantProductId: "66c423c5-8789-45a3-bcbd-8ce0a9d3e6fb",
+  },
+  {
+    mediaId: "4dee4f37-6732-4af5-b179-9512845858a7",
+    title: "Omega-3 Broiler",
+    variantProductId: "66c423c5-8789-45a3-bcbd-8ce0a9d3e6fb",
+  },
+  {
+    mediaId: "632e3aeb-43a8-4165-a266-2009f4947d5f",
+    title: "Omega-3 Egg",
+    variantProductId: "66c423c5-8789-45a3-bcbd-8ce0a9d3e6fb",
+  },
 ];
 
 export const unitData = [

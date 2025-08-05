@@ -5,7 +5,7 @@ import { Request, Response } from "express";
 import { handleError } from "@/utils/errorHandler";
 import { generateHateoasLinksForCollection } from "@/utils/generateHateoasLinks";
 import { BANNER_ENDPOINTS } from "@/data/endpoints";
-import { mediaTable, productsTable } from "@/db/schema";
+import { mediaTable, productsTable, variantProductsTable } from "@/db/schema";
 
 /**
  * Controller function to retrieve banners data with pagination and HATEOAS links.
@@ -44,8 +44,12 @@ export const listAllBannersV100 = async (req: Request, res: Response) => {
       .from(bannersTable)
       .leftJoin(mediaTable, eq(bannersTable.mediaId, mediaTable.id))
       .leftJoin(
+        variantProductsTable,
+        eq(bannersTable.variantProductId, variantProductsTable.id),
+      )
+      .leftJoin(
         productsTable,
-        eq(bannersTable.variantProductId, productsTable.id),
+        eq(variantProductsTable.productId, productsTable.id),
       )
       .where(eq(bannersTable.isDeleted, false))
       .orderBy(bannersTable.createdAt)
