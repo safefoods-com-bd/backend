@@ -51,11 +51,45 @@ export const accountData = [
 
 export const userData = [
   {
+    id: "90073e5c-30b4-471f-bf09-293a527daa95",
     email: "softpiper.dev@softpiper.com",
     password: "admin123",
     registeredAt: new Date(),
     isVerified: true,
     providerName: "traditional",
+  },
+];
+
+export const addressesData = [
+  {
+    id: "f37ca2fd-cec7-48d9-b4e0-114c19b3c276",
+    userId: "90073e5c-30b4-471f-bf09-293a527daa95",
+    flatNo: "4c",
+    floorNo: "3",
+    addressLine: "Shahjahanpur",
+    name: "arafat",
+    phoneNo: "01676042170",
+    deliveryNotes: "the address is near Amtola Masjid",
+    city: "Dhaka",
+    state: "Dhaka",
+    country: "Bangladesh",
+    postalCode: "1205",
+    isActive: true,
+  },
+  {
+    id: "2d1eebd1-334c-4721-88e0-52fbb878932d",
+    userId: "90073e5c-30b4-471f-bf09-293a527daa95",
+    flatNo: "4c",
+    floorNo: "3",
+    addressLine: "Hazaribagh",
+    name: "arafat",
+    phoneNo: "01676042170",
+    deliveryNotes: "the address is near Hazaribagh Park",
+    city: "Dhaka",
+    state: "Dhaka",
+    country: "Bangladesh",
+    postalCode: "1217",
+    isActive: false,
   },
 ];
 
@@ -439,5 +473,29 @@ export const deliveryZoneData = [
     isDeleted: false,
     createdAt: new Date(),
     updatedAt: new Date(),
+  },
+];
+
+export const paymentMethodData = [
+  {
+    id: "c1d37851-9779-483f-a86d-57c7b5515d0b",
+    title: "Cash on Delivery",
+    description: "Pay with cash upon delivery of your order.",
+    isActive: true,
+    isDeleted: false,
+  },
+  {
+    id: "fdc2e021-a9c6-4e2f-87b3-2a06c7fb6d85",
+    title: "bKash",
+    description: "Pay with bKash.",
+    isActive: true,
+    isDeleted: false,
+  },
+  {
+    id: "c1d37851-9779-483f-a86d-57c7b5515d0b",
+    title: "Nagad",
+    description: "Pay with Nagad.",
+    isActive: true,
+    isDeleted: false,
   },
 ];

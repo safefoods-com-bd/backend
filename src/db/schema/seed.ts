@@ -8,6 +8,7 @@ export const db = drizzle(connectionString, { schema, logger: true });
 
 import {
   accountData,
+  addressesData,
   bannersData,
   categoryData,
   categoryLevelsData,
@@ -15,6 +16,7 @@ import {
   deliveryZoneData,
   mediaData,
   orderData,
+  paymentMethodData,
   permissionData,
   productData,
   productOrderData,
@@ -258,6 +260,24 @@ async function seedSliders() {
   }
 }
 
+async function seedPaymentMethods() {
+  for (const method of paymentMethodData) {
+    await db
+      .insert(schema.paymentMethodsTable)
+      .values(method)
+      .onConflictDoNothing();
+  }
+}
+
+async function seedAddresses() {
+  for (const address of addressesData) {
+    await db
+      .insert(schema.addressesTable)
+      .values(address)
+      .onConflictDoNothing();
+  }
+}
+
 async function seedAll() {
   // await seedPermissions();
   // await seedRoles();
@@ -278,8 +298,10 @@ async function seedAll() {
   // await seedCoupons();
   // await seedDeliveryZones();
   // await seedVariantProductsMedia();
-  await seedBanners();
-  await seedSliders();
+  // await seedBanners();
+  // await seedSliders();
+  // await seedPaymentMethods();
+  await seedAddresses();
 }
 
 const handleError = (error: Error) => {
