@@ -279,9 +279,9 @@ async function seedAddresses() {
 }
 
 async function seedAll() {
-  // await seedPermissions();
+  await seedPermissions();
   // await seedRoles();
-  // await seedPermissionToRoles();
+  await seedPermissionToRoles();
   // await seedUserRolePermissions();
   // await seedAccounts();
   // await seedUsers();

@@ -9,6 +9,7 @@ export const READ_ROLE = "read_role";
 export const UPDATE_ROLE = "update_role";
 export const DELETE_ROLE = "delete_role";
 // users
+export const READ_ALL_USERS = "read_all_users";
 export const CREATE_USER = "create_user";
 export const READ_USER = "read_user";
 export const UPDATE_USER = "update_user";

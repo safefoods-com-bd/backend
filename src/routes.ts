@@ -2,7 +2,7 @@ import { Express } from "express";
 import { permissionsRoutes } from "@/modules/user-management/permissions/index";
 import { rolesRoutes } from "@/modules/user-management/roles/index";
 import authRoutesV1 from "@/modules/auth/routes/authRoutes.v1";
-import { userRoutes } from "@/modules/user-management/users/index";
+import userRoutes from "@/modules/user-management/users/usersRoute";
 import { profileRoutes } from "@/modules/user-management/profile/index";
 import { settingsRoutes } from "@/modules/general-settings/index";
 import mediaRoutes from "@/modules/utils/media/media.routes";
@@ -32,10 +32,10 @@ export const registerRoutes = (app: Express) => {
   // isProduction && app.use(validateApiKey as any);
 
   // user management
-  app.use("/api/user-management/permissions", permissionsRoutes);
-  app.use("/api/user-management/roles", rolesRoutes);
-  app.use("/api/user-management/users", userRoutes);
-  app.use("/api/user-management/profile", profileRoutes);
+  app.use("/api/v1/user-management/permissions", permissionsRoutes);
+  app.use("/api/v1/user-management/roles", rolesRoutes);
+  app.use("/api/v1/user-management/users", userRoutes);
+  app.use("/api/v1/user-management/profile", profileRoutes);
 
   // auth
   app.use("/api/v1/auth", authRoutesV1);

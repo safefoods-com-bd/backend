@@ -33,16 +33,30 @@ export const listAllUsers = async (req: Request, res: Response) => {
     }
 
     const query = db
-      .select()
+      .select({
+        id: usersTable.id,
+        email: usersTable.email,
+        roleId: usersTable.roleId,
+        isVerified: usersTable.isVerified,
+        isDeleted: usersTable.isDeleted,
+        registeredAt: usersTable.registeredAt,
+        permissions: sql<string>`STRING_AGG(${permissionsTable.name}, ',')`,
+        roleName: rolesTable.name,
+      })
       .from(usersTable)
       .orderBy(sort === "desc" ? desc(usersTable.id) : usersTable.id)
       .limit(limit)
       .offset(offset)
       .leftJoin(rolesTable, sql`${usersTable.roleId} = ${rolesTable.id}`)
       .leftJoin(
+        permissionToRolesTable,
+        sql`${rolesTable.id} = ${permissionToRolesTable.roleId}`,
+      )
+      .leftJoin(
         permissionsTable,
-        sql`${rolesTable.id} = ${permissionsTable.id}`,
-      );
+        sql`${permissionToRolesTable.permissionId} = ${permissionsTable.id}`,
+      )
+      .groupBy(usersTable.id, rolesTable.id);
 
     if (search) {
       query.where(
@@ -51,11 +65,20 @@ export const listAllUsers = async (req: Request, res: Response) => {
     }
 
     const users = await query;
-    const results = users.map((user) => ({
-      user: user.users,
-      role: user.roles,
-      permissions: user.permissions,
-    }));
+    console.log(users);
+    const results = users.map((user) => {
+      const permissionsArray = user.permissions.split(",");
+      return {
+        id: user.id,
+        email: user.email,
+        roleId: user.roleId,
+        isVerified: user.isVerified,
+        isDeleted: user.isDeleted,
+        registeredAt: user.registeredAt,
+        roleName: user.roleName,
+        permissions: permissionsArray,
+      };
+    });
 
     const totalCountQuery = db.select({ count: count() }).from(usersTable);
     if (search) {
@@ -86,6 +109,7 @@ export const listAllUsers = async (req: Request, res: Response) => {
       _links,
     });
   } catch (error) {
+    console.log(error);
     handleError(error, res);
   }
 };
