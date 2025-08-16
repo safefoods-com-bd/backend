@@ -7,6 +7,7 @@ import { handleError } from "@/utils/errorHandler";
 import { generateHateoasLinksForCollection } from "@/utils/generateHateoasLinks";
 import { CATEGORY_ENDPOINTS } from "@/data/endpoints";
 import { CategoryRecord, CategoryWithChildren } from "../category.types";
+import { mediaTable } from "@/db/schema";
 
 /**
  * Controller function to retrieve categories data with pagination and HATEOAS links.
@@ -45,6 +46,7 @@ export const listAllCategoriesV100 = async (req: Request, res: Response) => {
         description: categoriesTable.description,
         parentId: categoriesTable.parentId,
         mediaId: categoriesTable.mediaId,
+        mediaUrl: mediaTable.url,
         isActive: categoriesTable.isActive,
         createdAt: categoriesTable.createdAt,
         updatedAt: categoriesTable.updatedAt,
@@ -57,6 +59,7 @@ export const listAllCategoriesV100 = async (req: Request, res: Response) => {
         categoryLevelsTable,
         eq(categoriesTable.categoryLevelId, categoryLevelsTable.id),
       )
+      .leftJoin(mediaTable, eq(mediaTable.id, categoriesTable.mediaId))
       .where(
         isActive !== undefined
           ? eq(categoriesTable.isActive, isActive)
