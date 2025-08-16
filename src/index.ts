@@ -4,7 +4,6 @@ import cookieParser from "cookie-parser";
 import client from "prom-client";
 import "module-alias/register";
 import responseTime from "response-time";
-import "../src/services/tracing";
 
 import { registerRoutes } from "./routes";
 import { DOMAIN } from "./constants/variables";
