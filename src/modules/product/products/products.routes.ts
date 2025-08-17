@@ -9,6 +9,7 @@ import {
 } from "./controllers/delete-product.controller";
 import { listProductsByCategoryV100 } from "./controllers/get-products-by-category";
 import { getSingleProductBySlugV100 } from "./controllers/get-single-product-by-slug.controller";
+import { getRelatedProductsV100 } from "./controllers/get-related-products.controller";
 
 const router = Router();
 
@@ -22,6 +23,11 @@ router.get("/:id", getSingleProductV100 as RequestHandler);
 router.get(
   "/slug/:slug",
   getSingleProductBySlugV100 as unknown as RequestHandler,
+);
+// Get related products by slug
+router.get(
+  "/related/:slug",
+  getRelatedProductsV100 as unknown as RequestHandler,
 );
 
 // Get products by category
