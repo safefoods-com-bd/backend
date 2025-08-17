@@ -234,6 +234,27 @@ export const categoryLevelsData = [
     createdAt: new Date(),
     updatedAt: new Date(),
   },
+
+  {
+    id: "6f985180-3d55-4a30-8973-c52ae37759a2",
+    title: "Daily Essentials",
+    slug: "daily-essentials",
+    description: "",
+    categoryLevelId: "7474c266-4a58-4dad-b741-0daca67d34fa",
+    parentId: null,
+    mediaId: null,
+    isActive: true,
+  },
+  {
+    id: "db91e54f-7e75-49b7-b6b7-3fe5ddc579eb",
+    title: "Oil",
+    slug: "oil",
+    description: "",
+    categoryLevelId: "65f89dd4-3dab-4832-b1ff-83a7178d1561",
+    parentId: "6f985180-3d55-4a30-8973-c52ae37759a2",
+    mediaId: null,
+    isActive: true,
+  },
 ];
 
 export const categoryData = [

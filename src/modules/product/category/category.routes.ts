@@ -7,11 +7,15 @@ import {
   deleteCategoryV100,
   deleteCategoriesBatchV100,
 } from "./controllers/delete-category.controller";
+import { allCategoriesListV100 } from "./controllers/all-categories-list.controller";
 
 const router = Router();
 
 // Get all categories with pagination
 router.get("/", listAllCategoriesV100 as RequestHandler);
+
+// Get all categories without children (flat list)
+router.get("/flat", allCategoriesListV100 as RequestHandler);
 
 // Get a single category by ID
 router.get("/:id", getSingleCategoryV100 as RequestHandler);
