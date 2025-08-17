@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { db } from "@/db/db";
 import { handleError } from "@/utils/errorHandler";
-import { asc, desc, eq, sql } from "drizzle-orm";
+import { and, asc, desc, eq, sql } from "drizzle-orm";
 import { PRODUCT_ENDPOINTS } from "@/data/endpoints";
 import productsTables from "@/db/schema/product-management/products/products";
 import categoriesTable from "@/db/schema/product-management/categories/categories";
@@ -56,6 +56,8 @@ export const listAllProductsV100 = async (
     const sortBy = (req.query.sortBy as string) || "createdAt";
     const sortOrder = (req.query.sortOrder as string) || "desc";
     const search = req.query.search as string;
+    const bestDeal = req.query.bestDeal ? true : false;
+    const discountedSale = req.query.discountedSale ? true : false;
 
     // First, build a subquery to find matching product IDs
     let matchingProductIdsQuery;
@@ -183,8 +185,16 @@ export const listAllProductsV100 = async (
             eq(variantProductTables.id, stockTable.variantProductId),
           )
           .where(
-            sql`${eq(variantProductTables.productId, product.id)} AND ${eq(variantProductTables.isDeleted, false)}`,
+            and(
+              eq(variantProductTables.productId, product.id),
+              eq(variantProductTables.isDeleted, false),
+              eq(variantProductTables.bestDeal, bestDeal),
+              eq(variantProductTables.discountedSale, discountedSale),
+            ),
           );
+        // .where(
+        //   sql`${eq(variantProductTables.productId, product.id)} AND ${eq(variantProductTables.isDeleted, false)}`,
+        // );
 
         // Then for each variant, fetch its media
         const variantsWithMedia = await Promise.all(
@@ -226,10 +236,14 @@ export const listAllProductsV100 = async (
       totalPages: Math.ceil(countValue / limit),
     };
 
+    const filteredProducts = productsWithVariants.filter(
+      (product) => product.variants && product.variants.length > 0,
+    );
+
     return res.status(200).json({
       success: true,
       message: "Products with variants retrieved successfully",
-      data: productsWithVariants,
+      data: filteredProducts,
       pagination,
     });
   } catch (error) {
