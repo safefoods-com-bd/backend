@@ -72,6 +72,7 @@ export const getRelatedProductsV100 = async (req: Request, res: Response) => {
         categoryId: productsTables.categoryId,
         brandId: productsTables.brandId,
         categoryTitle: categoriesTable.title,
+        categorySlug: categoriesTable.slug,
         brandTitle: brandTables.title,
       })
       .from(productsTables)
