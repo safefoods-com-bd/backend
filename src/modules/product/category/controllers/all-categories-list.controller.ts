@@ -6,7 +6,6 @@ import { Request, Response } from "express";
 import { handleError } from "@/utils/errorHandler";
 import { generateHateoasLinksForCollection } from "@/utils/generateHateoasLinks";
 import { CATEGORY_ENDPOINTS } from "@/data/endpoints";
-import { CategoryRecord, CategoryWithChildren } from "../category.types";
 import { mediaTable } from "@/db/schema";
 
 /**
