@@ -8,6 +8,7 @@ import {
   deleteProductBatchV100,
 } from "./controllers/delete-product.controller";
 import { listProductsByCategoryV100 } from "./controllers/get-products-by-category";
+import { getSingleProductBySlugV100 } from "./controllers/get-single-product-by-slug.controller";
 
 const router = Router();
 
@@ -16,6 +17,12 @@ router.get("/", listAllProductsV100 as unknown as RequestHandler);
 
 // Get a single product by ID
 router.get("/:id", getSingleProductV100 as RequestHandler);
+
+// Get a single product by slug
+router.get(
+  "/slug/:slug",
+  getSingleProductBySlugV100 as unknown as RequestHandler,
+);
 
 // Get products by category
 router.get(
