@@ -22,6 +22,7 @@ export const verifyMobileOtp200 = async (req: Request, res: Response) => {
   try {
     const validation = validateZodSchema(verifyMobileOtpSchema)(req.body);
     const otp_verification_token = req.headers.otp_verification_token;
+    console.log("otp_verification_token", otp_verification_token);
     if (!otp_verification_token) {
       throw {
         type: ERROR_TYPES.BAD_REQUEST,
