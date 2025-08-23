@@ -1,11 +1,12 @@
-import { pgTable, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
+import { pgTable, text, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
 import blogCategoriesTable from "./blog_categories";
 import { mediaTable } from "..";
 
 const blogsTable = pgTable("blogs", {
   id: uuid("id").primaryKey().defaultRandom(),
   title: varchar("title", { length: 255 }).notNull(),
-  content: varchar("content", { length: 1000 }).notNull(),
+  slug: varchar("slug", { length: 255 }).notNull().unique(),
+  content: text("content").notNull(),
   authorName: varchar("author_name", { length: 255 }).notNull(),
   blogCategoryId: uuid("blog_category_id").references(
     () => blogCategoriesTable.id,

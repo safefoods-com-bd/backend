@@ -169,3 +169,13 @@ export const AUTH_ENDPOINTS = {
   SEND_MOBILE_OTP: "POST /api/v1/send-mobile-otp",
   VERIFY_MOBILE_OTP: "POST  /api/v1/verify-mobile-otp",
 };
+
+// blogs
+export const BLOG_ENDPOINTS = {
+  LIST_ALL_BLOGS: "GET /api/v1/blogs",
+  GET_SINGLE_BLOG: "GET /api/v1/blogs/:id",
+  CREATE_BLOG: "POST /api/v1/blogs",
+  UPDATE_BLOG: "PATCH /api/v1/blogs/:id",
+  DELETE_BLOG: "DELETE /api/v1/blogs/:id",
+  DELETE_BLOGS_BATCH: "DELETE /api/v1/blogs/batch",
+};

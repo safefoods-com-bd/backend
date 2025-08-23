@@ -81,7 +81,7 @@ export async function verifySession(token: string): Promise<any> {
 //     }
 
 //     const tokenData = await verifySession(cookies.accessToken);
-//     // console.log("tokenData", tokenData);
+//     //
 //     if (tokenData.success === false) {
 //       return res.status(401).json({
 //         success: false,
@@ -140,7 +140,7 @@ export const getPermissions = async (userId: string) => {
 
 export async function decryptTokenData(token: string): Promise<any> {
   const tokenData = await decrypt(token);
-  console.log("tokenData", tokenData);
+
   if (tokenData.code === "ERR_JWT_EXPIRED") {
     return {
       message: "Token Expired",

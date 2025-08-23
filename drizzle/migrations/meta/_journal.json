@@ -99,6 +99,20 @@
       "when": 1755965385159,
       "tag": "0013_blogs",
       "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "7",
+      "when": 1755967631785,
+      "tag": "0014_added slug to the blogsTable",
+      "breakpoints": true
+    },
+    {
+      "idx": 15,
+      "version": "7",
+      "when": 1755968746811,
+      "tag": "0015_changed type from varchar to text , content in blogsTable",
+      "breakpoints": true
     }
   ]
 }

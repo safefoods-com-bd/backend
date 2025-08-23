@@ -26,6 +26,7 @@ import authRoutesV2 from "./modules/auth/routes/authRoutes.v2";
 import slidersRoutes from "./modules/others/sliders/slider.routes";
 import bannersRoutes from "./modules/others/banners/banner.routes";
 import blogCategoriesRoutes from "./modules/blogs/blog-categories/blog-categories.routes";
+import { blogRoutes } from "./modules/blogs";
 
 // import { validateApiKey } from "./middleware/apiKeyMiddleware";
 // import { isProduction } from "./constants/variables";
@@ -75,4 +76,5 @@ export const registerRoutes = (app: Express) => {
   app.use("/api/v1/sliders", slidersRoutes);
   app.use("/api/v1/banners", bannersRoutes);
   app.use("/api/v1/blogs/categories", blogCategoriesRoutes);
+  app.use("/api/v1/blogs", blogRoutes);
 };
