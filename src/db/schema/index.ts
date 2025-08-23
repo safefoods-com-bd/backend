@@ -46,3 +46,7 @@ export { default as warehouseTable } from "./stock-management/warehouses";
 // ------------others-----------------
 export { default as bannersTable } from "./others/banners";
 export { default as slidersTable } from "./others/sliders";
+
+// ------------blogs-----------------
+export { default as blogCategoriesTable } from "./blogs/blog_categories";
+export { default as blogTable } from "./blogs/blogs";
