@@ -13,8 +13,7 @@ export const verifyOnRegisterV200 = async (req: Request, res: Response) => {
     const { otp, email } = await validateZodSchema(verifyOnRegisterSchema)(
       req.body,
     );
-    const email_verification_token = req.headers.email_verification_token;
-    console.log("email_verification_token", email_verification_token);
+    const email_verification_token = req.headers["email-verification-token"];
     // Check if email verification token is provided
     if (!email_verification_token) {
       return res.status(400).json({

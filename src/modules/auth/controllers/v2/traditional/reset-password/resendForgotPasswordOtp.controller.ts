@@ -20,7 +20,7 @@ export const resendOtpOnForgotPasswordV200 = async (
   res: Response,
 ) => {
   try {
-    const forgot_password_token = req.headers.forgot_password_token;
+    const forgot_password_token = req.headers["forgot-password-token"];
     if (!forgot_password_token) {
       return res.status(400).json({
         success: false,

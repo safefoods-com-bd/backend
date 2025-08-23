@@ -16,7 +16,8 @@ export const forgotPasswordOtpVerificationV200 = async (
     const { email, otp } = await validateZodSchema(
       verifyForgotPasswordOtpVerificationSchema,
     )(req.body);
-    const forgot_password_token = req.headers.forgot_password_token;
+    const forgot_password_token = req.headers["forgot-password-token"];
+    // Check if forgot password token is provided
     if (!forgot_password_token) {
       return res.status(400).json({
         success: false,

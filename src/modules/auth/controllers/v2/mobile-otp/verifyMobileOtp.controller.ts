@@ -15,15 +15,12 @@ import {
 import { eq, sql } from "drizzle-orm";
 import { DEFAULT_ROLE } from "@/constants/permissionsAndRoles";
 import { USER_ACCOUNT_TYPE } from "@/data/constants";
-import { handleAuthTokens } from "@/lib/tokenUtils";
 import { ACCESS_TOKEN_AGE, REFRESH_TOKEN_AGE } from "@/constants/variables";
 
 export const verifyMobileOtp200 = async (req: Request, res: Response) => {
   try {
     const validation = validateZodSchema(verifyMobileOtpSchema)(req.body);
     const otp_verification_token = req.headers["otp-verification-token"];
-    console.log("otp_verification_token", otp_verification_token);
-    console.log("headers", req.headers);
     if (!otp_verification_token) {
       throw {
         type: ERROR_TYPES.BAD_REQUEST,
