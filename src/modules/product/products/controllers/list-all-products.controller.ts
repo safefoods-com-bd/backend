@@ -156,6 +156,20 @@ export const listAllProductsV100 = async (
     const productsWithVariants = await Promise.all(
       products.map(async (product: Product) => {
         // First get the variants
+        // Build dynamic where conditions based on query params
+        const variantWhereConditions = [
+          eq(variantProductTables.productId, product.id),
+          eq(variantProductTables.isDeleted, false),
+        ];
+        if (bestDeal) {
+          variantWhereConditions.push(eq(variantProductTables.bestDeal, true));
+        }
+        if (discountedSale) {
+          variantWhereConditions.push(
+            eq(variantProductTables.discountedSale, true),
+          );
+        }
+
         const variants = await db
           .select({
             id: variantProductTables.id,
@@ -184,14 +198,7 @@ export const listAllProductsV100 = async (
             stockTable,
             eq(variantProductTables.id, stockTable.variantProductId),
           )
-          .where(
-            and(
-              eq(variantProductTables.productId, product.id),
-              eq(variantProductTables.isDeleted, false),
-              eq(variantProductTables.bestDeal, bestDeal),
-              eq(variantProductTables.discountedSale, discountedSale),
-            ),
-          );
+          .where(and(...variantWhereConditions));
         // .where(
         //   sql`${eq(variantProductTables.productId, product.id)} AND ${eq(variantProductTables.isDeleted, false)}`,
         // );
