@@ -1,7 +1,12 @@
 import { Request, Response } from "express";
 import { db } from "@/db/db";
 import { ERROR_TYPES, handleError } from "@/utils/errorHandler";
-import { ordersTable, orderHistoryTable, productsTable } from "@/db/schema";
+import {
+  ordersTable,
+  orderHistoryTable,
+  productsTable,
+  addressesTable,
+} from "@/db/schema";
 import { getUserOrdersValidationSchema } from "../orders.validation";
 import { eq, desc, count, and, inArray } from "drizzle-orm";
 import { ORDER_ENDPOINTS } from "@/data/endpoints";
@@ -36,8 +41,46 @@ export const getUserOrdersV100 = async (req: Request, res: Response) => {
 
     // Fetch orders
     const ordersQuery = db
-      .select()
+      .select({
+        id: ordersTable.id,
+        userId: ordersTable.userId,
+        subTotal: ordersTable.subTotal,
+        discount: ordersTable.discount,
+        couponId: ordersTable.couponId,
+        afterDiscountTotal: ordersTable.afterDiscountTotal,
+        deliveryCharge: ordersTable.deliveryCharge,
+        deliveryZoneId: ordersTable.deliveryZoneId,
+        total: ordersTable.total,
+        preferredDeliveryDateAndTime: ordersTable.preferredDeliveryDateAndTime,
+        paymentMethodId: ordersTable.paymentMethodId,
+        transactionNo: ordersTable.transactionNo,
+        transactionPhoneNo: ordersTable.transactionPhoneNo,
+        transactionDate: ordersTable.transactionDate,
+        addressId: ordersTable.addressId,
+        paymentStatus: ordersTable.paymentStatus,
+        orderStatus: ordersTable.orderStatus,
+        isDeleted: ordersTable.isDeleted,
+        createdAt: ordersTable.createdAt,
+        updatedAt: ordersTable.updatedAt,
+        address: {
+          id: addressesTable.id,
+          flatNo: addressesTable.flatNo,
+          floorNo: addressesTable.floorNo,
+          addressLine: addressesTable.addressLine,
+          name: addressesTable.name,
+          phoneNo: addressesTable.phoneNo,
+          deliveryNotes: addressesTable.deliveryNotes,
+          city: addressesTable.city,
+          state: addressesTable.state,
+          country: addressesTable.country,
+          postalCode: addressesTable.postalCode,
+          createdAt: addressesTable.createdAt,
+          updatedAt: addressesTable.updatedAt,
+          isActive: addressesTable.isActive,
+        },
+      })
       .from(ordersTable)
+      .leftJoin(addressesTable, eq(ordersTable.addressId, addressesTable.id))
       .where(
         and(eq(ordersTable.userId, userId), eq(ordersTable.isDeleted, false)),
       )
