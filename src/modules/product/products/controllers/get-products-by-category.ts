@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { db } from "@/db/db";
 import { handleError } from "@/utils/errorHandler";
-import { asc, desc, eq, sql } from "drizzle-orm";
+import { eq, desc, asc, sql, inArray } from "drizzle-orm";
 import { PRODUCT_ENDPOINTS } from "@/data/endpoints";
 import productsTables from "@/db/schema/product-management/products/products";
 import categoriesTable from "@/db/schema/product-management/categories/categories";
@@ -64,7 +64,49 @@ export const listProductsByCategoryV100 = async (
       });
     }
 
-    // When filtering by category, find products that belong to the specified category
+    // First, get the target category and all its children
+    const allCategories = await db
+      .select({
+        id: categoriesTable.id,
+        parentId: categoriesTable.parentId,
+        slug: categoriesTable.slug,
+      })
+      .from(categoriesTable);
+
+    // Find the target category ID
+    const targetCategory = allCategories.find((c) => c.slug === categorySlug);
+    if (!targetCategory) {
+      return res.status(404).json({
+        success: false,
+        message: "Category not found",
+      });
+    }
+
+    // Function to recursively get all child category IDs
+    const getAllChildCategoryIds = (
+      categoryId: string,
+      categories: typeof allCategories,
+    ): string[] => {
+      const childIds: string[] = [];
+      const directChildren = categories.filter(
+        (c) => c.parentId === categoryId,
+      );
+
+      childIds.push(categoryId); // Include the parent category itself
+      directChildren.forEach((child) => {
+        childIds.push(...getAllChildCategoryIds(child.id, categories));
+      });
+
+      return childIds;
+    };
+
+    // Get all category IDs including the target and its children
+    const categoryIds = getAllChildCategoryIds(
+      targetCategory.id,
+      allCategories,
+    );
+
+    // When filtering by category, find products that belong to the specified categories
     const matchingProductIdsQuery = db
       .selectDistinct({ id: productsTables.id })
       .from(productsTables)
@@ -72,7 +114,7 @@ export const listProductsByCategoryV100 = async (
         categoriesTable,
         eq(productsTables.categoryId, categoriesTable.id),
       )
-      .where(eq(categoriesTable.slug, categorySlug));
+      .where(inArray(productsTables.categoryId, categoryIds));
 
     // Get the count of matching products
     const countResult = await db
