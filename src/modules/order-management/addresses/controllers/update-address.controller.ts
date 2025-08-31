@@ -63,7 +63,7 @@ export const updateAddressV100 = async (req: Request, res: Response) => {
         .from(addressesTable)
         .where(
           and(
-            eq(addressesTable.userId, updatedAddress[0].userId),
+            eq(addressesTable.userId, updatedAddress[0].userId!),
             not(eq(addressesTable.id, id)),
           ), // Exclude the updated address
         );
@@ -74,7 +74,7 @@ export const updateAddressV100 = async (req: Request, res: Response) => {
           .set({ isActive: false })
           .where(
             and(
-              eq(addressesTable.userId, updatedAddress[0].userId),
+              eq(addressesTable.userId, updatedAddress[0].userId!),
               not(eq(addressesTable.id, id)),
             ),
           );

@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { string, z } from "zod";
 
 const paymentStatusEnum = z.enum(["paid", "unpaid", "refunded", "failed"]);
 const orderStatusEnum = z.enum([
@@ -94,6 +94,27 @@ export const orderValidationSchema = baseOrderSchema.refine(
     path: ["afterDiscountTotal"],
   },
 );
+
+export const guestUserOrderValidationSchema = baseOrderSchema
+  .omit({
+    userId: true,
+    addressId: true,
+  })
+  .extend({
+    fullName: z.string({ required_error: "Full Name is required" }),
+    email: z.string(),
+    phoneNumber: z.string({ required_error: "Phone Number is required" }),
+    flatNo: z.string(),
+    floorNo: z.string(),
+    addressLine: z.string({ required_error: "Address line is required" }),
+    city: z.string({ required_error: "City is required" }),
+    postalCode: z.string(),
+    country: z.string().default("Bangladesh"),
+  })
+  .refine((data) => Number(data.afterDiscountTotal) <= Number(data.subTotal), {
+    message: "After discount total must be less than or equal to subtotal",
+    path: ["afterDiscountTotal"],
+  });
 
 export type OrderValidationType = z.infer<typeof orderValidationSchema>;
 

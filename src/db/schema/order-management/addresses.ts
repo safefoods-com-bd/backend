@@ -10,14 +10,18 @@ import {
 } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
 import usersTable from "../user-management/users";
+import guestUsersTable from "../user-management/guestUsers";
 
 const addressesTable = pgTable(
   "addresses",
   {
     id: uuid("id").primaryKey().defaultRandom(),
-    userId: uuid("user_id")
-      .notNull()
-      .references(() => usersTable.id, { onDelete: "cascade" }),
+    userId: uuid("user_id").references(() => usersTable.id, {
+      onDelete: "cascade",
+    }),
+    guestUserId: uuid("guest_user_id").references(() => guestUsersTable.id, {
+      onDelete: "cascade",
+    }),
     flatNo: varchar("flat_no", { length: 100 }),
     floorNo: varchar("floor_no", { length: 100 }),
     addressLine: text("address_line").notNull(),

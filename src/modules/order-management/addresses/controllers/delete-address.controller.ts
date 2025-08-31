@@ -60,7 +60,7 @@ export const deleteAddressV100 = async (req: Request, res: Response) => {
       .from(addressesTable)
       .where(
         and(
-          eq(addressesTable.userId, existingAddress[0].userId),
+          eq(addressesTable.userId, existingAddress[0].userId!),
           not(eq(addressesTable.id, id)),
         ), // Exclude the updated address
       );

@@ -113,6 +113,13 @@
       "when": 1755968746811,
       "tag": "0015_changed type from varchar to text , content in blogsTable",
       "breakpoints": true
+    },
+    {
+      "idx": 16,
+      "version": "7",
+      "when": 1756655457592,
+      "tag": "0016_guest user table and relations",
+      "breakpoints": true
     }
   ]
 }

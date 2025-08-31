@@ -9,7 +9,7 @@ export { default as profilesTable } from "./user-management/profile";
 export { default as refreshTokensTable } from "./user-management/refresh_tokens";
 export { default as accountsTable } from "./user-management/accounts";
 export { default as usersToAccountsTable } from "./user-management/users_accounts";
-
+export { default as guestUsersTable } from "./user-management/guestUsers";
 // ------------general-settings-------------------
 export { default as generalSettingsTable } from "./general-settings/general_settings";
 

@@ -6,6 +6,7 @@ import {
   deleteOrderV100,
   deleteOrdersBatchV100,
 } from "./controllers/delete-order.controller";
+import { createGuestUserOrderV100 } from "./controllers/create-guest-order.controller";
 
 const router = Router();
 
@@ -14,6 +15,9 @@ router.get("/user/:userId", getUserOrdersV100 as RequestHandler);
 
 // Create a new order
 router.post("/", createOrderV100 as RequestHandler);
+
+// Create a new Guest User Order
+router.post("/guest", createGuestUserOrderV100 as RequestHandler);
 
 // Update an existing order
 router.patch("/:id", updateOrderV100 as RequestHandler);

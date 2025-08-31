@@ -13,6 +13,7 @@ import couponsTable from "./coupons";
 import deliveryZoneTable from "./delivery_zones";
 import paymentMethodTable from "./payment_methods";
 import addressesTable from "./addresses";
+import guestUsersTable from "../user-management/guestUsers";
 
 const paymentStatusEnum = pgEnum("payment_status", [
   "paid",
@@ -29,9 +30,8 @@ const orderStatusEnum = pgEnum("order_status", [
 ]);
 const ordersTable = pgTable("orders", {
   id: uuid("id").primaryKey().defaultRandom(),
-  userId: uuid("user_id")
-    .notNull()
-    .references(() => usersTable.id),
+  userId: uuid("user_id").references(() => usersTable.id),
+  guestUserId: uuid("guest_user_id").references(() => guestUsersTable.id),
   subTotal: real("sub_total").notNull(), // products prices
   discount: real("discount").notNull().default(0), // discounts
   couponId: uuid("coupon_id").references(() => couponsTable.id), // coupon applied
