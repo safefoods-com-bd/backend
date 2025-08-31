@@ -10,6 +10,7 @@ import {
   accountData,
   addressesData,
   bannersData,
+  blogsData,
   categoryData,
   categoryLevelsData,
   couponsData,
@@ -278,10 +279,25 @@ async function seedAddresses() {
   }
 }
 
+async function seedBlogCategories() {
+  for (const category of categoryData) {
+    await db
+      .insert(schema.blogCategoriesTable)
+      .values(category)
+      .onConflictDoNothing();
+  }
+}
+
+async function seedBlogs() {
+  for (const blog of blogsData) {
+    await db.insert(schema.blogTable).values(blog).onConflictDoNothing();
+  }
+}
+
 async function seedAll() {
-  await seedPermissions();
+  // await seedPermissions();
   // await seedRoles();
-  await seedPermissionToRoles();
+  // await seedPermissionToRoles();
   // await seedUserRolePermissions();
   // await seedAccounts();
   // await seedUsers();
@@ -301,7 +317,9 @@ async function seedAll() {
   // await seedBanners();
   // await seedSliders();
   // await seedPaymentMethods();
-  await seedAddresses();
+  // await seedAddresses();
+  // await seedBlogCategories();
+  await seedBlogs();
 }
 
 const handleError = (error: Error) => {
