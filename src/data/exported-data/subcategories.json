@@ -1,0 +1,171 @@
+[
+  {
+    "name": "Flour",
+    "slug": "flour",
+    "image": "http://res.cloudinary.com/dymnymsph/image/upload/v1686209401/safefoods/muywm0gvtvlck7lv7uzv.png",
+    "category": "daily-essentials"
+  },
+  {
+    "name": "Lentil",
+    "slug": "lentil",
+    "image": "http://res.cloudinary.com/dymnymsph/image/upload/v1685956294/safefoods/xkm1vexuekycepedjbja.png",
+    "category": "daily-essentials"
+  },
+  {
+    "name": "Oil",
+    "slug": "oil",
+    "image": "http://res.cloudinary.com/dymnymsph/image/upload/v1685956310/safefoods/ahfp2hj7d5kfp9ijzmq8.png",
+    "category": "daily-essentials"
+  },
+  {
+    "name": "Meat",
+    "slug": "meat",
+    "image": "http://res.cloudinary.com/dymnymsph/image/upload/v1685956331/safefoods/gow4wyo2ewydf5lgqw2g.png",
+    "category": "proteins"
+  },
+  {
+    "name": "Dairy",
+    "slug": "dairy",
+    "image": "http://res.cloudinary.com/dymnymsph/image/upload/v1685956350/safefoods/eajbuuxjqs6y8uriolh7.png",
+    "category": "proteins"
+  },
+  {
+    "name": "Fruits",
+    "slug": "fruits",
+    "image": "http://res.cloudinary.com/dymnymsph/image/upload/v1685956371/safefoods/ra0ov5dnbdjsa9n2wtns.png",
+    "category": "fruits-and-vegetables"
+  },
+  {
+    "name": "Vegetables",
+    "slug": "vegetables",
+    "image": "http://res.cloudinary.com/dymnymsph/image/upload/v1685956387/safefoods/w0ih5eke9flwwnh4rytz.png",
+    "category": "fruits-and-vegetables"
+  },
+  {
+    "name": "Honey",
+    "slug": "honey",
+    "image": "http://res.cloudinary.com/dymnymsph/image/upload/v1685957394/safefoods/wul7bepc2naq7we7mrdf.png",
+    "category": "health-food"
+  },
+  {
+    "name": "Herbal Powders",
+    "slug": "herbal-powders",
+    "image": "http://res.cloudinary.com/dymnymsph/image/upload/v1685956423/safefoods/kovubuqbb6poqzxtlue8.png",
+    "category": "health-food"
+  },
+  {
+    "name": "Nuts",
+    "slug": "nuts",
+    "image": "http://res.cloudinary.com/dymnymsph/image/upload/v1685956440/safefoods/iq4bjai3feans4fw84xl.png",
+    "category": "health-food"
+  },
+  {
+    "name": "Jelly",
+    "slug": "jelly",
+    "image": "http://res.cloudinary.com/dymnymsph/image/upload/v1685956462/safefoods/xegosgumutcmqi8wlpyj.png",
+    "category": "snacks"
+  },
+  {
+    "name": "Tea & Coffe",
+    "slug": "tea-and-coffe",
+    "image": "http://res.cloudinary.com/dymnymsph/image/upload/v1685957774/safefoods/rbamznhgajcdqpkxm2ae.png",
+    "category": "snacks"
+  },
+  {
+    "name": "Egg",
+    "slug": "egg",
+    "image": "http://res.cloudinary.com/dymnymsph/image/upload/v1687360499/safefoods/u8razhnovfuf8slxmaiy.png",
+    "category": "proteins"
+  },
+  {
+    "name": "2023",
+    "slug": "2023",
+    "image": "http://res.cloudinary.com/dymnymsph/image/upload/v1687446941/safefoods/lintoxrhijado63rkj1p.jpg",
+    "category": "qurbani-project"
+  },
+  {
+    "name": "Fish",
+    "slug": "fish",
+    "image": "http://res.cloudinary.com/dymnymsph/image/upload/v1691569722/safefoods/gqqssbrldcp8zovgu6td.jpg",
+    "category": "proteins"
+  },
+  {
+    "name": "Rice",
+    "slug": "rice",
+    "image": "http://res.cloudinary.com/dymnymsph/image/upload/v1691572681/safefoods/nov46y00gikbwu6ufgur.png",
+    "category": "daily-essentials"
+  },
+  {
+    "name": "Nut",
+    "slug": "nut",
+    "image": "http://res.cloudinary.com/dymnymsph/image/upload/v1697290639/safefoods/oxju4onoc9umypcc3sto.png",
+    "category": "snacks"
+  },
+  {
+    "name": "Beverages & Juice",
+    "slug": "beverages-and-juice",
+    "image": "http://res.cloudinary.com/dymnymsph/image/upload/v1685956423/safefoods/kovubuqbb6poqzxtlue8.png",
+    "category": "snacks"
+  },
+  {
+    "name": "Nuts",
+    "slug": "nuts",
+    "image": "http://res.cloudinary.com/dymnymsph/image/upload/v1685956440/safefoods/iq4bjai3feans4fw84xl.png",
+    "category": "snacks"
+  },
+  {
+    "name": "Jelly",
+    "slug": "jelly",
+    "image": "http://res.cloudinary.com/dymnymsph/image/upload/v1685956462/safefoods/xegosgumutcmqi8wlpyj.png"
+  },
+  {
+    "name": "Tea & Coffe",
+    "slug": "tea-and-coffe",
+    "image": "http://res.cloudinary.com/dymnymsph/image/upload/v1685957774/safefoods/rbamznhgajcdqpkxm2ae.png"
+  },
+  {
+    "name": "Egg",
+    "slug": "egg",
+    "image": "http://res.cloudinary.com/dymnymsph/image/upload/v1687360499/safefoods/u8razhnovfuf8slxmaiy.png"
+  },
+  {
+    "name": "2023",
+    "slug": "2023",
+    "image": "http://res.cloudinary.com/dymnymsph/image/upload/v1687446941/safefoods/lintoxrhijado63rkj1p.jpg"
+  },
+  {
+    "name": "Fish",
+    "slug": "fish",
+    "image": "http://res.cloudinary.com/dymnymsph/image/upload/v1691569722/safefoods/gqqssbrldcp8zovgu6td.jpg"
+  },
+  {
+    "name": "Rice",
+    "slug": "rice",
+    "image": "http://res.cloudinary.com/dymnymsph/image/upload/v1691572681/safefoods/nov46y00gikbwu6ufgur.png"
+  },
+  {
+    "name": "Nut",
+    "slug": "nut",
+    "image": "http://res.cloudinary.com/dymnymsph/image/upload/v1697290639/safefoods/oxju4onoc9umypcc3sto.png"
+  },
+  {
+    "name": "Beverages & Juice",
+    "slug": "beverages-and-juice",
+    "image": "http://res.cloudinary.com/dymnymsph/image/upload/v1699283567/safefoods/q3ibskcxptfu4iqqcgzz.jpg"
+  },
+  {
+    "name": "Khejur Ros & Gur",
+    "slug": "khejur-ros-and-gur",
+    "image": "http://res.cloudinary.com/dymnymsph/image/upload/v1700378674/safefoods/tm9zb9x3pnildifbyiu5.png"
+  },
+  {
+    "name": " আম ",
+    "slug": "",
+    "image": "http://res.cloudinary.com/dymnymsph/image/upload/v1750047543/safefoods/xh4eq1gjyemyqvejyxyd.jpg"
+  },
+  {
+    "name": "Chicken Items",
+    "slug": "chicken-items",
+    "image": "http://res.cloudinary.com/dymnymsph/image/upload/v1752574540/safefoods/c0hht0ygbmqryhxi08r8.png"
+  }
+]
