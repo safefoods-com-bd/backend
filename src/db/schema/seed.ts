@@ -33,6 +33,9 @@ import {
 import { hash } from "bcryptjs";
 import { eq, inArray } from "drizzle-orm";
 import { USER_ACCOUNT_TYPE } from "@/data/constants";
+import { categories } from "@/data/exported-data/categories";
+import { subcategories } from "@/data/exported-data/subcategories";
+import { products } from "@/data/exported-data/products";
 
 async function seedPermissions() {
   for (const permission of permissionData) {
@@ -149,17 +152,33 @@ async function seedCategoryLevels() {
 }
 
 async function seedCategories() {
-  for (const category of categoryData) {
+  for (const category of categories) {
+    const mediaRecord = await db
+      .select()
+      .from(schema.mediaTable)
+      .where(eq(schema.mediaTable.url, category.image))
+      .limit(1);
+
+    const mediaId = mediaRecord.length > 0 ? mediaRecord[0].id : null;
     await db
       .insert(schema.categoriesTable)
-      .values(category)
+      .values({
+        title: category.name,
+        slug: category.slug,
+        mediaId: mediaId,
+        categoryLevelId: "65f89dd4-3dab-4832-b1ff-83a7178d1561",
+        parentId: null,
+      })
       .onConflictDoNothing();
   }
 }
 
 async function seedMedia() {
-  for (const media of mediaData) {
-    await db.insert(schema.mediaTable).values(media).onConflictDoNothing();
+  for (const media of products) {
+    await db
+      .insert(schema.mediaTable)
+      .values({ title: media.slug, url: media.image })
+      .onConflictDoNothing();
   }
 }
 
@@ -173,8 +192,64 @@ async function seedWarehouses() {
 }
 
 async function seedProducts() {
-  for (const product of productData) {
-    await db.insert(schema.productsTable).values(product).onConflictDoNothing();
+  for (const product of products) {
+    const categoryId = await db
+      .select({ id: schema.categoriesTable.id })
+      .from(schema.categoriesTable)
+      .where(eq(schema.categoriesTable.slug, product.category));
+    console.log(categoryId);
+
+    const newProduct = await db
+      .insert(schema.productsTable)
+      .values({
+        title: product.title,
+        slug: product.slug,
+        sku: product.title,
+        categoryId: categoryId[0].id,
+        brandId: null,
+      })
+      .returning()
+      .onConflictDoNothing();
+
+    const newVariant = await db
+      .insert(schema.variantProductsTable)
+      .values({
+        productId: newProduct[0].id,
+        price: Number(product.price),
+        description: product.description,
+        shortDescription: product.shortDescription,
+        bestDeal: Boolean(product.bestDeal) || false,
+        discountedSale: Boolean(product.discountedSale) || false,
+        isActive: true,
+        isDeleted: false,
+      })
+      .returning()
+      .onConflictDoNothing();
+
+    const mediaId = await db
+      .select({ id: schema.mediaTable.id })
+      .from(schema.mediaTable)
+      .where(eq(schema.mediaTable.url, product.image))
+      .limit(1);
+
+    if (mediaId[0]) {
+      await db
+        .insert(schema.variantProductsMediaTables)
+        .values({
+          variantProductId: newVariant[0].id,
+          mediaId: mediaId[0].id,
+        })
+        .onConflictDoNothing();
+    }
+
+    await db
+      .insert(schema.stockTable)
+      .values({
+        variantProductId: newVariant[0].id,
+        quantity: 100, // Default stock quantity
+        warehouseId: "257b861a-50e6-4b79-a5fd-ae87ddefc88b", // Default warehouse ID
+      })
+      .onConflictDoNothing();
   }
 }
 
@@ -304,7 +379,7 @@ async function seedAll() {
   // await seedCategoryLevels();
   // await seedCategories();
   // await seedWarehouses();
-  // await seedProducts();
+  await seedProducts();
   // await seedUnits();
   // await seedVariantProducts();
   // await seedMedia();
@@ -319,7 +394,7 @@ async function seedAll() {
   // await seedPaymentMethods();
   // await seedAddresses();
   // await seedBlogCategories();
-  await seedBlogs();
+  // await seedBlogs();
 }
 
 const handleError = (error: Error) => {
