@@ -8,8 +8,8 @@ export const sendEmailWithNodemailer = async (emailData: any) => {
     secure: false,
     requireTLS: true,
     auth: {
-      user: `${process.env.MAILTRAP_USER}`,
-      pass: `${process.env.MAILTRAP_PASSWORD}`,
+      user: `${process.env.EMAIL_USER}`,
+      pass: `${process.env.EMAIL_PASSWORD}`,
     },
   });
 

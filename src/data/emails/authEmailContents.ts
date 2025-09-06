@@ -48,7 +48,7 @@ export const onRegisterVerificationEmail = ({
                     <h3>${otp}</h3>
                     <p>This OTP will be valid for 60 minutes.</p>
                     <p>If you didn't initiate this action or if you think you received this email by mistake, please contact</p>
-                    <p style= "color:blue, font-wight:600">support@softeko.co</p>
+                    <p style= "color:blue, font-wight:600">support@safefoods.com.bd</p>
                     <hr />
                     <p>Regards,</p>
                     <p style="font-size:17px;font-weight:600">Safefoods Support Team</p>
@@ -110,7 +110,7 @@ export const onResetPasswordVerificationEmail = ({
                     <h3>${otp}</h3>
                     <p>This otp will be valid for 60 minutes.</p>
                     <p>If you didn't initiate this action or if you think you received this email by mistake, please contact</p>
-                    <p style= "color:blue, font-wight:600">support@softeko.co</p>
+                    <p style= "color:blue, font-wight:600">support@safefoods.com.bd</p>
                     <hr />
                     <p>Regards,</p>
                    <p style="font-size:17px;font-weight:600">Safefoods Support Team</p>
