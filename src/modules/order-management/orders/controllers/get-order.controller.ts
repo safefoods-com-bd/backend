@@ -15,6 +15,7 @@ import productOrdersTable from "@/db/schema/order-management/products_orders";
 import variantProductTables from "@/db/schema/product-management/products/variant_products";
 import variantProductsMediaTables from "@/db/schema/product-management/products/variant_products_media";
 import mediaTables from "@/db/schema/utils/media";
+import paymentMethodTable from "@/db/schema/order-management/payment_methods";
 
 /**
  * Retrieves all orders for a specific user with pagination, including order history for each order
@@ -53,6 +54,7 @@ export const getUserOrdersV100 = async (req: Request, res: Response) => {
         total: ordersTable.total,
         preferredDeliveryDateAndTime: ordersTable.preferredDeliveryDateAndTime,
         paymentMethodId: ordersTable.paymentMethodId,
+        paymentMethodTitle: paymentMethodTable.title,
         transactionNo: ordersTable.transactionNo,
         transactionPhoneNo: ordersTable.transactionPhoneNo,
         transactionDate: ordersTable.transactionDate,
@@ -81,6 +83,10 @@ export const getUserOrdersV100 = async (req: Request, res: Response) => {
       })
       .from(ordersTable)
       .leftJoin(addressesTable, eq(ordersTable.addressId, addressesTable.id))
+      .leftJoin(
+        paymentMethodTable,
+        eq(ordersTable.paymentMethodId, paymentMethodTable.id),
+      )
       .where(
         and(eq(ordersTable.userId, userId), eq(ordersTable.isDeleted, false)),
       )
