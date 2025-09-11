@@ -8,6 +8,11 @@ export const paymentMethodValidationSchema = z.object({
   description: z
     .string({ required_error: "Description is required" })
     .min(1, "Description cannot be empty"),
+  accountNumber: z
+    .string()
+    .max(255, "Account number cannot be longer than 255 characters")
+    .optional()
+    .nullable(),
   isActive: z.boolean().optional().default(true),
 });
 

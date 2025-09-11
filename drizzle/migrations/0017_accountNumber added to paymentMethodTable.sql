@@ -1,0 +1,1 @@
+ALTER TABLE "payment_methods" ADD COLUMN "account_number" varchar(100);

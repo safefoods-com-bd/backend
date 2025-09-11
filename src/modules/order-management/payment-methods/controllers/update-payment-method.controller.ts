@@ -48,7 +48,7 @@ export const updatePaymentMethodV100 = async (req: Request, res: Response) => {
       };
     }
 
-    const { title, description, isActive } = validation.data;
+    const { title, description, isActive, accountNumber } = validation.data;
 
     // Check if payment method exists
     const existingPaymentMethod = await db
@@ -88,6 +88,7 @@ export const updatePaymentMethodV100 = async (req: Request, res: Response) => {
       .set({
         ...(title && { title }),
         ...(description && { description }),
+        ...(accountNumber && { accountNumber }),
         ...(isActive !== undefined && { isActive }),
         updatedAt: new Date(),
       })

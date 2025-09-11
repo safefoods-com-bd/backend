@@ -25,7 +25,7 @@ export const createPaymentMethodV100 = async (req: Request, res: Response) => {
       };
     }
 
-    const { title, description } = validationResult.data;
+    const { title, description, accountNumber } = validationResult.data;
 
     // Check if payment method with same title already exists
     const existingPaymentMethod = await db
@@ -48,6 +48,7 @@ export const createPaymentMethodV100 = async (req: Request, res: Response) => {
       .values({
         title,
         description,
+        accountNumber,
       })
       .returning();
 

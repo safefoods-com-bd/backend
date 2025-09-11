@@ -11,6 +11,7 @@ const paymentMethodTable = pgTable("payment_methods", {
   id: uuid("id").primaryKey().defaultRandom(),
   title: varchar("title", { length: 255 }).notNull(),
   description: text("description").notNull(),
+  accountNumber: varchar("account_number", { length: 100 }),
   isActive: boolean("is_active").default(true).notNull(),
   isDeleted: boolean("is_deleted").default(false).notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),

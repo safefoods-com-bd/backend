@@ -120,6 +120,13 @@
       "when": 1756655457592,
       "tag": "0016_guest user table and relations",
       "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1757613469014,
+      "tag": "0017_accountNumber added to paymentMethodTable",
+      "breakpoints": true
     }
   ]
 }
