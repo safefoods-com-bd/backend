@@ -131,7 +131,6 @@ export const updateOrderValidationSchema = baseOrderSchema
     id: z
       .string({ required_error: "Order ID is required" })
       .uuid("Invalid ID format"),
-    guestUserId: z.string().uuid("Invalid user ID format").nullable(),
     changedBy: z
       .string({ required_error: "Changed by user ID is required" })
       .uuid("Invalid changed by user ID format")

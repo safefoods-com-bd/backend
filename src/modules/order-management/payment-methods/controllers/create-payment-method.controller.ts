@@ -34,10 +34,24 @@ export const createPaymentMethodV100 = async (req: Request, res: Response) => {
       .where(eq(paymentMethodTable.title, title))
       .limit(1);
 
-    if (existingPaymentMethod.length > 0) {
+    if (
+      existingPaymentMethod.length > 0 &&
+      existingPaymentMethod[0].isDeleted === false
+    ) {
       throw {
         type: ERROR_TYPES.CONFLICT,
         message: "Payment method with this title already exists",
+        endpoint: PAYMENT_METHOD_ENDPOINTS.CREATE_PAYMENT_METHOD,
+      };
+    }
+    if (
+      existingPaymentMethod.length > 0 &&
+      existingPaymentMethod[0].isDeleted === true
+    ) {
+      throw {
+        type: ERROR_TYPES.CONFLICT,
+        message:
+          "Payment method with this title already exists but is deleted. Please restore it instead of creating a new one.",
         endpoint: PAYMENT_METHOD_ENDPOINTS.CREATE_PAYMENT_METHOD,
       };
     }
