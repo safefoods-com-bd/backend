@@ -17,7 +17,9 @@ import { CATEGORY_ENDPOINTS } from "@/data/endpoints";
 export const deleteCategoryV100 = async (req: Request, res: Response) => {
   try {
     // Validate input using Zod schema
-    const validationResult = deleteCategoryValidationSchema.safeParse(req.body);
+    const validationResult = deleteCategoryValidationSchema.safeParse(
+      req.params,
+    );
 
     if (!validationResult.success) {
       throw {

@@ -30,7 +30,6 @@ export const allCategoriesListV100 = async (req: Request, res: Response) => {
   try {
     const limit = parseInt(req.query.limit as string) || 10;
     const offset = parseInt(req.query.offset as string) || 0;
-    const sort = (req.query.sort as string) || "desc";
     const search = (req.query.search as string) || "";
     const isActive =
       req.query.isActive !== undefined

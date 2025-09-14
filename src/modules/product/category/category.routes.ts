@@ -8,7 +8,6 @@ import {
   deleteCategoriesBatchV100,
 } from "./controllers/delete-category.controller";
 import { allCategoriesListV100 } from "./controllers/all-categories-list.controller";
-import { checkPermission } from "@/lib/checkPermissionFunctions";
 
 const router = Router();
 
@@ -24,7 +23,7 @@ router.get("/:id", getSingleCategoryV100 as RequestHandler);
 // Create a new category
 router.post(
   "/",
-  checkPermission("administration") as RequestHandler,
+  // checkPermission("administration") as RequestHandler,
   createCategoryV100 as RequestHandler,
 );
 

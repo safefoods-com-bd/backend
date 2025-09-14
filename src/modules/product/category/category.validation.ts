@@ -10,18 +10,18 @@ export const categoryValidationSchema = z.object({
     .nullable()
     .optional(),
   parentId: z.string().uuid("Invalid parent ID format").nullable().optional(),
-  mediaId: z.string().uuid("Invalid media ID format").nullable().optional(),
+  mediaUrl: z.string().nullable().optional(),
   isActive: z.boolean().optional().default(true),
 });
 export type CategoryValidationType = z.infer<typeof categoryValidationSchema>;
 
-export const updateCategoryValidationSchema = categoryValidationSchema
-  .partial()
-  .extend({
-    id: z
-      .string({ required_error: "Category ID is required" })
-      .uuid("Invalid ID format"),
-  });
+export const updateCategoryValidationSchema =
+  categoryValidationSchema.partial();
+// .extend({
+//   id: z
+//     .string({ required_error: "Category ID is required" })
+//     .uuid("Invalid ID format"),
+// });
 export type UpdateCategoryValidationType = z.infer<
   typeof updateCategoryValidationSchema
 >;

@@ -6,7 +6,7 @@ import { categoryValidationSchema } from "../category.validation";
 import { eq, or } from "drizzle-orm";
 import { CATEGORY_ENDPOINTS } from "@/data/endpoints";
 import slugify from "slugify";
-import { categoryLevelsTable } from "@/db/schema";
+import { categoryLevelsTable, mediaTable } from "@/db/schema";
 import { categoryLevels } from "@/constants/categoryLevels";
 
 /**
@@ -28,7 +28,7 @@ export const createCategoryV100 = async (req: Request, res: Response) => {
       };
     }
 
-    const { title, slug, description, parentId, mediaId, isActive } =
+    const { title, slug, description, parentId, mediaUrl, isActive } =
       validationResult.data;
 
     // Check if category with the same title or slug already exists
@@ -56,14 +56,19 @@ export const createCategoryV100 = async (req: Request, res: Response) => {
     }
 
     ///get the category id of the parent id ,
-    let parentCategoryLevelId: string | null = null;
+    let categoryLevelId: string | null = null;
     if (parentId) {
       const categoryLevelIdOfParentCategory = await db
         .select({
           id: categoriesTable.id,
           categoryLevelId: categoriesTable.categoryLevelId,
+          categoryLevel: categoryLevelsTable.title,
         })
         .from(categoriesTable)
+        .leftJoin(
+          categoryLevelsTable,
+          eq(categoryLevelsTable.id, categoriesTable.categoryLevelId),
+        )
         .where(eq(categoriesTable.id, parentId))
         .limit(1)
         .execute();
@@ -75,8 +80,38 @@ export const createCategoryV100 = async (req: Request, res: Response) => {
           endpoint: CATEGORY_ENDPOINTS.CREATE_CATEGORY,
         };
       }
-      parentCategoryLevelId =
-        categoryLevelIdOfParentCategory[0].categoryLevelId;
+      if (
+        categoryLevelIdOfParentCategory[0].categoryLevel ===
+        categoryLevels.LEVEL_1
+      ) {
+        const getNextLevelId = await db
+          .select({ id: categoryLevelsTable.id })
+          .from(categoryLevelsTable)
+          .where(eq(categoryLevelsTable.title, categoryLevels.LEVEL_2));
+
+        categoryLevelId = getNextLevelId[0].id;
+      }
+      if (
+        categoryLevelIdOfParentCategory[0].categoryLevel ===
+        categoryLevels.LEVEL_2
+      ) {
+        const getNextLevelId = await db
+          .select({ id: categoryLevelsTable.id })
+          .from(categoryLevelsTable)
+          .where(eq(categoryLevelsTable.title, categoryLevels.LEVEL_3));
+
+        categoryLevelId = getNextLevelId[0].id;
+      }
+      if (
+        categoryLevelIdOfParentCategory[0].categoryLevel ===
+        categoryLevels.LEVEL_3
+      ) {
+        throw {
+          type: ERROR_TYPES.BAD_REQUEST,
+          message: "Cannot create a category under a sub-sub-category.",
+          endpoint: CATEGORY_ENDPOINTS.CREATE_CATEGORY,
+        };
+      }
     } else {
       // categoryLevelId of the "level_1"
       const categoryLevelIdOfLevel1 = await db
@@ -92,7 +127,19 @@ export const createCategoryV100 = async (req: Request, res: Response) => {
           endpoint: CATEGORY_ENDPOINTS.CREATE_CATEGORY,
         };
       }
-      parentCategoryLevelId = categoryLevelIdOfLevel1[0].id;
+      categoryLevelId = categoryLevelIdOfLevel1[0].id;
+    }
+
+    // Check if media URL is provided and and create a media record if necessary
+    let newMedia;
+    if (mediaUrl) {
+      newMedia = await db
+        .insert(mediaTable)
+        .values({
+          title: title,
+          url: mediaUrl,
+        })
+        .returning();
     }
 
     // Create category record
@@ -107,9 +154,10 @@ export const createCategoryV100 = async (req: Request, res: Response) => {
             })
           : slug,
         description,
-        categoryLevelId: parentCategoryLevelId,
+        categoryLevelId: categoryLevelId,
         parentId,
-        mediaId,
+        mediaId:
+          mediaUrl && newMedia && newMedia.length > 0 ? newMedia[0].id : null,
         isActive: isActive !== undefined ? isActive : true,
       })
       .returning();

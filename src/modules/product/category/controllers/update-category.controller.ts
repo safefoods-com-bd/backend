@@ -6,6 +6,7 @@ import { and, eq, not } from "drizzle-orm";
 import { updateCategoryValidationSchema } from "../category.validation";
 import { CATEGORY_ENDPOINTS } from "@/data/endpoints";
 import slugify from "slugify";
+import { mediaTable } from "@/db/schema";
 
 /**
  * Updates an existing category record in the database
@@ -25,13 +26,31 @@ export const updateCategoryV100 = async (req: Request, res: Response) => {
         endpoint: CATEGORY_ENDPOINTS.UPDATE_CATEGORY,
       };
     }
-
-    const { id, ...updateData } = validationResult.data;
+    const { id } = req.params;
+    if (!id) {
+      throw {
+        type: ERROR_TYPES.VALIDATION,
+        message: "Category ID is required",
+        endpoint: CATEGORY_ENDPOINTS.UPDATE_CATEGORY,
+      };
+    }
+    // Extract validated data
+    const { ...updateData } = validationResult.data;
 
     // Check if category exists
     const existingCategory = await db
-      .select()
+      .select({
+        id: categoriesTable.id,
+        title: categoriesTable.title,
+        slug: categoriesTable.slug,
+        description: categoriesTable.description,
+        categoryLevelId: categoriesTable.categoryLevelId,
+        parentId: categoriesTable.parentId,
+        mediaId: categoriesTable.mediaId,
+        mediaUrl: mediaTable.url,
+      })
       .from(categoriesTable)
+      .leftJoin(mediaTable, eq(categoriesTable.mediaId, mediaTable.id))
       .where(eq(categoriesTable.id, id));
 
     if (existingCategory.length === 0) {
@@ -64,6 +83,27 @@ export const updateCategoryV100 = async (req: Request, res: Response) => {
         };
       }
     }
+    let newMedia;
+    if (
+      updateData.mediaUrl &&
+      updateData.mediaUrl !== existingCategory[0].mediaUrl
+    ) {
+      newMedia = await db
+        .insert(mediaTable)
+        .values({
+          title: updateData.title || existingCategory[0].title,
+          url: updateData.mediaUrl,
+        })
+        .returning();
+
+      if (newMedia.length === 0) {
+        throw {
+          type: ERROR_TYPES.INTERNAL_SERVER_ERROR,
+          message: "Failed to create media record",
+          endpoint: CATEGORY_ENDPOINTS.UPDATE_CATEGORY,
+        };
+      }
+    }
 
     // Update the category record
     const updatedCategory = await db
@@ -80,7 +120,11 @@ export const updateCategoryV100 = async (req: Request, res: Response) => {
         categoryLevelId:
           updateData.categoryLevelId || existingCategory[0].categoryLevelId,
         parentId: updateData.parentId || existingCategory[0].parentId,
-        mediaId: updateData.mediaId || existingCategory[0].mediaId,
+        mediaId: updateData.mediaUrl
+          ? newMedia && newMedia.length > 0
+            ? newMedia[0].id
+            : existingCategory[0].mediaId
+          : existingCategory[0].mediaId,
       })
       .where(eq(categoriesTable.id, id))
       .returning();
