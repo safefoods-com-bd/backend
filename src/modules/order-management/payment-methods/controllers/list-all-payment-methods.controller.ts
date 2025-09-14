@@ -1,6 +1,6 @@
 import { db } from "@/db/db";
 import paymentMethodTable from "@/db/schema/order-management/payment_methods";
-import { count, desc, eq, and } from "drizzle-orm";
+import { count, desc, eq, sql } from "drizzle-orm";
 import { Request, Response } from "express";
 import { handleError } from "@/utils/errorHandler";
 import { generateHateoasLinksForCollection } from "@/utils/generateHateoasLinks";
@@ -13,6 +13,7 @@ import { PAYMENT_METHOD_ENDPOINTS } from "@/data/endpoints";
  *   - limit: (optional) Number of records to return per page, defaults to 10
  *   - offset: (optional) Number of records to skip, defaults to 0
  *   - sort: (optional) Sort order, either "desc" or "asc", defaults to "desc"
+ *   - search: (optional) search string to search for payment method name
  *   - isActive: (optional) Filter by active status
  *   - isDeleted: (optional) Filter by deleted status, defaults to false
  *
@@ -35,6 +36,7 @@ export const listAllPaymentMethodsV100 = async (
     const limit = parseInt(req.query.limit as string) || 10;
     const offset = parseInt(req.query.offset as string) || 0;
     const sort = (req.query.sort as string) || "desc";
+    const search = (req.query.search as string) || "";
     const isActive =
       req.query.isActive !== undefined
         ? req.query.isActive === "true"
@@ -45,17 +47,23 @@ export const listAllPaymentMethodsV100 = async (
         : false;
 
     // Build where condition
-    let whereCondition;
-    if (isActive !== undefined && !isDeleted) {
-      whereCondition = and(
-        eq(paymentMethodTable.isActive, isActive),
-        eq(paymentMethodTable.isDeleted, isDeleted),
-      );
-    } else if (isActive !== undefined) {
-      whereCondition = eq(paymentMethodTable.isActive, isActive);
-    } else {
-      whereCondition = eq(paymentMethodTable.isDeleted, isDeleted);
+    const whereConditions = [];
+    if (isActive !== undefined) {
+      whereConditions.push(eq(paymentMethodTable.isActive, isActive));
     }
+
+    whereConditions.push(eq(paymentMethodTable.isDeleted, isDeleted));
+
+    if (search) {
+      whereConditions.push(
+        sql`LOWER(${paymentMethodTable.title}) LIKE LOWER(${"%" + search + "%"})`,
+      );
+    }
+
+    const whereCondition =
+      whereConditions.length > 0
+        ? sql`${sql.join(whereConditions, sql` AND `)}`
+        : undefined;
 
     const query = db
       .select()
