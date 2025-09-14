@@ -6,6 +6,7 @@ export interface CustomError {
   message?: string;
   statusCode?: number;
   details?: unknown;
+  errors?: unknown;
   customMessage?: string;
   code?: string;
 }
@@ -70,7 +71,7 @@ export const handleError = (
       case ERROR_TYPES.VALIDATION:
         statusCode = 400;
         message = err.message || "Validation error";
-        details = err.details || {};
+        details = err.details ? err.details : err.errors ? err.errors : {};
         break;
       case ERROR_TYPES.DATABASE:
         statusCode = 503; // Changed to 503 Service Unavailable for database issues
