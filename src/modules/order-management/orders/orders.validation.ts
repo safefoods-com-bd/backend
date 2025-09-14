@@ -38,7 +38,7 @@ const baseOrderSchema = z.object({
   discount: z
     .number({ required_error: "Discount is required" })
     .min(0, "Discount must be non-negative"),
-  couponId: z.string().uuid("Invalid coupon ID format").optional(),
+  couponId: z.string().uuid("Invalid coupon ID format").optional().nullable(),
   afterDiscountTotal: z
     .number({ required_error: "After discount total is required" })
     .min(0, "After discount total must be non-negative"),
@@ -57,15 +57,21 @@ const baseOrderSchema = z.object({
   paymentMethodId: z
     .string({ required_error: "Payment method ID is required" })
     .uuid("Invalid payment method ID format"),
-  transactionNo: z.string().max(100, "Transaction number too long").optional(),
+  transactionNo: z
+    .string()
+    .max(100, "Transaction number too long")
+    .optional()
+    .nullable(),
   transactionPhoneNo: z
     .string()
     .max(15, "Transaction phone number too long")
-    .optional(),
+    .optional()
+    .nullable(),
   transactionDate: z
     .string()
     .datetime("Invalid date format for transaction date")
-    .optional(),
+    .optional()
+    .nullable(),
   addressId: z
     .string({ required_error: "Address ID is required" })
     .uuid("Invalid address ID format"),
@@ -125,6 +131,7 @@ export const updateOrderValidationSchema = baseOrderSchema
     id: z
       .string({ required_error: "Order ID is required" })
       .uuid("Invalid ID format"),
+    guestUserId: z.string().uuid("Invalid user ID format").nullable(),
     changedBy: z
       .string({ required_error: "Changed by user ID is required" })
       .uuid("Invalid changed by user ID format")
