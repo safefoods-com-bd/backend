@@ -3,6 +3,7 @@ import { getCouponsV100 } from "./controllers/get-coupon.controller";
 import { createCouponV100 } from "./controllers/create-coupon.controller";
 import { updateCouponV100 } from "./controllers/update-coupon.controller";
 import { validateCouponV100 } from "./controllers/validate-coupon.controller";
+import { deleteCouponV100 } from "./controllers/delete-coupon.controller";
 // import { deleteCouponV100 } from "./controllers/delete-coupon.controller";
 
 const router = Router();
@@ -21,7 +22,7 @@ router.patch("/:id", updateCouponV100 as RequestHandler);
 // Uncomment the following line when the validateCouponV100 controller is implemented
 
 // Delete a single coupon
-//   router.delete("/", deleteCouponV100 as RequestHandler);
+router.delete("/:id", deleteCouponV100 as RequestHandler);
 
 // Delete multiple coupons
 //   router.delete("/batch", deleteCouponsBatchV100 as RequestHandler);

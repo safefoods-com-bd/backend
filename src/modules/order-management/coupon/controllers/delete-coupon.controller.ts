@@ -17,7 +17,7 @@ export const deleteCouponV100: RequestHandler = async (
 ) => {
   try {
     // Validate input using Zod schema
-    const validationResult = deleteCouponValidationSchema.safeParse(req.body);
+    const validationResult = deleteCouponValidationSchema.safeParse(req.params);
 
     if (!validationResult.success) {
       res.status(400).json({
@@ -44,11 +44,8 @@ export const deleteCouponV100: RequestHandler = async (
 
     // Soft delete coupon
     await db
-      .update(couponsTable)
-      .set({
-        // isDeleted: true,
-        updatedAt: new Date(),
-      })
+      .delete(couponsTable)
+
       .where(eq(couponsTable.id, id));
 
     res.status(200).json({

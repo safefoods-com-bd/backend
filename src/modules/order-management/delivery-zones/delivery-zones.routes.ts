@@ -12,7 +12,7 @@ const router = Router();
 router.get("/", listAllDeliveryZonesV100 as RequestHandler);
 router.post("/", createDeliveryZoneV100 as unknown as RequestHandler);
 router.patch("/:id", updateDeliveryZoneV100 as unknown as RequestHandler);
-router.delete("/", deleteDeliveryZoneV100 as unknown as RequestHandler);
+router.delete("/:id", deleteDeliveryZoneV100 as unknown as RequestHandler);
 router.delete(
   "/batch",
   deleteDeliveryZonesBatchV100 as unknown as RequestHandler,

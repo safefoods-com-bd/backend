@@ -8,7 +8,7 @@ import {
 import { eq, inArray } from "drizzle-orm";
 
 export const deleteDeliveryZoneV100 = async (req: Request, res: Response) => {
-  const validation = deleteDeliveryZoneSchema.safeParse(req.body);
+  const validation = deleteDeliveryZoneSchema.safeParse(req.params);
   if (!validation.success) {
     return res
       .status(400)
