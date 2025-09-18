@@ -8,12 +8,14 @@ export const addressValidationSchema = z.object({
     .string()
     .min(1, "Flat number cannot be empty")
     .max(100, "Flat number too long")
-    .optional(),
+    .optional()
+    .nullable(),
   floorNo: z
     .string()
     .min(1, "Floor number cannot be empty")
     .max(100, "Floor number too long")
-    .optional(),
+    .optional()
+    .nullable(),
   addressLine: z
     .string({
       required_error: "Address line is required",
@@ -29,13 +31,14 @@ export const addressValidationSchema = z.object({
     .string({ required_error: "City is required" })
     .min(1, "City cannot be empty")
     .max(100, "City name too long"),
-  state: z.string().optional(),
+  state: z.string().optional().nullable(),
   country: z.string().default("Bangladesh"),
   postalCode: z
     .string()
     .min(1, "Postal code cannot be empty")
     .max(20, "Postal code too long")
-    .optional(),
+    .optional()
+    .nullable(),
   isActive: z.boolean().default(false),
 });
 
