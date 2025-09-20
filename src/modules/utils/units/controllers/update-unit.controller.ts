@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { db } from "@/db/db";
 import { ERROR_TYPES, handleError } from "@/utils/errorHandler";
 import unitsTable from "@/db/schema/utils/units";
-import { eq, or } from "drizzle-orm";
+import { and, eq, ne, or } from "drizzle-orm";
 import { updateUnitValidationSchema } from "../units.validation";
 import { UNIT_ENDPOINTS } from "@/data/endpoints";
 
@@ -25,7 +25,14 @@ export const updateUnitV100 = async (req: Request, res: Response) => {
       };
     }
 
-    const { id, ...updateData } = validationResult.data;
+    const id = req.params.id;
+    if (!id) {
+      return res.status(400).json({
+        success: false,
+        message: "Unit ID is required",
+      });
+    }
+    const { ...updateData } = validationResult.data;
 
     // Check if unit exists
     const existingUnit = await db
@@ -47,9 +54,12 @@ export const updateUnitV100 = async (req: Request, res: Response) => {
         .select()
         .from(unitsTable)
         .where(
-          or(
-            eq(unitsTable.code, updateData.code),
-            eq(unitsTable.title, updateData.title), // Not the current unit
+          and(
+            ne(unitsTable.id, id),
+            or(
+              eq(unitsTable.code, updateData.code),
+              eq(unitsTable.title, updateData.title), // Not the current unit
+            ),
           ),
         );
 

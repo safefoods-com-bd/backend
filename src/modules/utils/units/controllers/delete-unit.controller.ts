@@ -17,7 +17,7 @@ import { UNIT_ENDPOINTS } from "@/data/endpoints";
 export const deleteUnitV100 = async (req: Request, res: Response) => {
   try {
     // Validate input using Zod schema
-    const validationResult = deleteUnitValidationSchema.safeParse(req.body);
+    const validationResult = deleteUnitValidationSchema.safeParse(req.params);
 
     if (!validationResult.success) {
       throw {

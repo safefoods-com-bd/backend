@@ -16,10 +16,10 @@ router.get("/", listAllUnitsV100 as RequestHandler);
 router.post("/", createUnitV100 as RequestHandler);
 
 // Update an existing unit
-router.patch("/", updateUnitV100 as RequestHandler);
+router.patch("/:id", updateUnitV100 as RequestHandler);
 
 // Delete a single unit
-router.delete("/", deleteUnitV100 as RequestHandler);
+router.delete("/:id", deleteUnitV100 as RequestHandler);
 
 // Batch delete units
 router.delete("/batch", deleteUnitsBatchV100 as RequestHandler);

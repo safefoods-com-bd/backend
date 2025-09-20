@@ -14,9 +14,11 @@ import { UNIT_ENDPOINTS } from "@/data/endpoints";
 export const createUnitV100 = async (req: Request, res: Response) => {
   try {
     // Validate input using Zod schema
+    console.log(req.body);
     const validationResult = unitValidationSchema.safeParse(req.body);
 
     if (!validationResult.success) {
+      console.log(validationResult.error.errors);
       throw {
         type: ERROR_TYPES.VALIDATION,
         message: "Validation failed",
