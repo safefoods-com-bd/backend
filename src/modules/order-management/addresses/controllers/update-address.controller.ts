@@ -46,6 +46,21 @@ export const updateAddressV100 = async (req: Request, res: Response) => {
       };
     }
 
+    if (updateData.isActive === false) {
+      const userAddresses = await db
+        .select({ id: addressesTable.id })
+        .from(addressesTable)
+        .where(eq(addressesTable.userId, existingAddress[0].userId!));
+
+      if (userAddresses.length <= 1) {
+        throw {
+          type: ERROR_TYPES.BAD_REQUEST,
+          message: "Cannot deactivate the only address.",
+          endpoint: ADDRESS_ENDPOINTS.UPDATE_ADDRESS,
+        };
+      }
+    }
+
     // Update the address record with updatedAt timestamp
     const updatedAddress = await db
       .update(addressesTable)

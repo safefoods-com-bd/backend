@@ -5,6 +5,8 @@ import bannersTable from "@/db/schema/others/banners";
 import { bannerValidationSchema } from "../banner.validation";
 import { eq, and } from "drizzle-orm";
 import { BANNER_ENDPOINTS } from "@/data/endpoints";
+import { mediaTable } from "@/db/schema";
+import variantProductTables from "@/db/schema/product-management/products/variant_products";
 
 /**
  * Creates a new banner record in the database
@@ -25,7 +27,8 @@ export const createBannerV100 = async (req: Request, res: Response) => {
       };
     }
 
-    const { title, mediaId, variantProductId } = validationResult.data;
+    const { title, mediaUrl, variantProductId } = validationResult.data;
+    console.log(title, mediaUrl, variantProductId);
 
     // Check if banner with the same title already exists
     const existingBanner = await db
@@ -43,15 +46,50 @@ export const createBannerV100 = async (req: Request, res: Response) => {
       };
     }
 
+    // Check if media URL is provided and and create a media record if necessary
+    let newMedia;
+    if (mediaUrl) {
+      newMedia = await db
+        .insert(mediaTable)
+        .values({
+          title: title,
+          url: mediaUrl,
+        })
+        .returning();
+    }
+
+    // check if variantProductId exists in products table if provided
+    if (variantProductId) {
+      const variantExists = await db
+        .select()
+        .from(variantProductTables)
+        .where(
+          and(
+            eq(variantProductTables.id, variantProductId),
+            eq(variantProductTables.isDeleted, false),
+          ),
+        );
+      // console.log(variantExists);
+      if (variantExists.length === 0) {
+        throw {
+          type: ERROR_TYPES.NOT_FOUND,
+          message: "Variant Product with this ID does not exist",
+          endpoint: BANNER_ENDPOINTS.CREATE_BANNER,
+        };
+      }
+    }
+
     // Create the new banner
     const newBanner = await db
       .insert(bannersTable)
       .values({
         title,
-        mediaId,
+        mediaId:
+          mediaUrl && newMedia && newMedia.length > 0 ? newMedia[0].id : null,
         variantProductId,
       })
       .returning();
+    console.log(newBanner);
 
     // Return success response
     return res.status(201).json({

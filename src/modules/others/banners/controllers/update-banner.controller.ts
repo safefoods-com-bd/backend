@@ -6,8 +6,9 @@ import {
   updateBannerValidationSchema,
   UpdateBannerValidationType,
 } from "../banner.validation";
-import { eq, and } from "drizzle-orm";
+import { eq, and, ne } from "drizzle-orm";
 import { BANNER_ENDPOINTS } from "@/data/endpoints";
+import { mediaTable } from "@/db/schema";
 
 /**
  * Updates an existing banner in the database
@@ -17,11 +18,16 @@ import { BANNER_ENDPOINTS } from "@/data/endpoints";
 export const updateBannerV100 = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const validationData = { ...req.body, id };
+    if (!id) {
+      throw {
+        type: ERROR_TYPES.VALIDATION,
+        message: "Banner ID is required",
+        endpoint: BANNER_ENDPOINTS.UPDATE_BANNER,
+      };
+    }
 
     // Validate input using Zod schema
-    const validationResult =
-      updateBannerValidationSchema.safeParse(validationData);
+    const validationResult = updateBannerValidationSchema.safeParse(req.body);
 
     if (!validationResult.success) {
       throw {
@@ -32,12 +38,14 @@ export const updateBannerV100 = async (req: Request, res: Response) => {
       };
     }
 
-    const { title, mediaId, variantProductId } = validationResult.data;
+    // Extract validated data
+    const { title, mediaUrl, variantProductId } = validationResult.data;
 
     // Check if banner exists
     const existingBanner = await db
       .select()
-      .from(bannersTable)
+      .from({ ...bannersTable, mediaUrl: mediaTable.url })
+      .leftJoin(mediaTable, eq(bannersTable.mediaId, mediaTable.id))
       .where(and(eq(bannersTable.id, id), eq(bannersTable.isDeleted, false)));
 
     if (existingBanner.length === 0) {
@@ -54,7 +62,11 @@ export const updateBannerV100 = async (req: Request, res: Response) => {
         .select()
         .from(bannersTable)
         .where(
-          and(eq(bannersTable.title, title), eq(bannersTable.isDeleted, false)),
+          and(
+            eq(bannersTable.title, title),
+            eq(bannersTable.isDeleted, false),
+            ne(bannersTable.id, id),
+          ),
         );
 
       if (duplicateBanner.length > 0 && duplicateBanner[0].id !== id) {
@@ -69,14 +81,43 @@ export const updateBannerV100 = async (req: Request, res: Response) => {
     // Update the banner
     const updateData: Partial<UpdateBannerValidationType> = {};
     if (title !== undefined) updateData.title = title;
-    if (mediaId !== undefined) updateData.mediaId = mediaId;
+
+    let newMedia;
+    if (mediaUrl && mediaUrl !== existingBanner[0].media?.url) {
+      newMedia = await db
+        .insert(mediaTable)
+        .values({
+          title: updateData.title || existingBanner[0].banners.title,
+          url: mediaUrl,
+        })
+        .returning();
+
+      if (newMedia.length === 0) {
+        throw {
+          type: ERROR_TYPES.INTERNAL_SERVER_ERROR,
+          message: "Failed to create media record",
+          endpoint: BANNER_ENDPOINTS.UPDATE_BANNER,
+        };
+      }
+    }
+
     if (variantProductId !== undefined)
       updateData.variantProductId = variantProductId;
     updateData.updatedAt = new Date();
 
     const updatedBanner = await db
       .update(bannersTable)
-      .set(updateData)
+      .set({
+        title: updateData.title || existingBanner[0].banners.title,
+        mediaId:
+          mediaUrl && newMedia && newMedia.length > 0
+            ? newMedia[0].id
+            : existingBanner[0].banners.mediaId,
+        variantProductId:
+          updateData.variantProductId ||
+          existingBanner[0].banners.variantProductId,
+        updatedAt: updateData.updatedAt,
+      })
       .where(eq(bannersTable.id, id))
       .returning();
 
