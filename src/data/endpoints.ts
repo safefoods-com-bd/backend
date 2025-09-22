@@ -179,3 +179,10 @@ export const BLOG_ENDPOINTS = {
   DELETE_BLOG: "DELETE /api/v1/blogs/:id",
   DELETE_BLOGS_BATCH: "DELETE /api/v1/blogs/batch",
 };
+
+// profiles
+export const PROFILE_ENDPOINTS = {
+  CREATE_PROFILE: "POST /api/v1/profiles",
+  GET_USER_PROFILE: "GET /api/v1/profiles/user/:userId",
+  UPDATE_PROFILE: "PATCH /api/v1/profiles/:id",
+};
