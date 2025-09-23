@@ -47,15 +47,22 @@ export const updateAddressV100 = async (req: Request, res: Response) => {
     }
 
     if (updateData.isActive === false) {
-      const userAddresses = await db
+      // If user is trying to deactivate an address, check if it's the last active one.
+      const activeAddresses = await db
         .select({ id: addressesTable.id })
         .from(addressesTable)
-        .where(eq(addressesTable.userId, existingAddress[0].userId!));
+        .where(
+          and(
+            eq(addressesTable.userId, existingAddress[0].userId!),
+            eq(addressesTable.isActive, true),
+          ),
+        );
 
-      if (userAddresses.length <= 1) {
+      if (activeAddresses.length === 1 && activeAddresses[0].id === id) {
         throw {
           type: ERROR_TYPES.BAD_REQUEST,
-          message: "Cannot deactivate the only address.",
+          message:
+            "Cannot deactivate the last active address. At least one address must remain active.",
           endpoint: ADDRESS_ENDPOINTS.UPDATE_ADDRESS,
         };
       }
