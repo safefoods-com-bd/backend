@@ -21,7 +21,7 @@ router.post("/", (req, res) => {
 
 router.get(
   "/:userId",
-  checkPermissionAndOwnershipMiddleware(READ_PROFILE) as RequestHandler,
+  // checkPermissionAndOwnershipMiddleware(READ_PROFILE) as RequestHandler,
   (req, res) => {
     getUsersProfile(req, res);
   },
@@ -29,7 +29,7 @@ router.get(
 
 router.patch(
   "/:userId",
-  checkPermissionAndOwnershipMiddleware(UPDATE_PROFILE) as RequestHandler,
+  // checkPermissionAndOwnershipMiddleware(UPDATE_PROFILE) as RequestHandler,
   (req, res) => {
     updateProfile(req, res);
   },

@@ -113,9 +113,15 @@ export const updateProfile = async (req: Request, res: Response) => {
       .where(eq(profilesTable.userId, userId));
 
     if (existingProfile.length === 0) {
-      return res.status(404).json({
-        success: false,
-        message: "Profile not found.",
+      // If profile does not exist, create a new one
+      const newProfile = await db
+        .insert(profilesTable)
+        .values({ ...validation, userId })
+        .returning();
+      res.status(200).json({
+        success: true,
+        data: newProfile,
+        message: "Profile Updated successfully.",
       });
     }
 
