@@ -57,7 +57,8 @@ export const registerRoutes = (app: Express) => {
   app.use("/api/v1/category-levels", categoryLevelsRoutes);
   app.use("/api/v1/categories", categoryRoutes);
   app.use("/api/v1/products", productsRoutes);
-  app.use("/api/v1/products/variants", variantProductsRoutes);
+  // Mount variant-products on a dedicated path to avoid collision with `/api/v1/products/:id`
+  app.use("/api/v1/variant-products", variantProductsRoutes);
   app.use("/api/v1/variant-product-media", variantProductMediaRoutes);
 
   // order management
@@ -70,7 +71,8 @@ export const registerRoutes = (app: Express) => {
 
   //stock management
   app.use("/api/v1/stocks", stocksRoutes);
-  app.use("/api/v1/products/variants/media", variantProductMediaRoutes);
+  // Keep a dedicated media endpoint for variant products (avoid colliding with products routes)
+  app.use("/api/v1/variant-products/media", variantProductMediaRoutes);
 
   // others
   app.use("/api/v1/sliders", slidersRoutes);

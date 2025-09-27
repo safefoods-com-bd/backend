@@ -43,8 +43,11 @@ export const updateBannerV100 = async (req: Request, res: Response) => {
 
     // Check if banner exists
     const existingBanner = await db
-      .select()
-      .from({ ...bannersTable, mediaUrl: mediaTable.url })
+      .select({
+        banners: bannersTable,
+        media: mediaTable,
+      })
+      .from(bannersTable)
       .leftJoin(mediaTable, eq(bannersTable.mediaId, mediaTable.id))
       .where(and(eq(bannersTable.id, id), eq(bannersTable.isDeleted, false)));
 

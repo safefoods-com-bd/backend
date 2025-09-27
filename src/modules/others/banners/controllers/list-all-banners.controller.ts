@@ -36,6 +36,7 @@ export const listAllBannersV100 = async (req: Request, res: Response) => {
         title: bannersTable.title,
         url: mediaTable.url,
         productSlug: productsTable.slug,
+        productTitle: productsTable.title,
         variantProductId: bannersTable.variantProductId,
         isDeleted: bannersTable.isDeleted,
         createdAt: bannersTable.createdAt,

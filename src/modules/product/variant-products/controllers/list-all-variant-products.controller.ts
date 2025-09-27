@@ -67,30 +67,56 @@ export const listAllVariantProductsV100 = async (
     const sortBy = (req.query.sortBy as string) || "createdAt";
     const sortOrder = (req.query.sortOrder as string) || "desc";
     const search = req.query.search as string;
+    const fields = req.query.fields as string;
+
+    const allFields = {
+      id: variantProductTables.id,
+      price: variantProductTables.price,
+      originalPrice: variantProductTables.originalPrice,
+      // stock: variantProductTables.stock,
+      description: variantProductTables.description,
+      shortDescription: variantProductTables.shortDescription,
+      bestDeal: variantProductTables.bestDeal,
+      discountedSale: variantProductTables.discountedSale,
+      isActive: variantProductTables.isActive,
+      createdAt: variantProductTables.createdAt,
+      updatedAt: variantProductTables.updatedAt,
+      productId: variantProductTables.productId,
+      colorId: variantProductTables.colorId,
+      // sizeId: variantProductTables.sizeId,
+      unitId: variantProductTables.unitId,
+      productTitle: productsTables.title,
+      colorName: colorTables.title,
+      unitName: unitsTable.title,
+      stock: stockTable.quantity,
+    };
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let selectFields: Record<string, any> = allFields;
+
+    if (fields) {
+      const requestedFields = fields
+        .split(",")
+        .map((f) => f.trim())
+        .filter(Boolean);
+      if (requestedFields.length > 0) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const newSelectFields: Record<string, any> = {};
+        for (const field of requestedFields) {
+          if (field in allFields) {
+            newSelectFields[field] = allFields[field as keyof typeof allFields];
+          }
+        }
+
+        if (Object.keys(newSelectFields).length > 0) {
+          selectFields = newSelectFields;
+        }
+      }
+    }
 
     // Build the select query
     const selectQueryBuilder = db
-      .select({
-        id: variantProductTables.id,
-        price: variantProductTables.price,
-        originalPrice: variantProductTables.originalPrice,
-        // stock: variantProductTables.stock,
-        description: variantProductTables.description,
-        shortDescription: variantProductTables.shortDescription,
-        bestDeal: variantProductTables.bestDeal,
-        discountedSale: variantProductTables.discountedSale,
-        isActive: variantProductTables.isActive,
-        createdAt: variantProductTables.createdAt,
-        updatedAt: variantProductTables.updatedAt,
-        productId: variantProductTables.productId,
-        colorId: variantProductTables.colorId,
-        // sizeId: variantProductTables.sizeId,
-        unitId: variantProductTables.unitId,
-        productTitle: productsTables.title,
-        colorName: colorTables.title,
-        unitName: unitsTable.title,
-        stock: stockTable.quantity,
-      })
+      .select(selectFields)
       .from(variantProductTables)
       .leftJoin(
         productsTables,
