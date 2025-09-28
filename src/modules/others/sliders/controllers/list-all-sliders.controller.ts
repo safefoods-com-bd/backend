@@ -1,11 +1,11 @@
 import { db } from "@/db/db";
 import slidersTable from "@/db/schema/others/sliders";
-import mediaTables from "@/db/schema/utils/media";
 import { eq } from "drizzle-orm";
 import { Request, Response } from "express";
 import { handleError } from "@/utils/errorHandler";
 import { generateHateoasLinksForCollection } from "@/utils/generateHateoasLinks";
 import { SLIDER_ENDPOINTS } from "@/data/endpoints";
+import { mediaTable, productsTable, variantProductsTable } from "@/db/schema";
 
 /**
  * Controller function to retrieve sliders data with pagination and HATEOAS links.
@@ -28,38 +28,50 @@ export const listAllSlidersV100 = async (req: Request, res: Response) => {
   try {
     const limit = parseInt(req.query.limit as string) || 10;
     const offset = parseInt(req.query.offset as string) || 0;
-    const sort = (req.query.sort as string) || "desc";
 
     // Fetch all non-deleted sliders
     const sliders = await db
       .select({
         id: slidersTable.id,
         title: slidersTable.title,
-        url: mediaTables.url,
+        url: mediaTable.url,
+        productSlug: productsTable.slug,
+        productTitle: productsTable.title,
+        variantProductId: slidersTable.variantProductId,
         isDeleted: slidersTable.isDeleted,
         createdAt: slidersTable.createdAt,
         updatedAt: slidersTable.updatedAt,
       })
       .from(slidersTable)
+      .leftJoin(mediaTable, eq(slidersTable.mediaId, mediaTable.id))
+      .leftJoin(
+        variantProductsTable,
+        eq(slidersTable.variantProductId, variantProductsTable.id),
+      )
+      .leftJoin(
+        productsTable,
+        eq(variantProductsTable.productId, productsTable.id),
+      )
       .where(eq(slidersTable.isDeleted, false))
-      .leftJoin(mediaTables, eq(slidersTable.mediaId, mediaTables.id))
-      .orderBy(sort === "asc" ? slidersTable.createdAt : slidersTable.createdAt)
+      .orderBy(slidersTable.createdAt)
       .limit(limit)
       .offset(offset);
+
+    // Count total number of sliders
     const countResult = await db
       .select()
       .from(slidersTable)
       .where(eq(slidersTable.isDeleted, false));
 
-    const totalCount = countResult.length;
+    const total = countResult.length;
 
     // Generate HATEOAS links
     const baseUrl = `${req.protocol}://${req.get("host")}${req.baseUrl}`;
-    const _links = generateHateoasLinksForCollection({
+    const links = generateHateoasLinksForCollection({
       baseUrl,
       offset,
       limit,
-      totalCount: totalCount,
+      totalCount: total,
     });
 
     // Return response
@@ -69,10 +81,10 @@ export const listAllSlidersV100 = async (req: Request, res: Response) => {
       pagination: {
         offset,
         limit,
-        total: totalCount,
+        total,
         currentCount: sliders.length,
       },
-      _links: _links,
+      _links: links,
       message: "Sliders retrieved successfully",
     });
   } catch (error) {

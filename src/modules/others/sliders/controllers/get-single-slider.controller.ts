@@ -4,7 +4,7 @@ import { ERROR_TYPES, handleError } from "@/utils/errorHandler";
 import slidersTable from "@/db/schema/others/sliders";
 import { eq, and } from "drizzle-orm";
 import { SLIDER_ENDPOINTS } from "@/data/endpoints";
-import { mediaTable } from "@/db/schema";
+import { mediaTable, productsTable, variantProductsTable } from "@/db/schema";
 
 /**
  * Gets a single slider by ID
@@ -28,12 +28,22 @@ export const getSingleSliderV100 = async (req: Request, res: Response) => {
         id: slidersTable.id,
         title: slidersTable.title,
         url: mediaTable.url,
+        variantProductId: slidersTable.variantProductId,
+        productSlug: productsTable.slug,
         isDeleted: slidersTable.isDeleted,
         createdAt: slidersTable.createdAt,
         updatedAt: slidersTable.updatedAt,
       })
       .from(slidersTable)
       .leftJoin(mediaTable, eq(slidersTable.mediaId, mediaTable.id))
+      .leftJoin(
+        variantProductsTable,
+        eq(slidersTable.variantProductId, variantProductsTable.id),
+      )
+      .leftJoin(
+        productsTable,
+        eq(variantProductsTable.productId, productsTable.id),
+      )
       .where(and(eq(slidersTable.id, id), eq(slidersTable.isDeleted, false)));
 
     if (slider.length === 0) {

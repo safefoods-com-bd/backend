@@ -2,7 +2,12 @@ import { z } from "zod";
 
 export const sliderValidationSchema = z.object({
   title: z.string({ required_error: "Slider title is required" }),
-  mediaId: z.string().uuid("Invalid media ID format").nullable().optional(),
+  mediaUrl: z.string().url("Invalid media URL format").nullable().optional(),
+  variantProductId: z
+    .string()
+    .uuid("Invalid variant product ID format")
+    .nullable()
+    .optional(),
 });
 export type SliderValidationType = z.infer<typeof sliderValidationSchema>;
 

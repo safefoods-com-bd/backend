@@ -6,8 +6,9 @@ import {
   updateSliderValidationSchema,
   UpdateSliderValidationType,
 } from "../slider.validation";
-import { eq, and } from "drizzle-orm";
+import { eq, and, ne } from "drizzle-orm";
 import { SLIDER_ENDPOINTS } from "@/data/endpoints";
+import { mediaTable } from "@/db/schema";
 
 /**
  * Updates an existing slider in the database
@@ -17,11 +18,16 @@ import { SLIDER_ENDPOINTS } from "@/data/endpoints";
 export const updateSliderV100 = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const validationData = { ...req.body, id };
+    if (!id) {
+      throw {
+        type: ERROR_TYPES.VALIDATION,
+        message: "Slider ID is required",
+        endpoint: SLIDER_ENDPOINTS.UPDATE_SLIDER,
+      };
+    }
 
     // Validate input using Zod schema
-    const validationResult =
-      updateSliderValidationSchema.safeParse(validationData);
+    const validationResult = updateSliderValidationSchema.safeParse(req.body);
 
     if (!validationResult.success) {
       throw {
@@ -32,12 +38,17 @@ export const updateSliderV100 = async (req: Request, res: Response) => {
       };
     }
 
-    const { title, mediaId } = validationResult.data;
+    // Extract validated data
+    const { title, mediaUrl, variantProductId } = validationResult.data;
 
     // Check if slider exists
     const existingSlider = await db
-      .select()
+      .select({
+        sliders: slidersTable,
+        media: mediaTable,
+      })
       .from(slidersTable)
+      .leftJoin(mediaTable, eq(slidersTable.mediaId, mediaTable.id))
       .where(and(eq(slidersTable.id, id), eq(slidersTable.isDeleted, false)));
 
     if (existingSlider.length === 0) {
@@ -54,7 +65,11 @@ export const updateSliderV100 = async (req: Request, res: Response) => {
         .select()
         .from(slidersTable)
         .where(
-          and(eq(slidersTable.title, title), eq(slidersTable.isDeleted, false)),
+          and(
+            eq(slidersTable.title, title),
+            eq(slidersTable.isDeleted, false),
+            ne(slidersTable.id, id),
+          ),
         );
 
       if (duplicateSlider.length > 0 && duplicateSlider[0].id !== id) {
@@ -69,12 +84,43 @@ export const updateSliderV100 = async (req: Request, res: Response) => {
     // Update the slider
     const updateData: Partial<UpdateSliderValidationType> = {};
     if (title !== undefined) updateData.title = title;
-    if (mediaId !== undefined) updateData.mediaId = mediaId;
+
+    let newMedia;
+    if (mediaUrl && mediaUrl !== existingSlider[0].media?.url) {
+      newMedia = await db
+        .insert(mediaTable)
+        .values({
+          title: updateData.title || existingSlider[0].sliders.title,
+          url: mediaUrl,
+        })
+        .returning();
+
+      if (newMedia.length === 0) {
+        throw {
+          type: ERROR_TYPES.INTERNAL_SERVER_ERROR,
+          message: "Failed to create media record",
+          endpoint: SLIDER_ENDPOINTS.UPDATE_SLIDER,
+        };
+      }
+    }
+
+    if (variantProductId !== undefined)
+      updateData.variantProductId = variantProductId;
     updateData.updatedAt = new Date();
 
     const updatedSlider = await db
       .update(slidersTable)
-      .set(updateData)
+      .set({
+        title: updateData.title || existingSlider[0].sliders.title,
+        mediaId:
+          mediaUrl && newMedia && newMedia.length > 0
+            ? newMedia[0].id
+            : existingSlider[0].sliders.mediaId,
+        variantProductId:
+          updateData.variantProductId ||
+          existingSlider[0].sliders.variantProductId,
+        updatedAt: updateData.updatedAt,
+      })
       .where(eq(slidersTable.id, id))
       .returning();
 

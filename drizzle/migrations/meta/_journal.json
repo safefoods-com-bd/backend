@@ -127,6 +127,13 @@
       "when": 1757613469014,
       "tag": "0017_accountNumber added to paymentMethodTable",
       "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1759020481913,
+      "tag": "0018_product-variant-added-in-sliders-schema",
+      "breakpoints": true
     }
   ]
 }

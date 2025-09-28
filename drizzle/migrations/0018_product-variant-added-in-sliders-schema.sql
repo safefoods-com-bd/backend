@@ -1,0 +1,2 @@
+ALTER TABLE "sliders" ADD COLUMN "variant_product_id" uuid;--> statement-breakpoint
+ALTER TABLE "sliders" ADD CONSTRAINT "sliders_variant_product_id_variant_products_id_fk" FOREIGN KEY ("variant_product_id") REFERENCES "public"."variant_products"("id") ON DELETE no action ON UPDATE no action;

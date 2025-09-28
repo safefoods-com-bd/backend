@@ -5,6 +5,8 @@ import slidersTable from "@/db/schema/others/sliders";
 import { sliderValidationSchema } from "../slider.validation";
 import { eq, and } from "drizzle-orm";
 import { SLIDER_ENDPOINTS } from "@/data/endpoints";
+import { mediaTable } from "@/db/schema";
+import variantProductTables from "@/db/schema/product-management/products/variant_products";
 
 /**
  * Creates a new slider record in the database
@@ -25,7 +27,7 @@ export const createSliderV100 = async (req: Request, res: Response) => {
       };
     }
 
-    const { title, mediaId } = validationResult.data;
+    const { title, mediaUrl, variantProductId } = validationResult.data;
 
     // Check if slider with the same title already exists
     const existingSlider = await db
@@ -43,12 +45,46 @@ export const createSliderV100 = async (req: Request, res: Response) => {
       };
     }
 
+    // Check if media URL is provided and and create a media record if necessary
+    let newMedia;
+    if (mediaUrl) {
+      newMedia = await db
+        .insert(mediaTable)
+        .values({
+          title: title,
+          url: mediaUrl,
+        })
+        .returning();
+    }
+
+    // check if variantProductId exists in products table if provided
+    if (variantProductId) {
+      const variantExists = await db
+        .select()
+        .from(variantProductTables)
+        .where(
+          and(
+            eq(variantProductTables.id, variantProductId),
+            eq(variantProductTables.isDeleted, false),
+          ),
+        );
+      if (variantExists.length === 0) {
+        throw {
+          type: ERROR_TYPES.NOT_FOUND,
+          message: "Variant Product with this ID does not exist",
+          endpoint: SLIDER_ENDPOINTS.CREATE_SLIDER,
+        };
+      }
+    }
+
     // Create the new slider
     const newSlider = await db
       .insert(slidersTable)
       .values({
         title,
-        mediaId,
+        mediaId:
+          mediaUrl && newMedia && newMedia.length > 0 ? newMedia[0].id : null,
+        variantProductId,
       })
       .returning();
 
