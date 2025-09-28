@@ -40,10 +40,10 @@ router.get(
 router.post("/", createProductV100 as unknown as RequestHandler);
 
 // Update an existing product
-router.patch("/", updateProductV100 as unknown as RequestHandler);
+router.patch("/:id", updateProductV100 as unknown as RequestHandler);
 
 // Delete a single product
-router.delete("/", deleteProductSingleV100 as unknown as RequestHandler);
+router.delete("/:id", deleteProductSingleV100 as unknown as RequestHandler);
 
 // Batch delete products
 router.delete("/batch", deleteProductBatchV100 as unknown as RequestHandler);

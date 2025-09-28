@@ -33,7 +33,7 @@ export const deleteProductSingleV100 = async (
 ): Promise<Response> => {
   try {
     // Validate input
-    const validation = deleteProductValidationSchema.safeParse(req.body);
+    const validation = deleteProductValidationSchema.safeParse(req.params);
 
     if (!validation.success) {
       throw {

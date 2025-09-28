@@ -3,7 +3,17 @@ import { db } from "@/db/db";
 import { ERROR_TYPES, handleError } from "@/utils/errorHandler";
 import productsTables from "@/db/schema/product-management/products/products";
 import { updateProductValidationSchema } from "../products.validation";
-import { eq } from "drizzle-orm";
+import {
+  variantProductValidationSchema,
+  updateVariantProductValidationSchema,
+} from "../../variant-products/variant-products.validation";
+import {
+  variantProductsTable,
+  variantProductsMediaTables,
+  stockTable,
+  mediaTable,
+} from "@/db/schema";
+import { eq, isNull, and, ne } from "drizzle-orm";
 import { PRODUCT_ENDPOINTS } from "@/data/endpoints";
 import categoriesTable from "@/db/schema/product-management/categories/categories";
 import brandTables from "@/db/schema/utils/brands";
@@ -41,8 +51,15 @@ export const updateProductV100 = async (
         message: validation.error.errors.map((err) => err.message).join(", "),
       };
     }
+    const id = req.params.id;
+    if (!id) {
+      throw {
+        type: ERROR_TYPES.VALIDATION,
+        message: "Product ID is required in the URL parameters",
+      };
+    }
 
-    const { id, title, slug, sku, season, categoryId, brandId, isActive } =
+    const { title, slug, sku, season, categoryId, brandId, isActive } =
       validation.data;
 
     // Check if product exists
@@ -92,45 +109,322 @@ export const updateProductV100 = async (
     }
 
     // Check if the brand exists (if brandId is provided)
-    if (brandId) {
-      const brandExists = await db
-        .select()
-        .from(brandTables)
-        .where(eq(brandTables.id, brandId));
+    // if (brandId) {
+    //   const brandExists = await db
+    //     .select()
+    //     .from(brandTables)
+    //     .where(eq(brandTables.id, brandId));
 
-      if (brandExists.length === 0) {
-        throw {
-          type: ERROR_TYPES.VALIDATION,
-          message: "Brand not found",
-        };
-      }
+    //   if (brandExists.length === 0) {
+    //     throw {
+    //       type: ERROR_TYPES.VALIDATION,
+    //       message: "Brand not found",
+    //     };
+    //   }
+    // }
+
+    // If no variants provided, keep existing simple update behavior
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { variants } = (validation.data as any) || {};
+    console.log("variants", variants);
+
+    if (!variants) {
+      // Update product only
+      const updatedProduct = await db
+        .update(productsTables)
+        .set({
+          title: title || existingProduct[0].title,
+          slug:
+            slug ||
+            (title
+              ? slugify(title, { lower: true, strict: true })
+              : existingProduct[0].slug),
+          sku: sku || existingProduct[0].sku,
+          season: season || existingProduct[0].season,
+          categoryId: categoryId || existingProduct[0].categoryId,
+          brandId: brandId || existingProduct[0].brandId,
+          isActive:
+            isActive !== undefined ? isActive : existingProduct[0].isActive,
+          updatedAt: new Date(),
+        })
+        .where(eq(productsTables.id, id))
+        .returning();
+
+      return res.status(200).json({
+        success: true,
+        message: "Product updated successfully",
+        data: updatedProduct[0],
+      });
     }
 
-    // Update product
-    const updatedProduct = await db
-      .update(productsTables)
-      .set({
-        title: title || existingProduct[0].title,
-        slug:
-          slug ||
-          (title
-            ? slugify(title, { lower: true, strict: true })
-            : existingProduct[0].slug),
-        sku: sku || existingProduct[0].sku,
-        season: season || existingProduct[0].season,
-        categoryId: categoryId || existingProduct[0].categoryId,
-        brandId: brandId || existingProduct[0].brandId,
-        isActive:
-          isActive !== undefined ? isActive : existingProduct[0].isActive,
-        updatedAt: new Date(),
-      })
-      .where(eq(productsTables.id, id))
-      .returning();
+    // If variants provided, perform transactional update: update product, then process variants
+    const result = await db.transaction(async (tx) => {
+      const updatedProduct = await tx
+        .update(productsTables)
+        .set({
+          title: title || existingProduct[0].title,
+          slug:
+            slug ||
+            (title
+              ? slugify(title, { lower: true, strict: true })
+              : existingProduct[0].slug),
+          sku: sku || existingProduct[0].sku,
+          season: season || existingProduct[0].season,
+          categoryId: categoryId || existingProduct[0].categoryId,
+          brandId: brandId || existingProduct[0].brandId,
+          isActive:
+            isActive !== undefined ? isActive : existingProduct[0].isActive,
+          updatedAt: new Date(),
+        })
+        .where(eq(productsTables.id, id))
+        .returning();
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const processedVariants: any[] = [];
+      console.log("processedVariants---------", processedVariants);
+
+      // Prepare schemas
+      const newVariantSchema = variantProductValidationSchema.omit({
+        productId: true,
+      });
+
+      for (const v of variants) {
+        // If v has id -> update existing variant
+        if (v.id) {
+          const parsed = updateVariantProductValidationSchema.safeParse(v);
+          if (!parsed.success) {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const errMsg = (parsed.error.errors as any[])
+              .map((e) => e.message)
+              .join(", ");
+            throw {
+              type: ERROR_TYPES.VALIDATION,
+              message: errMsg,
+            };
+          }
+
+          // Check duplicate combination (productId, colorId/unitId) excluding current variant
+          const dupQuery = await tx
+            .select()
+            .from(variantProductsTable)
+            .where(
+              and(
+                eq(variantProductsTable.productId, id),
+                v.colorId
+                  ? eq(variantProductsTable.colorId, v.colorId)
+                  : isNull(variantProductsTable.colorId),
+                eq(variantProductsTable.unitId, v.unitId),
+                // exclude current id (will filter below)
+                eq(variantProductsTable.isDeleted, false),
+              ),
+            );
+          console.log("dupQuery", dupQuery);
+
+          // If duplicates exist and their id isn't the same as v.id, reject
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          if ((dupQuery as any[]).some((d) => d.id !== v.id)) {
+            console.log("Duplicate variant found:", v);
+            throw {
+              type: ERROR_TYPES.VALIDATION,
+              message:
+                "A variant with the same product, color, and unit combination already exists",
+            };
+          }
+
+          // Update variant
+          const updatedVariant = await tx
+            .update(variantProductsTable)
+            .set({
+              price: v.price,
+              originalPrice: v.originalPrice,
+              description: v.description,
+              shortDescription: v.shortDescription,
+              bestDeal: v.bestDeal !== undefined ? v.bestDeal : false,
+              discountedSale:
+                v.discountedSale !== undefined ? v.discountedSale : false,
+              isActive: v.isActive !== undefined ? v.isActive : true,
+              isDeleted: v.isDeleted !== undefined ? v.isDeleted : false,
+              colorId: v.colorId,
+              unitId: v.unitId,
+              updatedAt: new Date(),
+            })
+            .where(eq(variantProductsTable.id, v.id))
+            .returning();
+
+          // Update or insert stock if initialStock provided
+          if (v.initialStock !== undefined) {
+            const existingStock = await tx
+              .select()
+              .from(stockTable)
+              .where(eq(stockTable.variantProductId, v.id))
+              .limit(1);
+
+            if (existingStock.length > 0) {
+              await tx
+                .update(stockTable)
+                .set({ quantity: v.initialStock })
+                .where(eq(stockTable.variantProductId, v.id));
+            } else {
+              await tx
+                .insert(stockTable)
+                .values({
+                  variantProductId: v.id,
+                  quantity: v.initialStock,
+                  warehouseId: "257b861a-50e6-4b79-a5fd-ae87ddefc88b",
+                })
+                .onConflictDoNothing();
+            }
+          }
+
+          // Attach media if provided
+          if (v.mediaUrl) {
+            const existingMedia = await tx
+              .select()
+              .from(mediaTable)
+              .where(eq(mediaTable.url, v.mediaUrl));
+
+            let mediaId;
+            if (existingMedia.length > 0) mediaId = existingMedia[0].id;
+            else {
+              const newMedia = await tx
+                .insert(mediaTable)
+                .values({
+                  title: slugify(
+                    String(updatedProduct[0].title || title || ""),
+                    {
+                      lower: true,
+                      strict: true,
+                    },
+                  ),
+                  url: v.mediaUrl,
+                })
+                .returning();
+              mediaId = newMedia[0].id;
+            }
+
+            await tx
+              .insert(variantProductsMediaTables)
+              .values({
+                variantProductId: v.id,
+                mediaId,
+              })
+              .onConflictDoNothing();
+          }
+
+          processedVariants.push(updatedVariant[0]);
+        } else {
+          // New variant creation
+          const parsed = newVariantSchema.safeParse(v);
+          if (!parsed.success) {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const errMsg = (parsed.error.errors as any[])
+              .map((e) => e.message)
+              .join(", ");
+            throw {
+              type: ERROR_TYPES.VALIDATION,
+              message: errMsg,
+            };
+          }
+
+          // Check duplicate combination
+          const existingVariant = await tx
+            .select()
+            .from(variantProductsTable)
+            .where(
+              and(
+                eq(variantProductsTable.productId, id),
+                v.colorId
+                  ? eq(variantProductsTable.colorId, v.colorId)
+                  : isNull(variantProductsTable.colorId),
+                eq(variantProductsTable.unitId, v.unitId),
+                eq(variantProductsTable.isDeleted, false),
+                ne(variantProductsTable.id, v.id),
+              ),
+            );
+          console.log("existingVariant", existingVariant);
+
+          if (existingVariant.length > 0) {
+            console.log("Duplicate variant found on create>>>>>>>>>>>>>>>:");
+            throw {
+              type: ERROR_TYPES.VALIDATION,
+              message:
+                "A variant with the same product, color, and unit combination already exists",
+            };
+          }
+
+          const newVariant = await tx
+            .insert(variantProductsTable)
+            .values({
+              price: v.price,
+              originalPrice: v.originalPrice,
+              description: v.description,
+              shortDescription: v.shortDescription,
+              bestDeal: v.bestDeal !== undefined ? v.bestDeal : false,
+              discountedSale:
+                v.discountedSale !== undefined ? v.discountedSale : false,
+              isActive: v.isActive !== undefined ? v.isActive : true,
+              productId: id,
+              colorId: v.colorId,
+              unitId: v.unitId,
+            })
+            .returning();
+
+          // create stock
+          await tx
+            .insert(stockTable)
+            .values({
+              variantProductId: newVariant[0].id,
+              quantity: v.initialStock ?? 0,
+              warehouseId: "257b861a-50e6-4b79-a5fd-ae87ddefc88b",
+            })
+            .onConflictDoNothing();
+
+          // attach media
+          if (v.mediaUrl) {
+            const existingMedia = await tx
+              .select()
+              .from(mediaTable)
+              .where(eq(mediaTable.url, v.mediaUrl));
+
+            let mediaId;
+            if (existingMedia.length > 0) mediaId = existingMedia[0].id;
+            else {
+              const newMedia = await tx
+                .insert(mediaTable)
+                .values({
+                  title: slugify(
+                    String(updatedProduct[0].title || title || ""),
+                    {
+                      lower: true,
+                      strict: true,
+                    },
+                  ),
+                  url: v.mediaUrl,
+                })
+                .returning();
+              mediaId = newMedia[0].id;
+            }
+
+            await tx
+              .insert(variantProductsMediaTables)
+              .values({
+                variantProductId: newVariant[0].id,
+                mediaId,
+              })
+              .onConflictDoNothing();
+          }
+
+          processedVariants.push(newVariant[0]);
+        }
+      }
+
+      return { product: updatedProduct[0], variants: processedVariants };
+    });
 
     return res.status(200).json({
       success: true,
       message: "Product updated successfully",
-      data: updatedProduct[0],
+      data: result,
     });
   } catch (error) {
     return handleError(error, res, PRODUCT_ENDPOINTS.UPDATE_PRODUCT);

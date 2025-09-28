@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { variantProductValidationSchema } from "../variant-products/variant-products.validation";
 
 export const productValidationSchema = z.object({
   title: z
@@ -14,6 +15,10 @@ export const productValidationSchema = z.object({
     .uuid("Invalid category ID format"),
   brandId: z.string().uuid("Invalid brand ID format").nullable().optional(),
   isActive: z.boolean().optional().default(true),
+  // Optional variants array for product creation; each variant omits productId (set server-side)
+  variants: z
+    .array(variantProductValidationSchema.omit({ productId: true }))
+    .optional(),
 });
 export type ProductValidationType = z.infer<typeof productValidationSchema>;
 
