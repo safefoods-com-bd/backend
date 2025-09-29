@@ -7,8 +7,12 @@ import {
   deleteOrdersBatchV100,
 } from "./controllers/delete-order.controller";
 import { createGuestUserOrderV100 } from "./controllers/create-guest-order.controller";
+import { getAllOrdersV100 } from "./controllers/list-all-orders.controller";
 
 const router = Router();
+
+// Get all orders
+router.get("/", getAllOrdersV100 as RequestHandler);
 
 // Get all orders for a specific user with pagination
 router.get("/user/:userId", getUserOrdersV100 as RequestHandler);

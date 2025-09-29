@@ -137,6 +137,7 @@ export const STOCK_ENDPOINTS = {
 
 // orders
 export const ORDER_ENDPOINTS = {
+  GET_ALL_ORDERS: "GET /api/v1/orders",
   CREATE_ORDER: "POST /api/v1/orders",
   UPDATE_ORDER: "PATCH /api/v1/orders/:id",
   DELETE_ORDER: "DELETE /api/v1/orders",
