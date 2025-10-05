@@ -76,22 +76,22 @@ export const updateProductV100 = async (
     }
 
     // Check if the SKU exists (if SKU update is requested) and it's different from current product
-    if (sku) {
-      const duplicateSku = await db
-        .select()
-        .from(productsTables)
-        .where(eq(productsTables.sku, sku));
+    // if (sku) {
+    //   const duplicateSku = await db
+    //     .select()
+    //     .from(productsTables)
+    //     .where(eq(productsTables.sku, sku));
 
-      if (
-        duplicateSku.length > 0 &&
-        duplicateSku[0].id !== existingProduct[0].id
-      ) {
-        throw {
-          type: ERROR_TYPES.VALIDATION,
-          message: "Product with the same SKU already exists",
-        };
-      }
-    }
+    //   if (
+    //     duplicateSku.length > 0 &&
+    //     duplicateSku[0].id !== existingProduct[0].id
+    //   ) {
+    //     throw {
+    //       type: ERROR_TYPES.VALIDATION,
+    //       message: "Product with the same SKU already exists",
+    //     };
+    //   }
+    // }
 
     // Check if the category exists (if categoryId is provided)
     if (categoryId) {
@@ -203,53 +203,89 @@ export const updateProductV100 = async (
             };
           }
 
-          // Check duplicate combination (productId, colorId/unitId) excluding current variant
-          const dupQuery = await tx
+          const existingVariantArr = await tx
             .select()
             .from(variantProductsTable)
-            .where(
-              and(
-                eq(variantProductsTable.productId, id),
-                v.colorId
-                  ? eq(variantProductsTable.colorId, v.colorId)
-                  : isNull(variantProductsTable.colorId),
-                eq(variantProductsTable.unitId, v.unitId),
-                // exclude current id (will filter below)
-                eq(variantProductsTable.isDeleted, false),
-              ),
-            );
-          console.log("dupQuery", dupQuery);
+            .where(eq(variantProductsTable.id, v.id));
 
-          // If duplicates exist and their id isn't the same as v.id, reject
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          if ((dupQuery as any[]).some((d) => d.id !== v.id)) {
-            console.log("Duplicate variant found:", v);
+          if (existingVariantArr.length === 0) {
             throw {
-              type: ERROR_TYPES.VALIDATION,
-              message:
-                "A variant with the same product, color, and unit combination already exists",
+              type: ERROR_TYPES.NOT_FOUND,
+              message: `Variant with id ${v.id} not found.`,
             };
           }
+          const dbVariant = existingVariantArr[0];
 
-          // Update variant
-          const updatedVariant = await tx
-            .update(variantProductsTable)
-            .set({
-              price: v.price,
-              originalPrice: v.originalPrice,
-              description: v.description,
-              shortDescription: v.shortDescription,
-              bestDeal: v.bestDeal !== undefined ? v.bestDeal : false,
-              discountedSale:
-                v.discountedSale !== undefined ? v.discountedSale : false,
-              isActive: v.isActive !== undefined ? v.isActive : true,
-              isDeleted: v.isDeleted !== undefined ? v.isDeleted : false,
-              colorId: v.colorId,
-              unitId: v.unitId,
-              updatedAt: new Date(),
-            })
-            .where(eq(variantProductsTable.id, v.id))
-            .returning();
+          const hasChanges =
+            (v.price !== undefined && v.price !== dbVariant.price) ||
+            (v.originalPrice !== undefined &&
+              v.originalPrice !== dbVariant.originalPrice) ||
+            (v.description !== undefined &&
+              v.description !== dbVariant.description) ||
+            (v.shortDescription !== undefined &&
+              v.shortDescription !== dbVariant.shortDescription) ||
+            (v.bestDeal !== undefined && v.bestDeal !== dbVariant.bestDeal) ||
+            (v.discountedSale !== undefined &&
+              v.discountedSale !== dbVariant.discountedSale) ||
+            (v.isActive !== undefined && v.isActive !== dbVariant.isActive) ||
+            (v.isDeleted !== undefined &&
+              v.isDeleted !== dbVariant.isDeleted) ||
+            (v.colorId !== undefined && v.colorId !== dbVariant.colorId) ||
+            (v.unitId !== undefined && v.unitId !== dbVariant.unitId);
+
+          let updatedVariantData = dbVariant;
+
+          if (hasChanges) {
+            // Check for duplicate combination if relevant fields changed
+            const uniquenessFieldsChanged =
+              (v.colorId !== undefined && v.colorId !== dbVariant.colorId) ||
+              (v.unitId !== undefined && v.unitId !== dbVariant.unitId);
+
+            if (uniquenessFieldsChanged) {
+              const dupQuery = await tx
+                .select()
+                .from(variantProductsTable)
+                .where(
+                  and(
+                    eq(variantProductsTable.productId, id),
+                    v.colorId
+                      ? eq(variantProductsTable.colorId, v.colorId)
+                      : isNull(variantProductsTable.colorId),
+                    eq(variantProductsTable.unitId, v.unitId),
+                    eq(variantProductsTable.isDeleted, false),
+                    ne(variantProductsTable.id, v.id),
+                  ),
+                );
+
+              if (dupQuery.length > 0) {
+                throw {
+                  type: ERROR_TYPES.VALIDATION,
+                  message:
+                    "A variant with the same product, color, and unit combination already exists",
+                };
+              }
+            }
+
+            const updatedVariant = await tx
+              .update(variantProductsTable)
+              .set({
+                price: v.price ?? dbVariant.price,
+                originalPrice: v.originalPrice ?? dbVariant.originalPrice,
+                description: v.description ?? dbVariant.description,
+                shortDescription:
+                  v.shortDescription ?? dbVariant.shortDescription,
+                bestDeal: v.bestDeal ?? dbVariant.bestDeal,
+                discountedSale: v.discountedSale ?? dbVariant.discountedSale,
+                isActive: v.isActive ?? dbVariant.isActive,
+                isDeleted: v.isDeleted ?? dbVariant.isDeleted,
+                colorId: v.colorId ?? dbVariant.colorId,
+                unitId: v.unitId ?? dbVariant.unitId,
+                updatedAt: new Date(),
+              })
+              .where(eq(variantProductsTable.id, v.id))
+              .returning();
+            updatedVariantData = updatedVariant[0];
+          }
 
           // Update or insert stock if initialStock provided
           if (v.initialStock !== undefined) {
@@ -260,10 +296,12 @@ export const updateProductV100 = async (
               .limit(1);
 
             if (existingStock.length > 0) {
-              await tx
-                .update(stockTable)
-                .set({ quantity: v.initialStock })
-                .where(eq(stockTable.variantProductId, v.id));
+              if (existingStock[0].quantity !== v.initialStock) {
+                await tx
+                  .update(stockTable)
+                  .set({ quantity: v.initialStock })
+                  .where(eq(stockTable.variantProductId, v.id));
+              }
             } else {
               await tx
                 .insert(stockTable)
@@ -284,8 +322,9 @@ export const updateProductV100 = async (
               .where(eq(mediaTable.url, v.mediaUrl));
 
             let mediaId;
-            if (existingMedia.length > 0) mediaId = existingMedia[0].id;
-            else {
+            if (existingMedia.length > 0) {
+              mediaId = existingMedia[0].id;
+            } else {
               const newMedia = await tx
                 .insert(mediaTable)
                 .values({
@@ -302,16 +341,29 @@ export const updateProductV100 = async (
               mediaId = newMedia[0].id;
             }
 
-            await tx
-              .insert(variantProductsMediaTables)
-              .values({
-                variantProductId: v.id,
-                mediaId,
-              })
-              .onConflictDoNothing();
+            // Check if this media is already associated with the variant
+            const existingLink = await tx
+              .select()
+              .from(variantProductsMediaTables)
+              .where(
+                and(
+                  eq(variantProductsMediaTables.variantProductId, v.id),
+                  eq(variantProductsMediaTables.mediaId, mediaId),
+                ),
+              );
+
+            if (existingLink.length === 0) {
+              await tx
+                .insert(variantProductsMediaTables)
+                .values({
+                  variantProductId: v.id,
+                  mediaId,
+                })
+                .onConflictDoNothing(); // onConflict is good
+            }
           }
 
-          processedVariants.push(updatedVariant[0]);
+          processedVariants.push(updatedVariantData);
         } else {
           // New variant creation
           const parsed = newVariantSchema.safeParse(v);
@@ -338,7 +390,6 @@ export const updateProductV100 = async (
                   : isNull(variantProductsTable.colorId),
                 eq(variantProductsTable.unitId, v.unitId),
                 eq(variantProductsTable.isDeleted, false),
-                ne(variantProductsTable.id, v.id),
               ),
             );
           console.log("existingVariant", existingVariant);

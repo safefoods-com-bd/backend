@@ -1,9 +1,9 @@
 import { Request, Response } from "express";
 import { db } from "@/db/db";
 import { ERROR_TYPES, handleError } from "@/utils/errorHandler";
-import variantProductTables from "@/db/schema/product-management/products/variant_products";
+import { variantProductsTable } from "@/db/schema";
 import { updateVariantProductValidationSchema } from "../variant-products.validation";
-import { and, eq, ne, sql } from "drizzle-orm";
+import { and, eq, ne, isNull } from "drizzle-orm";
 import { VARIANT_PRODUCT_ENDPOINTS } from "@/data/endpoints";
 import productsTables from "@/db/schema/product-management/products/products";
 import colorTables from "@/db/schema/utils/colors";
@@ -59,8 +59,8 @@ export const updateVariantProductV100 = async (
     // Check if variant product exists
     const existingVariantProduct = await db
       .select()
-      .from(variantProductTables)
-      .where(eq(variantProductTables.id, id));
+      .from(variantProductsTable)
+      .where(eq(variantProductsTable.id, id));
 
     if (existingVariantProduct.length === 0) {
       throw {
@@ -114,22 +114,26 @@ export const updateVariantProductV100 = async (
       }
     }
 
-    // Check for duplicate combinations if any of productId, colorId, or sizeId are updated
-    if (productId || colorId) {
+    // Check for duplicate combinations if any of productId, colorId, or unitId are updated
+    if (productId || colorId || unitId) {
       const checkProductId = productId || existingVariantProduct[0].productId;
       const checkColorId = colorId || existingVariantProduct[0].colorId;
+      const checkUnitId = unitId || existingVariantProduct[0].unitId;
 
       const existingVariant = await db
         .select()
-        .from(variantProductTables)
+        .from(variantProductsTable)
         .where(
           and(
-            eq(variantProductTables.productId, checkProductId),
-            checkColorId !== null
-              ? eq(variantProductTables.colorId, checkColorId)
-              : sql`(${variantProductTables.colorId} IS NULL)`,
-            ne(variantProductTables.id, id),
-            eq(variantProductTables.isDeleted, false),
+            eq(variantProductsTable.productId, checkProductId),
+            checkColorId
+              ? eq(variantProductsTable.colorId, checkColorId)
+              : isNull(variantProductsTable.colorId),
+            checkUnitId
+              ? eq(variantProductsTable.unitId, checkUnitId)
+              : isNull(variantProductsTable.unitId),
+            ne(variantProductsTable.id, id),
+            eq(variantProductsTable.isDeleted, false),
           ),
         );
 
@@ -137,14 +141,14 @@ export const updateVariantProductV100 = async (
         throw {
           type: ERROR_TYPES.VALIDATION,
           message:
-            "A variant with the same product, color, and size combination already exists",
+            "A variant with the same product, color, and unit combination already exists",
         };
       }
     }
 
     // Update variant product
     const updatedVariantProduct = await db
-      .update(variantProductTables)
+      .update(variantProductsTable)
       .set({
         price: price !== undefined ? price : existingVariantProduct[0].price,
         originalPrice:
@@ -176,7 +180,7 @@ export const updateVariantProductV100 = async (
         unitId: unitId || existingVariantProduct[0].unitId,
         updatedAt: new Date(),
       })
-      .where(eq(variantProductTables.id, id))
+      .where(eq(variantProductsTable.id, id))
       .returning();
 
     return res.status(200).json({
