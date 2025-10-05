@@ -1,14 +1,12 @@
 import { z } from "zod";
-import { variantProductValidationSchema } from "../variant-products/variant-products.validation";
+import { updateVariantProductValidationSchema } from "../variant-products/variant-products.validation";
 
 export const productValidationSchema = z.object({
   title: z
     .string({ required_error: "Product title is required" })
     .min(1, "Product title cannot be empty"),
   slug: z.string().optional(),
-  sku: z
-    .string({ required_error: "SKU is required" })
-    .min(1, "SKU cannot be empty"),
+  sku: z.string().optional().nullable(),
   season: z.string().optional(),
   categoryId: z
     .string({ required_error: "Category ID is required" })
@@ -17,7 +15,7 @@ export const productValidationSchema = z.object({
   isActive: z.boolean().optional().default(true),
   // Optional variants array for product creation; each variant omits productId (set server-side)
   variants: z
-    .array(variantProductValidationSchema.omit({ productId: true }))
+    .array(updateVariantProductValidationSchema.omit({ productId: true }))
     .optional(),
 });
 export type ProductValidationType = z.infer<typeof productValidationSchema>;
@@ -57,3 +55,18 @@ export const batchDeleteProductValidationSchema = z.object({
 export type DeleteProductValidationType = z.infer<
   typeof deleteProductValidationSchema
 >;
+
+export interface Product {
+  id: string;
+  title: string;
+  slug: string;
+  sku: string | null;
+  season: string | null;
+  isActive: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+  categoryId: string;
+  brandId: string | null;
+  categoryTitle: string | null;
+  brandTitle: string | null;
+}

@@ -15,20 +15,8 @@ import colorTables from "@/db/schema/utils/colors";
 import unitsTable from "@/db/schema/utils/units";
 import variantProductTables from "@/db/schema/product-management/products/variant_products";
 import mediaTables from "@/db/schema/utils/media";
-interface Product {
-  id: string;
-  title: string;
-  slug: string;
-  sku: string;
-  season: string | null;
-  isActive: boolean;
-  createdAt: Date;
-  updatedAt: Date;
-  categoryId: string;
-  brandId: string | null;
-  categoryTitle: string | null;
-  brandTitle: string | null;
-}
+import { Product } from "../products.validation";
+
 /**
  * Gets a single product by ID
  *

@@ -12,7 +12,7 @@ const productsTables = pgTable("products", {
   id: uuid("id").primaryKey().defaultRandom(),
   title: varchar("title", { length: 255 }).notNull(),
   slug: varchar("slug", { length: 255 }).notNull().unique(),
-  sku: varchar("sku", { length: 255 }).notNull().unique(),
+  sku: varchar("sku", { length: 255 }),
   season: varchar("season", { length: 255 }),
   isActive: boolean("is_active").default(true).notNull(),
   isDeleted: boolean("is_deleted").default(false).notNull(),

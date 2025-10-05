@@ -76,17 +76,17 @@ export const createProductV100 = async (
     }
 
     // Check for existing product with same SKU
-    const existingProductBySKU = await db
-      .select()
-      .from(productsTables)
-      .where(eq(productsTables.sku, sku));
+    // const existingProductBySKU = await db
+    //   .select()
+    //   .from(productsTables)
+    //   .where(eq(productsTables.sku, sku));
 
-    if (existingProductBySKU.length > 0) {
-      throw {
-        type: ERROR_TYPES.VALIDATION,
-        message: "Product with the same SKU already exists",
-      };
-    }
+    // if (existingProductBySKU.length > 0) {
+    //   throw {
+    //     type: ERROR_TYPES.VALIDATION,
+    //     message: "Product with the same SKU already exists",
+    //   };
+    // }
 
     // Check if the category exists
     const categoryExists = await db

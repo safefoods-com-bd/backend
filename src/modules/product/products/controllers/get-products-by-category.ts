@@ -11,22 +11,7 @@ import variantProductsMediaTables from "@/db/schema/product-management/products/
 import colorTables from "@/db/schema/utils/colors";
 import unitsTable from "@/db/schema/utils/units";
 import mediaTables from "@/db/schema/utils/media";
-
-// Define product interface for type checking
-interface Product {
-  id: string;
-  title: string;
-  slug: string;
-  sku: string;
-  season: string | null;
-  isActive: boolean;
-  createdAt: Date;
-  updatedAt: Date;
-  categoryId: string;
-  brandId: string | null;
-  categoryTitle: string | null;
-  brandTitle: string | null;
-}
+import { Product } from "../products.validation";
 
 /**
  * Lists all product records from the database with optional filtering and pagination
